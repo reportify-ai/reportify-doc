@@ -1,0 +1,132 @@
+---
+title: 'Search'
+openapi: 'POST /v2/search'
+---
+
+## 通用文档搜索
+
+**URL**: `/v2/search`  
+**方法**: `POST`  
+**描述**: 跨所有文档类别的通用搜索接口，支持搜索财报、电话会议、研究报告、公告、新闻、社交媒体等多种类型的文档。
+
+### 请求参数
+| 参数名           | 类型         | 必填 | 描述                                                                 |
+|------------------|--------------|------|----------------------------------------------------------------------|
+| query            | str          | 是   | 搜索关键词。                                                         |
+| symbols          | array[str]   | 否   | 股票代码列表，如 `["US:AAPL", "SH:600519"]`。                        |
+| industries       | array[str]   | 否   | 行业列表，如 `["科技", "消费"]`。                                    |
+| channel_ids      | array[str]   | 否   | 频道 ID 列表，用于筛选特定来源。                                     |
+| num              | int          | 否   | 返回的结果数量，默认值为 `10`，最大值为 `100`。                      |
+| start_datetime   | str          | 否   | 开始时间，格式为 `YYYY-MM-DD` 或 `YYYY-MM-DD HH:MM:SS`。             |
+| end_datetime     | str          | 否   | 结束时间，格式为 `YYYY-MM-DD` 或 `YYYY-MM-DD HH:MM:SS`。             |
+
+### 响应参数
+| 参数名              | 类型    | 描述                                                   |
+|---------------------|---------|--------------------------------------------------------|
+| docs                | array   | 搜索结果文档数组，每个文档包含以下字段：               |
+| &nbsp;&nbsp;doc_id       | str     | 文档唯一 ID。                                          |
+| &nbsp;&nbsp;title        | str     | 文档标题。                                             |
+| &nbsp;&nbsp;summary      | str     | 文档摘要。                                             |
+| &nbsp;&nbsp;category     | str     | 文档类别。                                             |
+| &nbsp;&nbsp;published_at | int     | 发布时间（毫秒级时间戳）。                             |
+| &nbsp;&nbsp;companies    | array   | 相关公司列表。                                         |
+| &nbsp;&nbsp;metadata     | object  | 文档元数据。                                           |
+| &nbsp;&nbsp;score        | number  | 相关性评分。                                           |
+| &nbsp;&nbsp;url          | str     | 文档链接。                                             |
+| total_count         | int     | 匹配文档总数。                                         |
+| took_ms             | int     | 搜索执行时间（毫秒）。                                 |
+
+### 支持的文档类型
+- `financials`: 财务报告
+- `transcripts`: 电话会议记录
+- `reports`: 研究报告
+- `filings`: 公司公告
+- `news`: 新闻文章
+- `socials`: 社交媒体内容
+
+### 请求示例
+
+**cURL**
+```bash
+curl -X POST https://api.reportify.cn/v2/search \
+-H "Authorization: Bearer 447460****09c9" \
+-H "Content-Type: application/json" \
+-d '{
+    "query": "人工智能 业绩增长",
+    "symbols": ["US:NVDA", "US:MSFT"],
+    "industries": ["科技"],
+    "num": 10,
+    "start_datetime": "2024-01-01",
+    "end_datetime": "2024-12-31"
+}'
+```
+
+**Python 示例**
+```python
+import requests
+
+url = "https://api.reportify.cn/v2/search"
+headers = {
+    "Authorization": "Bearer 447460****09c9",
+    "Content-Type": "application/json"
+}
+payload = {
+    "query": "人工智能 业绩增长",
+    "symbols": ["US:NVDA", "US:MSFT"],
+    "industries": ["科技"],
+    "num": 10,
+    "start_datetime": "2024-01-01",
+    "end_datetime": "2024-12-31"
+}
+
+response = requests.post(url, headers=headers, json=payload)
+print(response.json())
+```
+
+### 响应示例
+```json
+{
+  "docs": [
+    {
+      "doc_id": "1046915273103380488",
+      "title": "腾讯控股 2024年Q3 业绩电话会议记录",
+      "summary": "### 要点\n- 游戏业务收入同比增长 12%\n- 广告业务持续强劲增长\n...",
+      "category": "transcripts",
+      "published_at": 1679486400000,
+      "companies": [
+        {
+          "name": "腾讯控股",
+          "stocks": [
+            {
+              "code": "00700",
+              "market": "HK",
+              "symbol": "HK:00700"
+            },
+            {
+              "code": "TCEHY",
+              "market": "US",
+              "symbol": "US:TCEHY"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "report_type": 4,
+        "report_status": 2,
+        "report_scope": 1,
+        "report_language": "zh"
+      },
+      "score": 0.9876,
+      "url": "https://reportify.cn/transcripts/1046915273103380488"
+    }
+  ],
+  "total_count": 1,
+  "took_ms": 98
+}
+```
+
+### 错误响应
+| HTTP 状态码 | 描述                     |
+|-------------|--------------------------|
+| 422         | 请求参数验证错误         |
+

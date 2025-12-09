@@ -1,0 +1,107 @@
+---
+title: 'Company Income Statement'
+openapi: 'POST /v1/stock/company-income-statement'
+---
+
+## 利润表
+
+**URL**: `/v1/stock/company-income-statement`
+**方法**: `POST`  
+**描述**: 获取公司利润表数据。
+
+### 请求参数
+| 参数名         | 类型   | 必填 | 描述                                                              |
+|----------------|--------|------|-------------------------------------------------------------------|
+| symbol         | str    | 是   | 股票代码，如 `HK:00700`、`US:AAPL`。                              |
+| period         | str    | 否   | 报告周期：`annual`、`quarterly`、`cumulative quarterly`。         |
+| limit          | int    | 否   | 返回最近 N 条记录，默认 8。                                       |
+| start_date     | str    | 否   | 开始日期（YYYY-MM-DD）。                                          |
+| end_date       | str    | 否   | 结束日期（YYYY-MM-DD）。                                          |
+| calendar       | str    | 否   | `calendar` 或 `fiscal`，默认 `fiscal`。                           |
+| fiscal_year    | str    | 否   | 指定财年（如 `2023`）。                                           |
+| fiscal_quarter | str    | 否   | 指定财季（Q1, Q2, Q3, Q4, FY, H1, `Q3 (9 months)`）。             |
+
+### 响应参数
+| 参数名              | 类型    | 描述                                       |
+|---------------------|---------|-------------------------------------------|
+| status              | int     | HTTP 状态码。                              |
+| code                | int     | 响应代码（0 表示成功）。                   |
+| message             | str     | 响应消息。                                 |
+| data                | array   | 利润表数据列表。                           |
+| &nbsp;&nbsp;fiscal_year        | str     | 财年。                                     |
+| &nbsp;&nbsp;fiscal_quarter     | str     | 财季。                                     |
+| &nbsp;&nbsp;total_revenue      | object  | 总收入。                                   |
+| &nbsp;&nbsp;gross_profit       | object  | 毛利润。                                   |
+| &nbsp;&nbsp;net_profit         | object  | 净利润。                                   |
+| &nbsp;&nbsp;earnings_per_share | object  | 每股收益。                                 |
+
+### 请求示例
+
+**cURL**
+```bash
+curl -X POST https://api.reportify.cn/v1/stock/company-income-statement \
+-H "Authorization: Bearer 447460****09c9" \
+-H "Content-Type: application/json" \
+-d '{
+    "symbol": "HK:00700",
+    "limit": 2
+}'
+```
+
+**Python**
+```python
+import requests
+
+url = "https://api.reportify.cn/v1/stock/company-income-statement"
+headers = {
+    "Authorization": "Bearer 447460****09c9",
+    "Content-Type": "application/json"
+}
+data = {
+    "symbol": "HK:00700",
+    "limit": 2
+}
+
+response = requests.post(url, headers=headers, json=data)
+print(response.json())
+```
+
+### 响应示例
+```json
+{
+  "status": 200,
+  "code": 0,
+  "message": "",
+  "data": [
+    {
+      "currency": "CNY",
+      "end_date": "2025-09-30",
+      "symbol": "00700",
+      "fiscal_year": "2025",
+      "fiscal_quarter": "Q3",
+      "period": "quarterly",
+      "total_revenue": {
+        "total_revenue": 192869000000.0,
+        "operating_revenue": 192869000000.0
+      },
+      "gross_profit": {
+        "gross_profit": 108798000000.0
+      },
+      "net_profit": {
+        "net_profit": 64943000000.0,
+        "net_profit_attributable_to_owners_of_the_parent": 63133000000.0
+      },
+      "earnings_per_share": {
+        "basic_earnings_per_share": 6.949,
+        "diluted_earnings_per_share": 6.756
+      }
+    }
+  ]
+}
+```
+
+### 错误响应
+| 状态码 | 描述                     |
+|--------|--------------------------|
+| 422    | 请求参数验证失败。       |
+

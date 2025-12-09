@@ -39,9 +39,43 @@
         {
           "group": "搜索和问答",
           "pages": [
-            "api-reference/search/search",
-            "api-reference/search/search_chunks",
-            "api-reference/search/completion"
+            {
+              "group": "v1",
+              "pages": [
+                "api-reference/search/search",
+                "api-reference/search/search_chunks",
+                "api-reference/search/completion"
+              ]
+            },
+            {
+              "group": "v2",
+              "pages": [
+                "api-reference/search/universal_search",
+                "api-reference/search/earnings_pack",
+                "api-reference/search/conference_calls",
+                "api-reference/search/minutes",
+                "api-reference/search/reports",
+                "api-reference/search/filings",
+                "api-reference/search/news",
+                "api-reference/search/socials",
+                "api-reference/search/webpages"
+              ]
+            }
+          ]
+        },
+        {
+          "group": "股票数据",
+          "pages": [
+            "api-reference/stock/company_overview",
+            "api-reference/stock/company_shareholders",
+            "api-reference/stock/company_prices",
+            "api-reference/stock/company_income_statement",
+            "api-reference/stock/company_balance_sheet",
+            "api-reference/stock/company_cashflow_statement",
+            "api-reference/stock/company_revenue_breakdown",
+            "api-reference/stock/index_prices",
+            "api-reference/stock/quote_realtime",
+            "api-reference/stock/screener"
           ]
         },
         {

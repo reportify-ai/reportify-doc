@@ -1,0 +1,101 @@
+---
+title: 'Webpages Search'
+openapi: 'POST /v2/search/webpages'
+---
+
+## 网页搜索
+
+**URL**: `/v2/search/webpages`  
+**方法**: `POST`  
+**描述**: 搜索网页内容。
+
+### 请求参数
+| 参数名           | 类型         | 必填 | 描述                                                                 |
+|------------------|--------------|------|----------------------------------------------------------------------|
+| query            | str          | 是   | 搜索关键词。                                                         |
+| num              | int          | 否   | 返回的结果数量，默认值为 `10`，最大值为 `100`。                      |
+| start_datetime   | str          | 否   | 开始时间，格式为 `YYYY-MM-DD` 或 `YYYY-MM-DD HH:MM:SS`。             |
+| end_datetime     | str          | 否   | 结束时间，格式为 `YYYY-MM-DD` 或 `YYYY-MM-DD HH:MM:SS`。             |
+
+### 响应参数
+| 参数名              | 类型    | 描述                                                   |
+|---------------------|---------|--------------------------------------------------------|
+| docs                | array   | 搜索结果文档数组，每个文档包含以下字段：               |
+| &nbsp;&nbsp;doc_id       | str     | 文档唯一 ID。                                          |
+| &nbsp;&nbsp;title        | str     | 文档标题。                                             |
+| &nbsp;&nbsp;summary      | str     | 文档摘要。                                             |
+| &nbsp;&nbsp;category     | str     | 文档类别。                                             |
+| &nbsp;&nbsp;published_at | int     | 发布时间（毫秒级时间戳）。                             |
+| &nbsp;&nbsp;companies    | array   | 相关公司列表。                                         |
+| &nbsp;&nbsp;metadata     | object  | 文档元数据。                                           |
+| &nbsp;&nbsp;score        | number  | 相关性评分。                                           |
+| &nbsp;&nbsp;url          | str     | 文档链接。                                             |
+| total_count         | int     | 匹配文档总数。                                         |
+| took_ms             | int     | 搜索执行时间（毫秒）。                                 |
+
+### 请求示例
+
+**cURL**
+```bash
+curl -X POST https://api.reportify.cn/v2/search/webpages \
+-H "Authorization: Bearer 447460****09c9" \
+-H "Content-Type: application/json" \
+-d '{
+    "query": "人工智能 投资趋势",
+    "num": 10,
+    "start_datetime": "2024-01-01",
+    "end_datetime": "2024-12-31"
+}'
+```
+
+**Python 示例**
+```python
+import requests
+
+url = "https://api.reportify.cn/v2/search/webpages"
+headers = {
+    "Authorization": "Bearer 447460****09c9",
+    "Content-Type": "application/json"
+}
+payload = {
+    "query": "人工智能 投资趋势",
+    "num": 10,
+    "start_datetime": "2024-01-01",
+    "end_datetime": "2024-12-31"
+}
+
+response = requests.post(url, headers=headers, json=payload)
+print(response.json())
+```
+
+### 响应示例
+```json
+{
+  "docs": [
+    {
+      "doc_id": "1046915273103380487",
+      "title": "2024年人工智能投资趋势分析",
+      "summary": "### 内容要点\n- AI 领域投资持续增长\n- 大模型和生成式 AI 成为热点\n...",
+      "category": "webpages",
+      "published_at": 1730390400000,
+      "companies": [],
+      "metadata": {
+        "report_type": 4,
+        "report_status": 2,
+        "report_scope": 1,
+        "report_language": "zh"
+      },
+      "score": 0.9412,
+      "url": "https://example.com/ai-investment-trends-2024"
+    }
+  ],
+  "total_count": 1,
+  "took_ms": 72
+}
+```
+
+### 错误响应
+| HTTP 状态码 | 描述                     |
+|-------------|--------------------------|
+| 422         | 请求参数验证错误         |
+

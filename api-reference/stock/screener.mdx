@@ -1,0 +1,124 @@
+---
+title: 'Stock Screener'
+openapi: 'POST /v1/stock/screener'
+---
+
+## 股票筛选器
+
+**URL**: `/v1/stock/screener`
+**方法**: `POST`  
+**描述**: 根据多种条件筛选股票。
+
+### 请求参数
+| 参数名                      | 类型   | 必填 | 描述                                          |
+|-----------------------------|--------|------|-----------------------------------------------|
+| market_cap_more_than        | number | 否   | 市值大于。                                    |
+| market_cap_lower_than       | number | 否   | 市值小于。                                    |
+| price_more_than             | number | 否   | 股价大于。                                    |
+| price_lower_than            | number | 否   | 股价小于。                                    |
+| change_percentage_more_than | number | 否   | 涨跌幅大于（如 0.02 表示 2%）。               |
+| change_percentage_lower_than| number | 否   | 涨跌幅小于（如 0.04 表示 4%）。               |
+| volume_more_than            | int    | 否   | 成交量大于。                                  |
+| volume_lower_than           | int    | 否   | 成交量小于。                                  |
+| country                     | str    | 否   | 国家代码（如 US, CN, HK）。                   |
+| exchange                    | str    | 否   | 交易所代码（如 NASDAQ, NYSE, HKEX）。         |
+| dividend_yield_more_than    | number | 否   | 股息率大于。                                  |
+| dividend_yield_lower_than   | number | 否   | 股息率小于。                                  |
+| pe_ttm_more_than            | number | 否   | 市盈率（TTM）大于。                           |
+| pe_ttm_lower_than           | number | 否   | 市盈率（TTM）小于。                           |
+| limit                       | int    | 否   | 返回结果数量限制，默认 100。                  |
+
+### 响应参数
+| 参数名              | 类型    | 描述                                       |
+|---------------------|---------|-------------------------------------------|
+| status              | int     | HTTP 状态码。                              |
+| code                | int     | 响应代码（0 表示成功）。                   |
+| message             | str     | 响应消息。                                 |
+| data                | object  | 筛选结果数据。                             |
+| &nbsp;&nbsp;items   | array   | 股票列表。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;ticker            | str     | 股票代码。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;name              | str     | 股票名称。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;price             | number  | 当前价格。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;change_percentage | number  | 涨跌幅。                                   |
+| &nbsp;&nbsp;&nbsp;&nbsp;market_cap        | number  | 市值。                                     |
+| &nbsp;&nbsp;&nbsp;&nbsp;pe_ttm            | number  | 市盈率（TTM）。                            |
+| &nbsp;&nbsp;&nbsp;&nbsp;dividend_yield    | number  | 股息率。                                   |
+
+### 请求示例
+
+**cURL**
+```bash
+curl -X POST https://api.reportify.cn/v1/stock/screener \
+-H "Authorization: Bearer 447460****09c9" \
+-H "Content-Type: application/json" \
+-d '{
+    "country": "HK",
+    "limit": 3
+}'
+```
+
+**Python**
+```python
+import requests
+
+url = "https://api.reportify.cn/v1/stock/screener"
+headers = {
+    "Authorization": "Bearer 447460****09c9",
+    "Content-Type": "application/json"
+}
+data = {
+    "country": "HK",
+    "limit": 3
+}
+
+response = requests.post(url, headers=headers, json=data)
+print(response.json())
+```
+
+### 响应示例
+```json
+{
+  "status": 200,
+  "code": 0,
+  "message": "",
+  "data": {
+    "items": [
+      {
+        "ticker": "00700",
+        "name": "腾讯控股",
+        "english_name": "TENCENT",
+        "country": "HK",
+        "exchange": "HK",
+        "price": 602.5,
+        "change_percentage": -0.0041,
+        "change": -2.5,
+        "day_high": 610,
+        "day_low": 596,
+        "market_cap": 5509795433315,
+        "volume": 17431321,
+        "dividend_yield": 0.0075,
+        "pe_ttm": 23.9193,
+        "timestamp": "2025-12-09T16:00:00+08:00"
+      },
+      {
+        "ticker": "09988",
+        "name": "阿里巴巴",
+        "english_name": "BABA",
+        "country": "HK",
+        "exchange": "HK",
+        "price": 150.9,
+        "change_percentage": -0.0163,
+        "market_cap": 2880475372644.3,
+        "dividend_yield": 0.0129,
+        "pe_ttm": 21.5757
+      }
+    ]
+  }
+}
+```
+
+### 错误响应
+| 状态码 | 描述                     |
+|--------|--------------------------|
+| 422    | 请求参数验证失败。       |
+

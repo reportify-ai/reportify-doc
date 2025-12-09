@@ -1,0 +1,94 @@
+---
+title: 'Stock Realtime Quote'
+openapi: 'POST /v1/stock/quote-realtime'
+---
+
+## 实时行情
+
+**URL**: `/v1/stock/quote-realtime`
+**方法**: `POST`  
+**描述**: 获取股票实时行情数据。
+
+### 请求参数
+| 参数名  | 类型   | 必填 | 描述                                          |
+|---------|--------|------|-----------------------------------------------|
+| symbol  | str    | 是   | 股票代码，如 `HK:00700`、`US:AAPL`、`688001`。|
+
+### 响应参数
+| 参数名              | 类型    | 描述                                       |
+|---------------------|---------|-------------------------------------------|
+| status              | int     | HTTP 状态码。                              |
+| code                | int     | 响应代码（0 表示成功）。                   |
+| message             | str     | 响应消息。                                 |
+| data                | object  | 实时行情数据。                             |
+| &nbsp;&nbsp;symbol              | str     | 股票代码。                                 |
+| &nbsp;&nbsp;name                | str     | 股票名称。                                 |
+| &nbsp;&nbsp;exchange            | str     | 交易所。                                   |
+| &nbsp;&nbsp;stock_price         | number  | 当前价格。                                 |
+| &nbsp;&nbsp;stock_change        | number  | 涨跌额。                                   |
+| &nbsp;&nbsp;stock_change_percent| number  | 涨跌幅。                                   |
+| &nbsp;&nbsp;stock_open          | number  | 开盘价。                                   |
+| &nbsp;&nbsp;day_high            | number  | 最高价。                                   |
+| &nbsp;&nbsp;day_low             | number  | 最低价。                                   |
+| &nbsp;&nbsp;trade_volume        | int     | 成交量。                                   |
+| &nbsp;&nbsp;trade_amount        | number  | 成交额。                                   |
+| &nbsp;&nbsp;timestamp           | str     | 时间戳。                                   |
+
+### 请求示例
+
+**cURL**
+```bash
+curl -X POST https://api.reportify.cn/v1/stock/quote-realtime \
+-H "Authorization: Bearer 447460****09c9" \
+-H "Content-Type: application/json" \
+-d '{
+    "symbol": "HK:00700"
+}'
+```
+
+**Python**
+```python
+import requests
+
+url = "https://api.reportify.cn/v1/stock/quote-realtime"
+headers = {
+    "Authorization": "Bearer 447460****09c9",
+    "Content-Type": "application/json"
+}
+data = {
+    "symbol": "HK:00700"
+}
+
+response = requests.post(url, headers=headers, json=data)
+print(response.json())
+```
+
+### 响应示例
+```json
+{
+  "status": 200,
+  "code": 0,
+  "message": "",
+  "data": {
+    "symbol": "00700",
+    "name": "腾讯控股",
+    "exchange": "HK",
+    "stock_price": 602.5,
+    "stock_change": -41.5,
+    "stock_change_percent": -6.4441,
+    "stock_open": 609.5,
+    "previous_stock_price": 644,
+    "day_high": 610,
+    "day_low": 596,
+    "trade_volume": 17431321,
+    "trade_amount": 10484820100,
+    "timestamp": "2025-12-09T16:08:31+08:00"
+  }
+}
+```
+
+### 错误响应
+| 状态码 | 描述                     |
+|--------|--------------------------|
+| 422    | 请求参数验证失败。       |
+

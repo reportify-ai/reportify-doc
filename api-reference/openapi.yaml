@@ -456,6 +456,538 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
       - BearerAuth: []
+  /v2/search:
+    post:
+      tags:
+      - openapi-v2-search
+      summary: Search
+      description: General document search across all categories
+      operationId: search_reportify_api_v2_search_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchToolsSearchRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchToolsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v2/search/earnings-pack:
+    post:
+      tags:
+      - openapi-v2-search
+      summary: Earnings Pack Search
+      description: Search earnings pack documents include Financial reports, Earnings call transcripts, Presentation materials, Press releases
+      operationId: earnings_pack_search_reportify_api_v2_search_earnings_pack_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchToolsEarningsPackRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchToolsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v2/search/conference-calls:
+    post:
+      tags:
+      - openapi-v2-search
+      summary: Conference Calls Search
+      description: Search conference call transcripts including Earnings calls, Research calls, Industry calls
+      operationId: conference_calls_search_reportify_api_v2_search_conference_calls_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchToolsConferenceCallsRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchToolsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v2/search/minutes:
+    post:
+      tags:
+      - openapi-v2-search
+      summary: Minutes Search
+      description: Search minutes transcripts including Conference calls, IR (Investor Relations) meetings
+      operationId: minutes_search_reportify_api_v2_search_minutes_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchToolsMinutesRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchToolsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v2/search/reports:
+    post:
+      tags:
+      - openapi-v2-search
+      summary: Reports Search
+      description: Search research reports from various institutions
+      operationId: reports_search_reportify_api_v2_search_reports_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchToolsReportsRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchToolsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v2/search/filings:
+    post:
+      tags:
+      - openapi-v2-search
+      summary: Filings Search
+      description: Search company filings and official announcements
+      operationId: filings_search_reportify_api_v2_search_filings_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchToolsFilingsRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchToolsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v2/search/news:
+    post:
+      tags:
+      - openapi-v2-search
+      summary: News Search
+      description: Search news articles and market updates
+      operationId: news_search_reportify_api_v2_search_news_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchToolsNewsRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchToolsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v2/search/socials:
+    post:
+      tags:
+      - openapi-v2-search
+      summary: Socials Search
+      description: Search social media content and market sentiment
+      operationId: socials_search_reportify_api_v2_search_socials_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchToolsSocialsRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchToolsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v2/search/webpages:
+    post:
+      tags:
+      - openapi-v2-search
+      summary: Webpages Search
+      description: Search webpage content
+      operationId: webpages_search_reportify_api_v2_search_webpages_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchToolsWebpagesRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchToolsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v1/stock/company-overview:
+    post:
+      tags:
+      - openapi-v2-stock
+      summary: Company Overview
+      description: Get comprehensive company information including fundamentals and business overview
+      operationId: company_overview_reportify_api_v2_stock_company_overview_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompanyOverviewInput'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StockAPIResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v1/stock/company-shareholders:
+    post:
+      tags:
+      - openapi-v2-stock
+      summary: Company Shareholders
+      description: Get list of company shareholders
+      operationId: company_shareholders_reportify_api_v2_stock_company_shareholders_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompanyShareholdersInput'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StockAPIResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v1/stock/company-prices:
+    post:
+      tags:
+      - openapi-v2-stock
+      summary: Company Stock Prices
+      description: Get current and historical stock prices
+      operationId: company_stock_prices_reportify_api_v2_stock_company_prices_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompanyStockPricesInput'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StockAPIResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v1/stock/company-income-statement:
+    post:
+      tags:
+      - openapi-v2-stock
+      summary: Company Income Statement
+      description: Get company income statement
+      operationId: company_income_statement_reportify_api_v2_stock_company_income_statement_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompanyIncomeStatementInput'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StockAPIResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v1/stock/company-balance-sheet:
+    post:
+      tags:
+      - openapi-v2-stock
+      summary: Company Balance Sheet
+      description: Get company balance sheet
+      operationId: company_balance_sheet_reportify_api_v2_stock_company_balance_sheet_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompanyBalanceSheetInput'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StockAPIResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v1/stock/company-cashflow-statement:
+    post:
+      tags:
+      - openapi-v2-stock
+      summary: Company Cashflow Statement
+      description: Get company cash flow statement
+      operationId: company_cashflow_statement_reportify_api_v2_stock_company_cashflow_statement_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompanyCashflowStatementInput'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StockAPIResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v1/stock/company-revenue-breakdown:
+    post:
+      tags:
+      - openapi-v2-stock
+      summary: Company Revenue Breakdown
+      description: Get company revenue breakdown
+      operationId: company_revenue_breakdown_reportify_api_v2_stock_company_revenue_breakdown_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompanyRevenueBreakdownInput'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StockAPIResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v1/stock/index-prices:
+    post:
+      tags:
+      - openapi-v2-stock
+      summary: Stock Index Prices
+      description: Get stock index prices
+      operationId: index_prices_reportify_api_v2_stock_index_prices_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StockIndexPricesInput'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StockAPIResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v1/stock/quote-realtime:
+    post:
+      tags:
+      - openapi-v2-stock
+      summary: Stock Realtime Quote
+      description: Get real-time stock quote
+      operationId: stock_realtime_quote_reportify_api_v2_stock_quote_realtime_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StockRealtimeQuoteInput'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StockAPIResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v1/stock/screener:
+    post:
+      tags:
+      - openapi-v2-stock
+      summary: Stock Screener
+      description: Screen stocks based on various criteria
+      operationId: stock_screener_reportify_api_v2_stock_screener_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StockScreenerInput'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StockAPIResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
   /v1/chat/completion:
     post:
       tags:
@@ -1933,6 +2465,712 @@ components:
       - msg
       - type
       title: ValidationError
+    SearchToolsEarningsPackRequest:
+      properties:
+        query:
+          type: string
+          title: Query
+          description: Search query
+        num:
+          type: integer
+          maximum: 100
+          minimum: 1
+          title: Num
+          description: Number of results to return
+          default: 10
+        symbols:
+          items:
+            type: string
+          type: array
+          title: Symbols
+          description: Stock symbols to filter by
+        start_datetime:
+          type: string
+          title: Start Datetime
+          description: Start datetime in YYYY-MM-DD or YYYY-MM-DD HH:MM:SS format
+        end_datetime:
+          type: string
+          title: End Datetime
+          description: End datetime in YYYY-MM-DD or YYYY-MM-DD HH:MM:SS format
+      type: object
+      required:
+      - query
+      - symbols
+      title: SearchToolsEarningsPackRequest
+      description: Request model for earnings pack search
+    SearchToolsConferenceCallsRequest:
+      properties:
+        query:
+          type: string
+          title: Query
+          description: Search query
+        num:
+          type: integer
+          maximum: 100
+          minimum: 1
+          title: Num
+          description: Number of results to return
+          default: 10
+        symbols:
+          items:
+            type: string
+          type: array
+          title: Symbols
+          description: Stock symbols to filter by
+        start_datetime:
+          type: string
+          title: Start Datetime
+          description: Start datetime in YYYY-MM-DD or YYYY-MM-DD HH:MM:SS format
+        end_datetime:
+          type: string
+          title: End Datetime
+          description: End datetime in YYYY-MM-DD or YYYY-MM-DD HH:MM:SS format
+      type: object
+      required:
+      - query
+      - symbols
+      title: SearchToolsConferenceCallsRequest
+      description: Request model for conference calls search
+    SearchToolsMinutesRequest:
+      properties:
+        query:
+          type: string
+          title: Query
+          description: Search query
+        num:
+          type: integer
+          maximum: 100
+          minimum: 1
+          title: Num
+          description: Number of results to return
+          default: 10
+        symbols:
+          items:
+            type: string
+          type: array
+          title: Symbols
+          description: Stock symbols to filter by
+        start_datetime:
+          type: string
+          title: Start Datetime
+          description: Start datetime in YYYY-MM-DD or YYYY-MM-DD HH:MM:SS format
+        end_datetime:
+          type: string
+          title: End Datetime
+          description: End datetime in YYYY-MM-DD or YYYY-MM-DD HH:MM:SS format
+      type: object
+      required:
+      - query
+      title: SearchToolsMinutesRequest
+      description: Request model for minutes search
+    SearchToolsReportsRequest:
+      properties:
+        query:
+          type: string
+          title: Query
+          description: Search query
+        num:
+          type: integer
+          maximum: 100
+          minimum: 1
+          title: Num
+          description: Number of results to return
+          default: 10
+        symbols:
+          items:
+            type: string
+          type: array
+          title: Symbols
+          description: Stock symbols to filter by
+        industries:
+          items:
+            type: string
+          type: array
+          title: Industries
+          description: Industries to filter by
+        channel_ids:
+          items:
+            type: string
+          type: array
+          title: Channel Ids
+          description: Channel IDs to filter by
+        start_datetime:
+          type: string
+          title: Start Datetime
+          description: Start datetime in YYYY-MM-DD or YYYY-MM-DD HH:MM:SS format
+        end_datetime:
+          type: string
+          title: End Datetime
+          description: End datetime in YYYY-MM-DD or YYYY-MM-DD HH:MM:SS format
+      type: object
+      required:
+      - query
+      title: SearchToolsReportsRequest
+      description: Request model for reports search
+    SearchToolsFilingsRequest:
+      properties:
+        query:
+          type: string
+          title: Query
+          description: Search query
+        num:
+          type: integer
+          maximum: 100
+          minimum: 1
+          title: Num
+          description: Number of results to return
+          default: 10
+        symbols:
+          items:
+            type: string
+          type: array
+          title: Symbols
+          description: Stock symbols to filter by
+        start_datetime:
+          type: string
+          title: Start Datetime
+          description: Start datetime in YYYY-MM-DD or YYYY-MM-DD HH:MM:SS format
+        end_datetime:
+          type: string
+          title: End Datetime
+          description: End datetime in YYYY-MM-DD or YYYY-MM-DD HH:MM:SS format
+      type: object
+      required:
+      - query
+      - symbols
+      title: SearchToolsFilingsRequest
+      description: Request model for filings search
+    SearchToolsNewsRequest:
+      properties:
+        query:
+          type: string
+          title: Query
+          description: Search query
+        num:
+          type: integer
+          maximum: 100
+          minimum: 1
+          title: Num
+          description: Number of results to return
+          default: 10
+        symbols:
+          items:
+            type: string
+          type: array
+          title: Symbols
+          description: Stock symbols to filter by
+        channel_ids:
+          items:
+            type: string
+          type: array
+          title: Channel Ids
+          description: Channel IDs to filter by
+        start_datetime:
+          type: string
+          title: Start Datetime
+          description: Start datetime in YYYY-MM-DD or YYYY-MM-DD HH:MM:SS format
+        end_datetime:
+          type: string
+          title: End Datetime
+          description: End datetime in YYYY-MM-DD or YYYY-MM-DD HH:MM:SS format
+      type: object
+      required:
+      - query
+      title: SearchToolsNewsRequest
+      description: Request model for news search
+    SearchToolsSocialsRequest:
+      properties:
+        query:
+          type: string
+          title: Query
+          description: Search query
+        num:
+          type: integer
+          maximum: 100
+          minimum: 1
+          title: Num
+          description: Number of results to return
+          default: 10
+        symbols:
+          items:
+            type: string
+          type: array
+          title: Symbols
+          description: Stock symbols to filter by
+        channel_ids:
+          items:
+            type: string
+          type: array
+          title: Channel Ids
+          description: Channel IDs to filter by
+        start_datetime:
+          type: string
+          title: Start Datetime
+          description: Start datetime in YYYY-MM-DD or YYYY-MM-DD HH:MM:SS format
+        end_datetime:
+          type: string
+          title: End Datetime
+          description: End datetime in YYYY-MM-DD or YYYY-MM-DD HH:MM:SS format
+      type: object
+      required:
+      - query
+      title: SearchToolsSocialsRequest
+      description: Request model for socials search
+    SearchToolsWebpagesRequest:
+      properties:
+        query:
+          type: string
+          title: Query
+          description: Search query
+        num:
+          type: integer
+          maximum: 100
+          minimum: 1
+          title: Num
+          description: Number of results to return
+          default: 10
+        start_datetime:
+          type: string
+          title: Start Datetime
+          description: Start datetime in YYYY-MM-DD or YYYY-MM-DD HH:MM:SS format
+        end_datetime:
+          type: string
+          title: End Datetime
+          description: End datetime in YYYY-MM-DD or YYYY-MM-DD HH:MM:SS format
+      type: object
+      required:
+      - query
+      title: SearchToolsWebpagesRequest
+      description: Request model for webpage search
+    SearchToolsSearchRequest:
+      properties:
+        query:
+          type: string
+          title: Query
+          description: Search query
+        num:
+          type: integer
+          maximum: 100
+          minimum: 1
+          title: Num
+          description: Number of results to return
+          default: 10
+        symbols:
+          items:
+            type: string
+          type: array
+          title: Symbols
+          description: Stock symbols to filter by
+        industries:
+          items:
+            type: string
+          type: array
+          title: Industries
+          description: Industries to filter by
+        channel_ids:
+          items:
+            type: string
+          type: array
+          title: Channel Ids
+          description: Channel IDs to filter by
+        start_datetime:
+          type: string
+          title: Start Datetime
+          description: Start datetime in YYYY-MM-DD or YYYY-MM-DD HH:MM:SS format
+        end_datetime:
+          type: string
+          title: End Datetime
+          description: End datetime in YYYY-MM-DD or YYYY-MM-DD HH:MM:SS format
+      type: object
+      required:
+      - query
+      title: SearchToolsSearchRequest
+      description: Request model for general document search
+    SearchToolsResponse:
+      properties:
+        docs:
+          items:
+            $ref: '#/components/schemas/SearchToolsDoc'
+          type: array
+          title: Docs
+          description: Search result documents
+        total_count:
+          type: integer
+          title: Total Count
+          description: Total number of matching documents
+          default: 0
+        took_ms:
+          type: integer
+          title: Took Ms
+          description: Search execution time in milliseconds
+          default: 0
+      type: object
+      title: SearchToolsResponse
+      description: Response model for all search tools
+    SearchToolsDoc:
+      properties:
+        doc_id:
+          type: string
+          title: Doc Id
+          description: Document ID
+        title:
+          type: string
+          title: Title
+          description: Document title
+        summary:
+          type: string
+          title: Summary
+          description: Document summary
+        category:
+          type: string
+          title: Category
+          description: Document category
+        published_at:
+          type: integer
+          title: Published At
+          description: Publication timestamp in milliseconds
+        companies:
+          items:
+            $ref: '#/components/schemas/CompanyLabel'
+          type: array
+          title: Companies
+          description: Related companies
+        metadata:
+          type: object
+          title: Metadata
+          description: Document metadata
+        score:
+          type: number
+          title: Score
+          description: Relevance score
+        url:
+          type: string
+          title: Url
+          description: Document URL
+      type: object
+      required:
+      - doc_id
+      - title
+      - url
+      title: SearchToolsDoc
+      description: Individual search result document
+    CompanyOverviewInput:
+      properties:
+        symbol:
+          type: string
+          title: Symbol
+          description: Stock symbol (e.g., HK:00700, US:AAPL)
+        name:
+          type: string
+          title: Name
+          description: Stock name (optional)
+      type: object
+      required:
+      - symbol
+      title: CompanyOverviewInput
+      description: Input schema for company overview
+    CompanyShareholdersInput:
+      properties:
+        symbol:
+          type: string
+          title: Symbol
+          description: Stock symbol
+        type:
+          type: string
+          title: Type
+          description: "Choose 'shareholders' or 'outstanding_shareholders'"
+        limit:
+          type: integer
+          title: Limit
+          description: Limit return number, default 10
+      type: object
+      required:
+      - symbol
+      title: CompanyShareholdersInput
+      description: Input schema for company shareholders
+    CompanyStockPricesInput:
+      properties:
+        symbol:
+          type: string
+          title: Symbol
+          description: Stock symbol
+        start_date:
+          type: string
+          title: Start Date
+          description: Start date (YYYY-MM-DD)
+        end_date:
+          type: string
+          title: End Date
+          description: End date (YYYY-MM-DD)
+      type: object
+      required:
+      - symbol
+      title: CompanyStockPricesInput
+      description: Input schema for company stock prices
+    CompanyIncomeStatementInput:
+      properties:
+        symbol:
+          type: string
+          title: Symbol
+          description: Stock symbol
+        period:
+          type: string
+          title: Period
+          description: "Report cycle: 'annual', 'quarterly', 'cumulative quarterly'"
+        limit:
+          type: integer
+          title: Limit
+          description: Return latest N records, default 8
+        start_date:
+          type: string
+          title: Start Date
+          description: Start date (YYYY-MM-DD)
+        end_date:
+          type: string
+          title: End Date
+          description: End date (YYYY-MM-DD)
+        calendar:
+          type: string
+          title: Calendar
+          description: "'calendar' or 'fiscal', default 'fiscal'"
+        fiscal_year:
+          type: string
+          title: Fiscal Year
+          description: Specific fiscal year (e.g., '2023')
+        fiscal_quarter:
+          type: string
+          title: Fiscal Quarter
+          description: "Specific fiscal quarter (Q1, Q2, Q3, Q4, FY, H1, 'Q3 (9 months)')"
+      type: object
+      required:
+      - symbol
+      title: CompanyIncomeStatementInput
+      description: Input schema for company income statement
+    CompanyBalanceSheetInput:
+      properties:
+        symbol:
+          type: string
+          title: Symbol
+          description: Stock symbol
+        period:
+          type: string
+          title: Period
+          description: "Report cycle: 'annual', 'quarterly'"
+        limit:
+          type: integer
+          title: Limit
+          description: Return latest N records, default 8
+        start_date:
+          type: string
+          title: Start Date
+          description: Start date (YYYY-MM-DD)
+        end_date:
+          type: string
+          title: End Date
+          description: End date (YYYY-MM-DD)
+        calendar:
+          type: string
+          title: Calendar
+          description: "'calendar' or 'fiscal', default 'fiscal'"
+        fiscal_year:
+          type: string
+          title: Fiscal Year
+          description: Specific fiscal year (e.g., '2023')
+        fiscal_quarter:
+          type: string
+          title: Fiscal Quarter
+          description: Specific fiscal quarter (Q1, Q2, Q3, Q4, FY)
+      type: object
+      required:
+      - symbol
+      title: CompanyBalanceSheetInput
+      description: Input schema for company balance sheet
+    CompanyCashflowStatementInput:
+      properties:
+        symbol:
+          type: string
+          title: Symbol
+          description: Stock symbol
+        period:
+          type: string
+          title: Period
+          description: "Report cycle: 'annual', 'quarterly', 'cumulative quarterly'"
+        limit:
+          type: integer
+          title: Limit
+          description: Return latest N records, default 8
+        start_date:
+          type: string
+          title: Start Date
+          description: Start date (YYYY-MM-DD)
+        end_date:
+          type: string
+          title: End Date
+          description: End date (YYYY-MM-DD)
+        calendar:
+          type: string
+          title: Calendar
+          description: "'calendar' or 'fiscal', default 'fiscal'"
+        fiscal_year:
+          type: string
+          title: Fiscal Year
+          description: Specific fiscal year (e.g., '2023')
+        fiscal_quarter:
+          type: string
+          title: Fiscal Quarter
+          description: "Specific fiscal quarter (Q1, Q2, Q3, Q4, FY, H1, 'Q3 (9 months)')"
+      type: object
+      required:
+      - symbol
+      title: CompanyCashflowStatementInput
+      description: Input schema for company cashflow statement
+    CompanyRevenueBreakdownInput:
+      properties:
+        symbol:
+          type: string
+          title: Symbol
+          description: Stock symbol
+        period:
+          type: string
+          title: Period
+          description: "Report cycle: 'FY', 'Q2'"
+        limit:
+          type: integer
+          title: Limit
+          description: Return latest N records, default 6
+        start_date:
+          type: string
+          title: Start Date
+          description: Start date (YYYY-MM-DD)
+        end_date:
+          type: string
+          title: End Date
+          description: End date (YYYY-MM-DD)
+        fiscal_year:
+          type: string
+          title: Fiscal Year
+          description: Specific fiscal year (e.g., '2023')
+      type: object
+      required:
+      - symbol
+      title: CompanyRevenueBreakdownInput
+      description: Input schema for company revenue breakdown
+    StockIndexPricesInput:
+      properties:
+        symbol:
+          type: string
+          title: Symbol
+          description: Stock index symbol (e.g., HSI, SPX, DJI)
+        start_date:
+          type: string
+          title: Start Date
+          description: Start date (YYYY-MM-DD)
+        end_date:
+          type: string
+          title: End Date
+          description: End date (YYYY-MM-DD)
+      type: object
+      required:
+      - symbol
+      title: StockIndexPricesInput
+      description: Input schema for stock index prices
+    StockRealtimeQuoteInput:
+      properties:
+        symbol:
+          type: string
+          title: Symbol
+          description: Stock symbol (e.g., AAPL, 688001, 00700)
+      type: object
+      required:
+      - symbol
+      title: StockRealtimeQuoteInput
+      description: Input schema for stock realtime quote
+    StockScreenerInput:
+      properties:
+        market_cap_more_than:
+          type: number
+          title: Market Cap More Than
+          description: Market cap greater than
+        market_cap_lower_than:
+          type: number
+          title: Market Cap Lower Than
+          description: Market cap less than
+        price_more_than:
+          type: number
+          title: Price More Than
+          description: Stock price greater than
+        price_lower_than:
+          type: number
+          title: Price Lower Than
+          description: Stock price less than
+        change_percentage_more_than:
+          type: number
+          title: Change Percentage More Than
+          description: Change percentage greater than (e.g., 0.02 for 2%)
+        change_percentage_lower_than:
+          type: number
+          title: Change Percentage Lower Than
+          description: Change percentage less than (e.g., 0.04 for 4%)
+        volume_more_than:
+          type: integer
+          title: Volume More Than
+          description: Trading volume greater than
+        volume_lower_than:
+          type: integer
+          title: Volume Lower Than
+          description: Trading volume less than
+        country:
+          type: string
+          title: Country
+          description: Country code (e.g., US, CN, HK)
+        exchange:
+          type: string
+          title: Exchange
+          description: Exchange code (e.g., NASDAQ, NYSE, HKEX)
+        dividend_yield_more_than:
+          type: number
+          title: Dividend Yield More Than
+          description: Dividend yield greater than
+        dividend_yield_lower_than:
+          type: number
+          title: Dividend Yield Lower Than
+          description: Dividend yield less than
+        pe_ttm_more_than:
+          type: number
+          title: PE TTM More Than
+          description: PE TTM greater than
+        pe_ttm_lower_than:
+          type: number
+          title: PE TTM Lower Than
+          description: PE TTM less than
+        limit:
+          type: integer
+          title: Limit
+          description: Maximum number of results, default 100
+      type: object
+      title: StockScreenerInput
+      description: Input schema for stock screener
+    StockAPIResponse:
+      properties:
+        status:
+          type: integer
+          title: Status
+          description: HTTP status code
+        code:
+          type: integer
+          title: Code
+          description: Response code (0 for success)
+        message:
+          type: string
+          title: Message
+          description: Response message
+        data:
+          type: object
+          title: Data
+          description: Response data (structure varies by endpoint)
+      type: object
+      title: StockAPIResponse
+      description: Generic response wrapper from stock API
   securitySchemes:
     BearerAuth:
       type: http
