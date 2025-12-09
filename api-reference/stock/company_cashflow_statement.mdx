@@ -28,11 +28,23 @@ openapi: 'POST /v1/stock/company-cashflow-statement'
 | code                | int     | 响应代码（0 表示成功）。                   |
 | message             | str     | 响应消息。                                 |
 | data                | array   | 现金流量表数据列表。                       |
-| &nbsp;&nbsp;fiscal_year                    | str     | 财年。                                     |
-| &nbsp;&nbsp;fiscal_quarter                 | str     | 财季。                                     |
-| &nbsp;&nbsp;operating_cashflow             | object  | 经营活动现金流。                           |
-| &nbsp;&nbsp;investing_cashflow             | object  | 投资活动现金流。                           |
-| &nbsp;&nbsp;financing_cashflow             | object  | 筹资活动现金流。                           |
+| &nbsp;&nbsp;currency                                  | str     | 货币单位。                                 |
+| &nbsp;&nbsp;end_date                                  | str     | 报告期结束日期（YYYY-MM-DD）。             |
+| &nbsp;&nbsp;symbol                                    | str     | 股票代码。                                 |
+| &nbsp;&nbsp;fiscal_year                               | str     | 财年。                                     |
+| &nbsp;&nbsp;fiscal_quarter                            | str     | 财季。                                     |
+| &nbsp;&nbsp;period                                    | str     | 报告周期类型。                             |
+| &nbsp;&nbsp;filling_date                              | str     | 填报日期（YYYY-MM-DD）。                   |
+| &nbsp;&nbsp;cash_flows_from_operating_activities     | object  | 经营活动现金流。                           |
+| &nbsp;&nbsp;&nbsp;&nbsp;net_cash_flows_from_operating_activities | number | 经营活动产生的现金流量净额。               |
+| &nbsp;&nbsp;cash_flows_from_investing_activities     | object  | 投资活动现金流。                           |
+| &nbsp;&nbsp;&nbsp;&nbsp;net_cash_flows_from_investing_activities | number | 投资活动产生的现金流量净额。               |
+| &nbsp;&nbsp;cash_flows_from_financing_activities     | object  | 筹资活动现金流。                           |
+| &nbsp;&nbsp;&nbsp;&nbsp;net_cash_flows_from_financing_activities | number | 筹资活动产生的现金流量净额。               |
+| &nbsp;&nbsp;&nbsp;&nbsp;effect_of_exchange_rate_changes_on_cash_and_cash_equivalents | number | 汇率变动对现金及现金等价物的影响。         |
+| &nbsp;&nbsp;&nbsp;&nbsp;net_increase_in_cash_and_cash_equivalents | number | 现金及现金等价物净增加额。                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;cash_and_cash_equivalents_at_beginning_of_year | number | 期初现金及现金等价物余额。                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;cash_and_cash_equivalents_at_end_of_year | number | 期末现金及现金等价物余额。                 |
 
 ### 请求示例
 
@@ -78,14 +90,20 @@ print(response.json())
       "symbol": "00700",
       "fiscal_year": "2025",
       "fiscal_quarter": "Q3",
-      "operating_cashflow": {
-        "net_cash_from_operating_activities": 80000000000.0
+      "period": "quarterly",
+      "filling_date": "2025-11-13",
+      "cash_flows_from_operating_activities": {
+        "net_cash_flows_from_operating_activities": 85312000000.0
       },
-      "investing_cashflow": {
-        "net_cash_from_investing_activities": -30000000000.0
+      "cash_flows_from_investing_activities": {
+        "net_cash_flows_from_investing_activities": -75507000000.0
       },
-      "financing_cashflow": {
-        "net_cash_from_financing_activities": -20000000000.0
+      "cash_flows_from_financing_activities": {
+        "net_cash_flows_from_financing_activities": -30637000000.0,
+        "effect_of_exchange_rate_changes_on_cash_and_cash_equivalents": -1243000000.0,
+        "net_increase_in_cash_and_cash_equivalents": -20832000000.0,
+        "cash_and_cash_equivalents_at_beginning_of_year": 0.0,
+        "cash_and_cash_equivalents_at_end_of_year": -22075000000.0
       }
     }
   ]

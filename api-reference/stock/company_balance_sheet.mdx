@@ -28,11 +28,66 @@ openapi: 'POST /v1/stock/company-balance-sheet'
 | code                | int     | 响应代码（0 表示成功）。                   |
 | message             | str     | 响应消息。                                 |
 | data                | array   | 资产负债表数据列表。                       |
-| &nbsp;&nbsp;fiscal_year         | str     | 财年。                                     |
-| &nbsp;&nbsp;fiscal_quarter      | str     | 财季。                                     |
-| &nbsp;&nbsp;total_assets        | object  | 总资产。                                   |
-| &nbsp;&nbsp;total_liabilities   | object  | 总负债。                                   |
-| &nbsp;&nbsp;total_equity        | object  | 总权益。                                   |
+| &nbsp;&nbsp;currency                     | str     | 货币单位。                                 |
+| &nbsp;&nbsp;end_date                     | str     | 报告期结束日期（YYYY-MM-DD）。             |
+| &nbsp;&nbsp;symbol                       | str     | 股票代码。                                 |
+| &nbsp;&nbsp;fiscal_year                  | str     | 财年。                                     |
+| &nbsp;&nbsp;fiscal_quarter               | str     | 财季。                                     |
+| &nbsp;&nbsp;period                       | str     | 报告周期类型。                             |
+| &nbsp;&nbsp;filling_date                 | str     | 填报日期（YYYY-MM-DD）。                   |
+| &nbsp;&nbsp;current_assets               | object  | 流动资产。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;cash_and_cash_equivalents                    | number  | 现金及现金等价物。                         |
+| &nbsp;&nbsp;&nbsp;&nbsp;restricted_cash_and_cash_equivalents         | number  | 受限制现金及现金等价物。                   |
+| &nbsp;&nbsp;&nbsp;&nbsp;inventories                                  | number  | 存货。                                     |
+| &nbsp;&nbsp;&nbsp;&nbsp;accounts_receivable                          | number  | 应收账款。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;financial_investments_at_fair_value_through_profit_or_loss_current | number | 以公允价值计量且其变动计入当期损益的金融投资（流动）。 |
+| &nbsp;&nbsp;&nbsp;&nbsp;financial_investments_at_fair_value_through_other_comprehensive_income_current | number | 以公允价值计量且其变动计入其他综合收益的金融投资（流动）。 |
+| &nbsp;&nbsp;&nbsp;&nbsp;prepayments_deposits_other_receivables_current | number | 预付款项、押金及其他应收款项（流动）。     |
+| &nbsp;&nbsp;&nbsp;&nbsp;total_current_assets                         | number  | 流动资产总额。                             |
+| &nbsp;&nbsp;non_current_assets           | object  | 非流动资产。                               |
+| &nbsp;&nbsp;&nbsp;&nbsp;time_deposits_non_current                    | number  | 定期存款（非流动）。                       |
+| &nbsp;&nbsp;&nbsp;&nbsp;property_plant_and_equipment                 | number  | 物业、厂房及设备。                         |
+| &nbsp;&nbsp;&nbsp;&nbsp;land_use_rights                              | number  | 土地使用权。                               |
+| &nbsp;&nbsp;&nbsp;&nbsp;right_of_use_asset                           | number  | 使用权资产。                               |
+| &nbsp;&nbsp;&nbsp;&nbsp;construction_in_progress                     | number  | 在建工程。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;investment_property                          | number  | 投资性房地产。                             |
+| &nbsp;&nbsp;&nbsp;&nbsp;interests_in_associates_and_joint_ventures   | number  | 联营及合营企业权益。                       |
+| &nbsp;&nbsp;&nbsp;&nbsp;investments_in_associates                    | number  | 联营企业投资。                             |
+| &nbsp;&nbsp;&nbsp;&nbsp;investments_in_joint_ventures                | number  | 合营企业投资。                             |
+| &nbsp;&nbsp;&nbsp;&nbsp;intangible_assets                            | number  | 无形资产。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;deferred_tax_assets                          | number  | 递延税项资产。                             |
+| &nbsp;&nbsp;&nbsp;&nbsp;financial_investments_at_fair_value_through_profit_or_loss_non_current | number | 以公允价值计量且其变动计入当期损益的金融投资（非流动）。 |
+| &nbsp;&nbsp;&nbsp;&nbsp;financial_investments_at_fair_value_through_other_comprehensive_income_non_current | number | 以公允价值计量且其变动计入其他综合收益的金融投资（非流动）。 |
+| &nbsp;&nbsp;&nbsp;&nbsp;prepayments_deposits_other_receivables_non_current | number | 预付款项、押金及其他应收款项（非流动）。   |
+| &nbsp;&nbsp;&nbsp;&nbsp;total_non_current_assets                     | number  | 非流动资产总额。                           |
+| &nbsp;&nbsp;&nbsp;&nbsp;total_assets                                 | number  | 资产总额。                                 |
+| &nbsp;&nbsp;current_liabilities          | object  | 流动负债。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;short_term_borrowings                        | number  | 短期借款。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;taxes_payable                                | number  | 应交税费。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;other_tax_liabilities                        | number  | 其他税项负债。                             |
+| &nbsp;&nbsp;&nbsp;&nbsp;notes_payable                                | number  | 应付票据。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;accounts_payable                             | number  | 应付账款。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;current_portion_of_deferred_income           | number  | 递延收入流动部分。                         |
+| &nbsp;&nbsp;&nbsp;&nbsp;lease_liabilities_current                    | number  | 租赁负债（流动）。                         |
+| &nbsp;&nbsp;&nbsp;&nbsp;receipts_in_advance_deposits_received_accrued_expenses_other_payables_and_other_liabilities_current | number | 预收款项、已收押金、应计费用、其他应付款项及其他负债（流动）。 |
+| &nbsp;&nbsp;&nbsp;&nbsp;total_current_liabilities                    | number  | 流动负债总额。                             |
+| &nbsp;&nbsp;non_current_liabilities      | object  | 非流动负债。                               |
+| &nbsp;&nbsp;&nbsp;&nbsp;long_term_borrowings                         | number  | 长期借款。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;deferred_tax_liabilities                     | number  | 递延税项负债。                             |
+| &nbsp;&nbsp;&nbsp;&nbsp;deferred_income_non_current                  | number  | 递延收入（非流动）。                       |
+| &nbsp;&nbsp;&nbsp;&nbsp;lease_liabilities_non_current                | number  | 租赁负债（非流动）。                       |
+| &nbsp;&nbsp;&nbsp;&nbsp;total_non_current_liabilities                | number  | 非流动负债总额。                           |
+| &nbsp;&nbsp;&nbsp;&nbsp;total_liabilities                            | number  | 负债总额。                                 |
+| &nbsp;&nbsp;owners_equity                | object  | 所有者权益。                               |
+| &nbsp;&nbsp;&nbsp;&nbsp;share_premium                                | number  | 股本溢价。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;treasury_shares                              | number  | 库存股。                                   |
+| &nbsp;&nbsp;&nbsp;&nbsp;other_reserve                                | number  | 其他储备。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;retained_earnings                            | number  | 留存收益。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;shares_held_for_share_award_scheme           | number  | 为股份奖励计划持有的股份。                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;total_equity_attributable_to_shareholders_and_other_equity_holders | number | 归属股东及其他权益持有人权益总额。         |
+| &nbsp;&nbsp;&nbsp;&nbsp;total_equity_attributable_to_ordinary_shareholders | number | 归属普通股股东权益总额。                   |
+| &nbsp;&nbsp;&nbsp;&nbsp;non_controlling_interests                    | number  | 非控股权益。                               |
+| &nbsp;&nbsp;&nbsp;&nbsp;total_shareholders_equity                    | number  | 股东权益总额。                             |
 
 ### 请求示例
 
@@ -78,14 +133,65 @@ print(response.json())
       "symbol": "00700",
       "fiscal_year": "2025",
       "fiscal_quarter": "Q3",
-      "total_assets": {
-        "total_assets": 1800000000000.0
+      "period": "quarterly",
+      "filling_date": "2025-11-13",
+      "current_assets": {
+        "cash_and_cash_equivalents": 386128000000.0,
+        "restricted_cash_and_cash_equivalents": 3579000000.0,
+        "inventories": 550000000.0,
+        "accounts_receivable": 52357000000.0,
+        "financial_investments_at_fair_value_through_profit_or_loss_current": 23742000000.0,
+        "financial_investments_at_fair_value_through_other_comprehensive_income_current": 8256000000.0,
+        "prepayments_deposits_other_receivables_current": 103016000000.0,
+        "total_current_assets": 582153000000.0
       },
-      "total_liabilities": {
-        "total_liabilities": 600000000000.0
+      "non_current_assets": {
+        "time_deposits_non_current": 78685000000.0,
+        "property_plant_and_equipment": 140463000000.0,
+        "land_use_rights": 22489000000.0,
+        "right_of_use_asset": 16680000000.0,
+        "construction_in_progress": 9542000000.0,
+        "investment_property": 955000000.0,
+        "interests_in_associates_and_joint_ventures": 327986000000.0,
+        "investments_in_associates": 321278000000.0,
+        "investments_in_joint_ventures": 6708000000.0,
+        "intangible_assets": 212459000000.0,
+        "deferred_tax_assets": 29943000000.0,
+        "financial_investments_at_fair_value_through_profit_or_loss_non_current": 208447000000.0,
+        "financial_investments_at_fair_value_through_other_comprehensive_income_non_current": 417503000000.0,
+        "prepayments_deposits_other_receivables_non_current": 24556000000.0,
+        "total_non_current_assets": 1491119000000.0,
+        "total_assets": 2073272000000.0
       },
-      "total_equity": {
-        "total_equity": 1200000000000.0
+      "current_liabilities": {
+        "short_term_borrowings": 52193000000.0,
+        "taxes_payable": 17222000000.0,
+        "other_tax_liabilities": 4601000000.0,
+        "notes_payable": 10655000000.0,
+        "accounts_payable": 128749000000.0,
+        "current_portion_of_deferred_income": 122039000000.0,
+        "lease_liabilities_current": 5300000000.0,
+        "receipts_in_advance_deposits_received_accrued_expenses_other_payables_and_other_liabilities_current": 83354000000.0,
+        "total_current_liabilities": 429234000000.0
+      },
+      "non_current_liabilities": {
+        "long_term_borrowings": 200696000000.0,
+        "deferred_tax_liabilities": 21416000000.0,
+        "deferred_income_non_current": 3852000000.0,
+        "lease_liabilities_non_current": 13069000000.0,
+        "total_non_current_liabilities": 383523000000.0,
+        "total_liabilities": 812757000000.0
+      },
+      "owners_equity": {
+        "share_premium": 57750000000.0,
+        "treasury_shares": 2514000000.0,
+        "other_reserve": 158719000000.0,
+        "retained_earnings": 965307000000.0,
+        "shares_held_for_share_award_scheme": -7182000000.0,
+        "total_equity_attributable_to_shareholders_and_other_equity_holders": 1172080000000.0,
+        "total_equity_attributable_to_ordinary_shareholders": 1172080000000.0,
+        "non_controlling_interests": 88435000000.0,
+        "total_shareholders_equity": 1260515000000.0
       }
     }
   ]

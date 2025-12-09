@@ -25,11 +25,20 @@ openapi: 'POST /v1/stock/company-revenue-breakdown'
 | status              | int     | HTTP 状态码。                              |
 | code                | int     | 响应代码（0 表示成功）。                   |
 | message             | str     | 响应消息。                                 |
-| data                | array   | 营收分解数据列表。                         |
-| &nbsp;&nbsp;fiscal_year    | str     | 财年。                                     |
-| &nbsp;&nbsp;fiscal_quarter | str     | 财季。                                     |
-| &nbsp;&nbsp;by_segment     | array   | 按业务板块分解。                           |
-| &nbsp;&nbsp;by_region      | array   | 按地区分解。                               |
+| data                | object  | 营收分解数据。                             |
+| &nbsp;&nbsp;currency                  | str     | 货币单位。                                 |
+| &nbsp;&nbsp;list                      | array   | 营收分解列表。                             |
+| &nbsp;&nbsp;&nbsp;&nbsp;end_date               | str     | 报告期结束日期（YYYY-MM-DD）。             |
+| &nbsp;&nbsp;&nbsp;&nbsp;period                 | str     | 报告周期。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;fiscal_year            | int     | 财年。                                     |
+| &nbsp;&nbsp;&nbsp;&nbsp;product                | array   | 按产品分解（可能为空）。                   |
+| &nbsp;&nbsp;&nbsp;&nbsp;area                   | array   | 按地区分解。                               |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name                | str     | 地区名称。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;industry               | array   | 按行业/业务板块分解。                      |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;name                | str     | 业务板块名称。                             |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;revenue             | number  | 营收金额。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;revenue_percentage  | number  | 营收占比（百分比形式）。                   |
+| &nbsp;&nbsp;&nbsp;&nbsp;industry_total_revenue | number  | 行业总营收。                               |
 
 ### 请求示例
 
@@ -68,31 +77,48 @@ print(response.json())
   "status": 200,
   "code": 0,
   "message": "",
-  "data": [
-    {
-      "fiscal_year": "2024",
-      "fiscal_quarter": "FY",
-      "by_segment": [
-        {
-          "segment": "增值服务",
-          "revenue": 300000000000.0,
-          "percent": 0.55
-        },
-        {
-          "segment": "网络广告",
-          "revenue": 100000000000.0,
-          "percent": 0.18
-        }
-      ],
-      "by_region": [
-        {
-          "region": "中国大陆",
-          "revenue": 450000000000.0,
-          "percent": 0.82
-        }
-      ]
-    }
-  ]
+  "data": {
+    "currency": "HKD",
+    "list": [
+      {
+        "end_date": "2025-09-30",
+        "period": "三季报",
+        "fiscal_year": 2025,
+        "product": [],
+        "area": [
+          {
+            "name": "中國內地"
+          },
+          {
+            "name": "其他"
+          }
+        ],
+        "industry": [
+          {
+            "name": "增值服務",
+            "revenue": 279361000000,
+            "revenue_percentage": 50.12
+          },
+          {
+            "name": "營銷服務",
+            "revenue": 103857000000,
+            "revenue_percentage": 18.63
+          },
+          {
+            "name": "金融科技及企業服務",
+            "revenue": 168617000000,
+            "revenue_percentage": 30.25
+          },
+          {
+            "name": "其他",
+            "revenue": 5560000000,
+            "revenue_percentage": 1.0
+          }
+        ],
+        "industry_total_revenue": 557395000000
+      }
+    ]
+  }
 }
 ```
 

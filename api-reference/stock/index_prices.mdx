@@ -24,13 +24,21 @@ openapi: 'POST /v1/stock/index-prices'
 | message             | str     | 响应消息。                                 |
 | data                | object  | 指数价格数据。                             |
 | &nbsp;&nbsp;items   | array   | 价格列表。                                 |
-| &nbsp;&nbsp;&nbsp;&nbsp;date                  | str     | 日期。                                     |
-| &nbsp;&nbsp;&nbsp;&nbsp;symbol                | str     | 指数代码。                                 |
-| &nbsp;&nbsp;&nbsp;&nbsp;name                  | str     | 指数名称。                                 |
-| &nbsp;&nbsp;&nbsp;&nbsp;stock_price           | number  | 指数点位。                                 |
-| &nbsp;&nbsp;&nbsp;&nbsp;stock_change_percent  | number  | 涨跌幅。                                   |
-| &nbsp;&nbsp;&nbsp;&nbsp;pe_ttm                | number  | 市盈率（TTM）。                            |
-| &nbsp;&nbsp;&nbsp;&nbsp;pb                    | number  | 市净率。                                   |
+| &nbsp;&nbsp;&nbsp;&nbsp;date                         | str     | 日期（YYYY-MM-DD）。                       |
+| &nbsp;&nbsp;&nbsp;&nbsp;symbol                       | str     | 指数代码。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;stock_open                   | number  | 开盘点位。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;stock_change_percent         | number  | 涨跌幅（百分比形式）。                     |
+| &nbsp;&nbsp;&nbsp;&nbsp;ps_ttm                       | number  | 市销率（TTM）。                            |
+| &nbsp;&nbsp;&nbsp;&nbsp;day_high                     | number  | 最高点位。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;pb                           | number  | 市净率。                                   |
+| &nbsp;&nbsp;&nbsp;&nbsp;trade_amount                 | number  | 成交额。                                   |
+| &nbsp;&nbsp;&nbsp;&nbsp;name                         | str     | 指数名称。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;pe_ttm                       | number  | 市盈率（TTM）。                            |
+| &nbsp;&nbsp;&nbsp;&nbsp;day_low                      | number  | 最低点位。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;stock_price                  | number  | 指数点位。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;dividend_yield               | number  | 股息率。                                   |
+| &nbsp;&nbsp;&nbsp;&nbsp;market_capitalization        | number  | 市值。                                     |
+| &nbsp;&nbsp;&nbsp;&nbsp;market_capitalization_a_share| number  | A股市值。                                  |
 
 ### 请求示例
 
@@ -76,16 +84,36 @@ print(response.json())
       {
         "date": "2025-12-09",
         "symbol": "HSI",
-        "name": "恒生指数",
-        "stock_price": 25434.23,
         "stock_open": 25780.97,
-        "day_high": 25820.31,
-        "day_low": 25386.58,
         "stock_change_percent": -1.29,
-        "pe_ttm": 11.9258,
-        "pb": 1.2375,
-        "dividend_yield": 0.0344,
-        "market_capitalization": 42122141513818.41
+        "ps_ttm": 1.5565010984908871,
+        "day_high": 25820.31,
+        "pb": 1.2374559921890569,
+        "trade_amount": 210235876843,
+        "name": "恒生指数",
+        "pe_ttm": 11.925769955931829,
+        "day_low": 25386.58,
+        "stock_price": 25434.23,
+        "dividend_yield": 0.03435103156895106,
+        "market_capitalization": 42122141513818.41,
+        "market_capitalization_a_share": 31242772425553.375
+      },
+      {
+        "date": "2025-12-08",
+        "symbol": "HSI",
+        "stock_open": 26067.86,
+        "stock_change_percent": -1.23,
+        "ps_ttm": 1.5761999127935258,
+        "day_high": 26151.46,
+        "pb": 1.253117025657977,
+        "trade_amount": 206230253465,
+        "name": "恒生指数",
+        "pe_ttm": 12.076700480815916,
+        "day_low": 25755.01,
+        "stock_price": 25765.36,
+        "dividend_yield": 0.03392172397510558,
+        "market_capitalization": 42655232203259.4,
+        "market_capitalization_a_share": 31613970564966.863
       }
     ]
   }

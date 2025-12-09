@@ -22,15 +22,37 @@ openapi: 'POST /v1/stock/company-overview'
 | code                | int     | 响应代码（0 表示成功）。                   |
 | message             | str     | 响应消息。                                 |
 | data                | object  | 公司信息数据。                             |
-| &nbsp;&nbsp;company_name       | str     | 公司名称。                                 |
-| &nbsp;&nbsp;company_full_name  | str     | 公司全称。                                 |
-| &nbsp;&nbsp;main_business      | str     | 主营业务。                                 |
-| &nbsp;&nbsp;country            | str     | 注册国家/地区。                            |
-| &nbsp;&nbsp;city               | str     | 所在城市。                                 |
-| &nbsp;&nbsp;website            | str     | 公司网站。                                 |
-| &nbsp;&nbsp;email              | str     | 联系邮箱。                                 |
-| &nbsp;&nbsp;telephone          | str     | 联系电话。                                 |
-| &nbsp;&nbsp;stockList          | array   | 股票列表信息。                             |
+| &nbsp;&nbsp;country                      | str     | 注册国家/地区代码。                        |
+| &nbsp;&nbsp;nature_of_company            | str     | 公司性质。                                 |
+| &nbsp;&nbsp;fiscal_year_end              | str     | 财年结束日期（MM-DD）。                    |
+| &nbsp;&nbsp;city                         | str     | 所在城市。                                 |
+| &nbsp;&nbsp;stockList                    | array   | 股票列表信息。                             |
+| &nbsp;&nbsp;&nbsp;&nbsp;stock_full_name           | str     | 股票全称。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;market                    | str     | 市场代码。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;symbol                    | str     | 股票代码。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;stock_english_name        | str     | 股票英文名称。                             |
+| &nbsp;&nbsp;&nbsp;&nbsp;industry_HS_1             | str     | 行业分类一级。                             |
+| &nbsp;&nbsp;&nbsp;&nbsp;industry_HS_2             | str     | 行业分类二级。                             |
+| &nbsp;&nbsp;&nbsp;&nbsp;stock_name                | str     | 股票名称。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;asset_class               | str     | 资产类别。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;stock_english_full_name   | str     | 股票英文全称。                             |
+| &nbsp;&nbsp;&nbsp;&nbsp;exchange                  | str     | 交易所代码。                               |
+| &nbsp;&nbsp;&nbsp;&nbsp;industry_HS_3             | str     | 行业分类三级。                             |
+| &nbsp;&nbsp;&nbsp;&nbsp;ipo_date                  | str     | IPO 日期（YYYY-MM-DD）。                   |
+| &nbsp;&nbsp;company_english_full_name    | str     | 公司英文全称。                             |
+| &nbsp;&nbsp;province                     | str     | 省份/地区。                                |
+| &nbsp;&nbsp;fax                          | str     | 传真号码。                                 |
+| &nbsp;&nbsp;email                        | str     | 联系邮箱。                                 |
+| &nbsp;&nbsp;website                      | str     | 公司网站。                                 |
+| &nbsp;&nbsp;address                      | str     | 注册地址。                                 |
+| &nbsp;&nbsp;company_english_name         | str     | 公司英文名称。                             |
+| &nbsp;&nbsp;telephone                    | str     | 联系电话。                                 |
+| &nbsp;&nbsp;registration_date            | str     | 注册日期（YYYY-MM-DD）。                   |
+| &nbsp;&nbsp;office_address               | str     | 办公地址。                                 |
+| &nbsp;&nbsp;board_secretary              | str     | 董事会秘书。                               |
+| &nbsp;&nbsp;company_name                 | str     | 公司名称。                                 |
+| &nbsp;&nbsp;company_full_name            | str     | 公司全称。                                 |
+| &nbsp;&nbsp;main_business                | str     | 主营业务。                                 |
 
 ### 请求示例
 
@@ -68,24 +90,40 @@ print(response.json())
   "code": 0,
   "message": "",
   "data": {
-    "company_name": "腾讯控股",
-    "company_full_name": "腾讯控股有限公司",
-    "company_english_name": "TENCENT",
     "country": "CYM",
+    "nature_of_company": "民营企业",
+    "fiscal_year_end": "12-31",
     "city": "开曼群岛",
-    "website": "www.tencent.com",
-    "email": "ir@tencent.com",
-    "telephone": "(86-755)86013388 转 87329",
-    "main_business": "在中国为用户提供互联网增值服务、移动及电信增值服务、网络广告服务以及电子商务交易服务。",
     "stockList": [
       {
-        "symbol": "00700",
+        "stock_full_name": "腾讯控股有限公司",
         "market": "HK",
+        "symbol": "00700",
+        "stock_english_name": "TENCENT",
+        "industry_HS_1": "资讯科技业",
+        "industry_HS_2": "软件服务",
         "stock_name": "腾讯控股",
+        "asset_class": "H shares",
+        "stock_english_full_name": "Tencent Holdings Limited",
         "exchange": "HK",
+        "industry_HS_3": "数码解决方案服务",
         "ipo_date": "2004-06-16"
       }
-    ]
+    ],
+    "company_english_full_name": "Tencent Holdings Limited",
+    "province": "开曼群岛",
+    "fax": "852-25290222",
+    "email": "ir@tencent.com",
+    "website": "www.tencent.com",
+    "address": "Cricket Square Hutchins Drive, P.O.Box 2681 Grand Cayman KY1-1111 Cayman Islands",
+    "company_english_name": "TENCENT",
+    "telephone": "(86-755)86013388 转 87329",
+    "registration_date": "2004-03-26",
+    "office_address": "香港德辅道中166-168号E168大厦4楼A室",
+    "board_secretary": "刘淑仪",
+    "company_name": "腾讯控股",
+    "company_full_name": "腾讯控股有限公司",
+    "main_business": "在中国为用户提供互联网增值服务、移动及电信增值服务、网络广告服务以及电子商务交易服务。"
   }
 }
 ```

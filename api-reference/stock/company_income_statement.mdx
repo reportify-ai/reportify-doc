@@ -28,12 +28,50 @@ openapi: 'POST /v1/stock/company-income-statement'
 | code                | int     | 响应代码（0 表示成功）。                   |
 | message             | str     | 响应消息。                                 |
 | data                | array   | 利润表数据列表。                           |
-| &nbsp;&nbsp;fiscal_year        | str     | 财年。                                     |
-| &nbsp;&nbsp;fiscal_quarter     | str     | 财季。                                     |
-| &nbsp;&nbsp;total_revenue      | object  | 总收入。                                   |
-| &nbsp;&nbsp;gross_profit       | object  | 毛利润。                                   |
-| &nbsp;&nbsp;net_profit         | object  | 净利润。                                   |
-| &nbsp;&nbsp;earnings_per_share | object  | 每股收益。                                 |
+| &nbsp;&nbsp;currency                                                  | str     | 货币单位。                                 |
+| &nbsp;&nbsp;end_date                                                  | str     | 报告期结束日期（YYYY-MM-DD）。             |
+| &nbsp;&nbsp;symbol                                                    | str     | 股票代码。                                 |
+| &nbsp;&nbsp;fiscal_year                                               | str     | 财年。                                     |
+| &nbsp;&nbsp;fiscal_quarter                                            | str     | 财季。                                     |
+| &nbsp;&nbsp;period                                                    | str     | 报告周期类型。                             |
+| &nbsp;&nbsp;filling_date                                              | str     | 填报日期（YYYY-MM-DD）。                   |
+| &nbsp;&nbsp;total_revenue                                             | object  | 总收入。                                   |
+| &nbsp;&nbsp;&nbsp;&nbsp;total_revenue                                 | number  | 总收入金额。                               |
+| &nbsp;&nbsp;&nbsp;&nbsp;operating_revenue                             | number  | 营业收入。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;interest_income                               | number  | 利息收入。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;net_fee_and_commission_revenue                | number  | 手续费及佣金净收入。                       |
+| &nbsp;&nbsp;&nbsp;&nbsp;other_revenue                                 | number  | 其他收入。                                 |
+| &nbsp;&nbsp;operating_cost                                            | object  | 营业成本。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;operating_cost                                | number  | 营业成本金额。                             |
+| &nbsp;&nbsp;&nbsp;&nbsp;interest_expenses                             | number  | 利息支出。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;fees_and_commission_expenses                  | number  | 手续费及佣金支出。                         |
+| &nbsp;&nbsp;gross_profit                                              | object  | 毛利润。                                   |
+| &nbsp;&nbsp;&nbsp;&nbsp;gross_profit                                  | number  | 毛利润金额。                               |
+| &nbsp;&nbsp;&nbsp;&nbsp;selling_expenses                              | number  | 销售费用。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;general_and_administrative_expenses           | number  | 一般及行政费用。                           |
+| &nbsp;&nbsp;&nbsp;&nbsp;research_and_development_expense              | number  | 研发费用。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;financial_expenses                            | number  | 财务费用。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;financing_income                              | number  | 融资收入。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;financing_cost                                | number  | 融资成本。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;share_of_profits_of_associates_and_joint_ventures | number | 联营及合营企业利润份额。                   |
+| &nbsp;&nbsp;&nbsp;&nbsp;investment_income                             | number  | 投资收益。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;other_operating_income                        | number  | 其他营业收入。                             |
+| &nbsp;&nbsp;profit_before_tax                                         | object  | 税前利润。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;profit_before_tax                             | number  | 税前利润金额。                             |
+| &nbsp;&nbsp;&nbsp;&nbsp;income_tax_expense                            | number  | 所得税费用。                               |
+| &nbsp;&nbsp;net_profit                                                | object  | 净利润。                                   |
+| &nbsp;&nbsp;&nbsp;&nbsp;net_profit                                    | number  | 净利润金额。                               |
+| &nbsp;&nbsp;&nbsp;&nbsp;net_profit_attributable_to_owners_of_the_parent | number | 归属母公司净利润。                         |
+| &nbsp;&nbsp;&nbsp;&nbsp;net_profit_attributable_to_non_controlling_interests | number | 归属非控股权益净利润。                     |
+| &nbsp;&nbsp;&nbsp;&nbsp;non_ifrs_net_profit                           | number  | 非国际财报准则净利润。                     |
+| &nbsp;&nbsp;&nbsp;&nbsp;non_ifrs_net_profit_attributable_to_owners_of_the_parent | number | 非国际财报准则归属母公司净利润。           |
+| &nbsp;&nbsp;total_comprehensive_income                                | object  | 综合收益总额。                             |
+| &nbsp;&nbsp;&nbsp;&nbsp;total_comprehensive_income                    | number  | 综合收益总额。                             |
+| &nbsp;&nbsp;&nbsp;&nbsp;total_comprehensive_income_attributable_to_owners_of_the_parent | number | 归属母公司综合收益总额。                   |
+| &nbsp;&nbsp;&nbsp;&nbsp;total_comprehensive_income_attributable_to_non_controlling_interests | number | 归属非控股权益综合收益总额。               |
+| &nbsp;&nbsp;earnings_per_share                                        | object  | 每股收益。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;basic_earnings_per_share                      | number  | 基本每股收益。                             |
+| &nbsp;&nbsp;&nbsp;&nbsp;diluted_earnings_per_share                    | number  | 稀释每股收益。                             |
 
 ### 请求示例
 
@@ -80,16 +118,46 @@ print(response.json())
       "fiscal_year": "2025",
       "fiscal_quarter": "Q3",
       "period": "quarterly",
+      "filling_date": "2025-11-13",
       "total_revenue": {
         "total_revenue": 192869000000.0,
-        "operating_revenue": 192869000000.0
+        "operating_revenue": 192869000000.0,
+        "interest_income": 0.0,
+        "net_fee_and_commission_revenue": 0.0,
+        "other_revenue": 0.0
+      },
+      "operating_cost": {
+        "operating_cost": 84071000000.0,
+        "interest_expenses": 0.0,
+        "fees_and_commission_expenses": 0.0
       },
       "gross_profit": {
-        "gross_profit": 108798000000.0
+        "gross_profit": 108798000000.0,
+        "selling_expenses": 11468000000.0,
+        "general_and_administrative_expenses": 34259000000.0,
+        "research_and_development_expense": 0.0,
+        "financial_expenses": -500000000.0,
+        "financing_income": 4256000000.0,
+        "financing_cost": 3756000000.0,
+        "share_of_profits_of_associates_and_joint_ventures": 7854000000.0,
+        "investment_income": 2820000000.0,
+        "other_operating_income": 483000000.0
+      },
+      "profit_before_tax": {
+        "profit_before_tax": 74728000000.0,
+        "income_tax_expense": 9785000000.0
       },
       "net_profit": {
         "net_profit": 64943000000.0,
-        "net_profit_attributable_to_owners_of_the_parent": 63133000000.0
+        "net_profit_attributable_to_owners_of_the_parent": 63133000000.0,
+        "net_profit_attributable_to_non_controlling_interests": 1810000000.0,
+        "non_ifrs_net_profit": 72796000000.0,
+        "non_ifrs_net_profit_attributable_to_owners_of_the_parent": 70551000000.0
+      },
+      "total_comprehensive_income": {
+        "total_comprehensive_income": 77030000000.0,
+        "total_comprehensive_income_attributable_to_owners_of_the_parent": 76499000000.0,
+        "total_comprehensive_income_attributable_to_non_controlling_interests": 531000000.0
       },
       "earnings_per_share": {
         "basic_earnings_per_share": 6.949,
