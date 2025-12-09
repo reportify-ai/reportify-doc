@@ -1,0 +1,99 @@
+---
+title: 'Stock Index Prices'
+openapi: 'POST /v1/stock/index-prices'
+---
+
+## 指数价格
+
+**URL**: `/v1/stock/index-prices`
+**方法**: `POST`  
+**描述**: 获取股票指数的当前和历史价格数据。
+
+### 请求参数
+| 参数名      | 类型   | 必填 | 描述                                          |
+|-------------|--------|------|-----------------------------------------------|
+| symbol      | str    | 是   | 指数代码，如 `HSI`、`SPX`、`DJI`。            |
+| start_date  | str    | 否   | 开始日期（YYYY-MM-DD）。                      |
+| end_date    | str    | 否   | 结束日期（YYYY-MM-DD）。                      |
+
+### 响应参数
+| 参数名              | 类型    | 描述                                       |
+|---------------------|---------|-------------------------------------------|
+| status              | int     | HTTP 状态码。                              |
+| code                | int     | 响应代码（0 表示成功）。                   |
+| message             | str     | 响应消息。                                 |
+| data                | object  | 指数价格数据。                             |
+| &nbsp;&nbsp;items   | array   | 价格列表。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;date                  | str     | 日期。                                     |
+| &nbsp;&nbsp;&nbsp;&nbsp;symbol                | str     | 指数代码。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;name                  | str     | 指数名称。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;stock_price           | number  | 指数点位。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;stock_change_percent  | number  | 涨跌幅。                                   |
+| &nbsp;&nbsp;&nbsp;&nbsp;pe_ttm                | number  | 市盈率（TTM）。                            |
+| &nbsp;&nbsp;&nbsp;&nbsp;pb                    | number  | 市净率。                                   |
+
+### 请求示例
+
+**cURL**
+```bash
+curl -X POST https://api.reportify.cn/v1/stock/index-prices \
+-H "Authorization: Bearer 447460****09c9" \
+-H "Content-Type: application/json" \
+-d '{
+    "symbol": "HSI",
+    "start_date": "2025-12-01",
+    "end_date": "2025-12-09"
+}'
+```
+
+**Python**
+```python
+import requests
+
+url = "https://api.reportify.cn/v1/stock/index-prices"
+headers = {
+    "Authorization": "Bearer 447460****09c9",
+    "Content-Type": "application/json"
+}
+data = {
+    "symbol": "HSI",
+    "start_date": "2025-12-01",
+    "end_date": "2025-12-09"
+}
+
+response = requests.post(url, headers=headers, json=data)
+print(response.json())
+```
+
+### 响应示例
+```json
+{
+  "status": 200,
+  "code": 0,
+  "message": "",
+  "data": {
+    "items": [
+      {
+        "date": "2025-12-09",
+        "symbol": "HSI",
+        "name": "恒生指数",
+        "stock_price": 25434.23,
+        "stock_open": 25780.97,
+        "day_high": 25820.31,
+        "day_low": 25386.58,
+        "stock_change_percent": -1.29,
+        "pe_ttm": 11.9258,
+        "pb": 1.2375,
+        "dividend_yield": 0.0344,
+        "market_capitalization": 42122141513818.41
+      }
+    ]
+  }
+}
+```
+
+### 错误响应
+| 状态码 | 描述                     |
+|--------|--------------------------|
+| 422    | 请求参数验证失败。       |
+

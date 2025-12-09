@@ -1,0 +1,97 @@
+---
+title: 'Company Overview'
+openapi: 'POST /v1/stock/company-overview'
+---
+
+## 公司概览
+
+**URL**: `/v1/stock/company-overview`
+**方法**: `POST`  
+**描述**: 获取公司综合信息，包括基本面和业务概览。
+
+### 请求参数
+| 参数名  | 类型   | 必填 | 描述                                      |
+|---------|--------|------|-------------------------------------------|
+| symbol  | str    | 是   | 股票代码，如 `HK:00700`、`US:AAPL`。      |
+| name    | str    | 否   | 股票名称（可选）。                        |
+
+### 响应参数
+| 参数名              | 类型    | 描述                                       |
+|---------------------|---------|-------------------------------------------|
+| status              | int     | HTTP 状态码。                              |
+| code                | int     | 响应代码（0 表示成功）。                   |
+| message             | str     | 响应消息。                                 |
+| data                | object  | 公司信息数据。                             |
+| &nbsp;&nbsp;company_name       | str     | 公司名称。                                 |
+| &nbsp;&nbsp;company_full_name  | str     | 公司全称。                                 |
+| &nbsp;&nbsp;main_business      | str     | 主营业务。                                 |
+| &nbsp;&nbsp;country            | str     | 注册国家/地区。                            |
+| &nbsp;&nbsp;city               | str     | 所在城市。                                 |
+| &nbsp;&nbsp;website            | str     | 公司网站。                                 |
+| &nbsp;&nbsp;email              | str     | 联系邮箱。                                 |
+| &nbsp;&nbsp;telephone          | str     | 联系电话。                                 |
+| &nbsp;&nbsp;stockList          | array   | 股票列表信息。                             |
+
+### 请求示例
+
+**cURL**
+```bash
+curl -X POST https://api.reportify.cn/v1/stock/company-overview \
+-H "Authorization: Bearer 447460****09c9" \
+-H "Content-Type: application/json" \
+-d '{
+    "symbol": "HK:00700"
+}'
+```
+
+**Python**
+```python
+import requests
+
+url = "https://api.reportify.cn/v1/stock/company-overview"
+headers = {
+    "Authorization": "Bearer 447460****09c9",
+    "Content-Type": "application/json"
+}
+data = {
+    "symbol": "HK:00700"
+}
+
+response = requests.post(url, headers=headers, json=data)
+print(response.json())
+```
+
+### 响应示例
+```json
+{
+  "status": 200,
+  "code": 0,
+  "message": "",
+  "data": {
+    "company_name": "腾讯控股",
+    "company_full_name": "腾讯控股有限公司",
+    "company_english_name": "TENCENT",
+    "country": "CYM",
+    "city": "开曼群岛",
+    "website": "www.tencent.com",
+    "email": "ir@tencent.com",
+    "telephone": "(86-755)86013388 转 87329",
+    "main_business": "在中国为用户提供互联网增值服务、移动及电信增值服务、网络广告服务以及电子商务交易服务。",
+    "stockList": [
+      {
+        "symbol": "00700",
+        "market": "HK",
+        "stock_name": "腾讯控股",
+        "exchange": "HK",
+        "ipo_date": "2004-06-16"
+      }
+    ]
+  }
+}
+```
+
+### 错误响应
+| 状态码 | 描述                     |
+|--------|--------------------------|
+| 422    | 请求参数验证失败。       |
+

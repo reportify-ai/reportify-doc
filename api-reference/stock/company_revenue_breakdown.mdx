@@ -1,0 +1,103 @@
+---
+title: 'Company Revenue Breakdown'
+openapi: 'POST /v1/stock/company-revenue-breakdown'
+---
+
+## 营收分解
+
+**URL**: `/v1/stock/company-revenue-breakdown`
+**方法**: `POST`  
+**描述**: 获取公司营收分解数据，按业务板块、产品或地区分类。
+
+### 请求参数
+| 参数名         | 类型   | 必填 | 描述                                      |
+|----------------|--------|------|-------------------------------------------|
+| symbol         | str    | 是   | 股票代码，如 `HK:00700`、`US:AAPL`。      |
+| period         | str    | 否   | 报告周期：`FY`、`Q2` 等。                 |
+| limit          | int    | 否   | 返回最近 N 条记录，默认 6。               |
+| start_date     | str    | 否   | 开始日期（YYYY-MM-DD）。                  |
+| end_date       | str    | 否   | 结束日期（YYYY-MM-DD）。                  |
+| fiscal_year    | str    | 否   | 指定财年（如 `2023`）。                   |
+
+### 响应参数
+| 参数名              | 类型    | 描述                                       |
+|---------------------|---------|-------------------------------------------|
+| status              | int     | HTTP 状态码。                              |
+| code                | int     | 响应代码（0 表示成功）。                   |
+| message             | str     | 响应消息。                                 |
+| data                | array   | 营收分解数据列表。                         |
+| &nbsp;&nbsp;fiscal_year    | str     | 财年。                                     |
+| &nbsp;&nbsp;fiscal_quarter | str     | 财季。                                     |
+| &nbsp;&nbsp;by_segment     | array   | 按业务板块分解。                           |
+| &nbsp;&nbsp;by_region      | array   | 按地区分解。                               |
+
+### 请求示例
+
+**cURL**
+```bash
+curl -X POST https://api.reportify.cn/v1/stock/company-revenue-breakdown \
+-H "Authorization: Bearer 447460****09c9" \
+-H "Content-Type: application/json" \
+-d '{
+    "symbol": "HK:00700",
+    "limit": 2
+}'
+```
+
+**Python**
+```python
+import requests
+
+url = "https://api.reportify.cn/v1/stock/company-revenue-breakdown"
+headers = {
+    "Authorization": "Bearer 447460****09c9",
+    "Content-Type": "application/json"
+}
+data = {
+    "symbol": "HK:00700",
+    "limit": 2
+}
+
+response = requests.post(url, headers=headers, json=data)
+print(response.json())
+```
+
+### 响应示例
+```json
+{
+  "status": 200,
+  "code": 0,
+  "message": "",
+  "data": [
+    {
+      "fiscal_year": "2024",
+      "fiscal_quarter": "FY",
+      "by_segment": [
+        {
+          "segment": "增值服务",
+          "revenue": 300000000000.0,
+          "percent": 0.55
+        },
+        {
+          "segment": "网络广告",
+          "revenue": 100000000000.0,
+          "percent": 0.18
+        }
+      ],
+      "by_region": [
+        {
+          "region": "中国大陆",
+          "revenue": 450000000000.0,
+          "percent": 0.82
+        }
+      ]
+    }
+  ]
+}
+```
+
+### 错误响应
+| 状态码 | 描述                     |
+|--------|--------------------------|
+| 422    | 请求参数验证失败。       |
+

@@ -1,0 +1,115 @@
+---
+title: 'Filings Search'
+openapi: 'POST /v2/search/filings'
+---
+
+## 公告文件搜索
+
+**URL**: `/v2/search/filings`  
+**方法**: `POST`  
+**描述**: 搜索公司公告和官方文件。
+
+### 请求参数
+| 参数名           | 类型         | 必填 | 描述                                                                 |
+|------------------|--------------|------|----------------------------------------------------------------------|
+| query            | str          | 是   | 搜索关键词。                                                         |
+| symbols          | array[str]   | 是   | 股票代码列表，如 `["US:AAPL", "SH:600519"]`。                        |
+| num              | int          | 否   | 返回的结果数量，默认值为 `10`，最大值为 `100`。                      |
+| start_datetime   | str          | 否   | 开始时间，格式为 `YYYY-MM-DD` 或 `YYYY-MM-DD HH:MM:SS`。             |
+| end_datetime     | str          | 否   | 结束时间，格式为 `YYYY-MM-DD` 或 `YYYY-MM-DD HH:MM:SS`。             |
+
+### 响应参数
+| 参数名              | 类型    | 描述                                                   |
+|---------------------|---------|--------------------------------------------------------|
+| docs                | array   | 搜索结果文档数组，每个文档包含以下字段：               |
+| &nbsp;&nbsp;doc_id       | str     | 文档唯一 ID。                                          |
+| &nbsp;&nbsp;title        | str     | 文档标题。                                             |
+| &nbsp;&nbsp;summary      | str     | 文档摘要。                                             |
+| &nbsp;&nbsp;category     | str     | 文档类别。                                             |
+| &nbsp;&nbsp;published_at | int     | 发布时间（毫秒级时间戳）。                             |
+| &nbsp;&nbsp;companies    | array   | 相关公司列表。                                         |
+| &nbsp;&nbsp;metadata     | object  | 文档元数据。                                           |
+| &nbsp;&nbsp;score        | number  | 相关性评分。                                           |
+| &nbsp;&nbsp;url          | str     | 文档链接。                                             |
+| total_count         | int     | 匹配文档总数。                                         |
+| took_ms             | int     | 搜索执行时间（毫秒）。                                 |
+
+### 请求示例
+
+**cURL**
+```bash
+curl -X POST https://api.reportify.cn/v2/search/filings \
+-H "Authorization: Bearer 447460****09c9" \
+-H "Content-Type: application/json" \
+-d '{
+    "query": "股权激励",
+    "symbols": ["SH:600519"],
+    "num": 10,
+    "start_datetime": "2024-01-01",
+    "end_datetime": "2024-12-31"
+}'
+```
+
+**Python 示例**
+```python
+import requests
+
+url = "https://api.reportify.cn/v2/search/filings"
+headers = {
+    "Authorization": "Bearer 447460****09c9",
+    "Content-Type": "application/json"
+}
+payload = {
+    "query": "股权激励",
+    "symbols": ["SH:600519"],
+    "num": 10,
+    "start_datetime": "2024-01-01",
+    "end_datetime": "2024-12-31"
+}
+
+response = requests.post(url, headers=headers, json=payload)
+print(response.json())
+```
+
+### 响应示例
+```json
+{
+  "docs": [
+    {
+      "doc_id": "1046915273103380484",
+      "title": "贵州茅台关于实施股权激励计划的公告",
+      "summary": "### 公告要点\n- 公司拟实施股权激励计划\n- 激励对象包括核心管理人员和技术骨干\n...",
+      "category": "filings",
+      "published_at": 1730390400000,
+      "companies": [
+        {
+          "name": "贵州茅台",
+          "stocks": [
+            {
+              "code": "600519",
+              "market": "SH",
+              "symbol": "SH:600519"
+            }
+          ]
+        }
+      ],
+      "metadata": {
+        "report_type": 4,
+        "report_status": 2,
+        "report_scope": 1,
+        "report_language": "zh"
+      },
+      "score": 0.9756,
+      "url": "https://reportify.cn/filings/1046915273103380484"
+    }
+  ],
+  "total_count": 1,
+  "took_ms": 95
+}
+```
+
+### 错误响应
+| HTTP 状态码 | 描述                     |
+|-------------|--------------------------|
+| 422         | 请求参数验证错误         |
+
