@@ -24,14 +24,21 @@ openapi: 'POST /v1/stock/company-prices'
 | message             | str     | 响应消息。                                 |
 | data                | object  | 价格数据。                                 |
 | &nbsp;&nbsp;items   | array   | 价格列表。                                 |
-| &nbsp;&nbsp;&nbsp;&nbsp;date                  | str     | 日期。                                     |
-| &nbsp;&nbsp;&nbsp;&nbsp;stock_price           | number  | 股票价格。                                 |
-| &nbsp;&nbsp;&nbsp;&nbsp;stock_change_percent  | number  | 涨跌幅。                                   |
-| &nbsp;&nbsp;&nbsp;&nbsp;trade_volume          | int     | 成交量。                                   |
-| &nbsp;&nbsp;&nbsp;&nbsp;trade_amount          | number  | 成交额。                                   |
-| &nbsp;&nbsp;&nbsp;&nbsp;market_capitalization | number  | 市值。                                     |
-| &nbsp;&nbsp;&nbsp;&nbsp;pe_ttm                | number  | 市盈率（TTM）。                            |
-| &nbsp;&nbsp;&nbsp;&nbsp;pb                    | number  | 市净率。                                   |
+| &nbsp;&nbsp;&nbsp;&nbsp;date                         | str     | 日期（YYYY-MM-DD）。                       |
+| &nbsp;&nbsp;&nbsp;&nbsp;symbol                       | str     | 股票代码。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;trade_volume                 | int     | 成交量。                                   |
+| &nbsp;&nbsp;&nbsp;&nbsp;stock_name                   | str     | 股票名称。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;stock_change_percent         | number  | 涨跌幅（小数形式）。                       |
+| &nbsp;&nbsp;&nbsp;&nbsp;ps_ttm                       | number  | 市销率（TTM）。                            |
+| &nbsp;&nbsp;&nbsp;&nbsp;pb                           | number  | 市净率。                                   |
+| &nbsp;&nbsp;&nbsp;&nbsp;turnover_rate                | number  | 换手率。                                   |
+| &nbsp;&nbsp;&nbsp;&nbsp;pcf_ttm                      | number  | 市现率（TTM）。                            |
+| &nbsp;&nbsp;&nbsp;&nbsp;trade_amount                 | number  | 成交额。                                   |
+| &nbsp;&nbsp;&nbsp;&nbsp;pe_ttm                       | number  | 市盈率（TTM）。                            |
+| &nbsp;&nbsp;&nbsp;&nbsp;dividend_yield               | number  | 股息率。                                   |
+| &nbsp;&nbsp;&nbsp;&nbsp;stock_price                  | number  | 股票价格。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;market_capitalization        | number  | 市值。                                     |
+| &nbsp;&nbsp;&nbsp;&nbsp;market_capitalization_a_share| number  | A股市值。                                  |
 
 ### 请求示例
 
@@ -77,16 +84,36 @@ print(response.json())
       {
         "date": "2025-12-09",
         "symbol": "00700",
-        "stock_name": "腾讯控股",
-        "stock_price": 602.5,
-        "stock_change_percent": -0.0041,
         "trade_volume": 17431321,
-        "trade_amount": 10484820078,
-        "market_capitalization": 5509795433315,
-        "pe_ttm": 23.9193,
-        "pb": 4.3007,
+        "stock_name": "腾讯控股",
+        "stock_change_percent": -0.0041,
         "ps_ttm": 7.1456,
-        "dividend_yield": 0.0075
+        "pb": 4.3007,
+        "turnover_rate": 0.0019,
+        "pcf_ttm": 17.9455,
+        "trade_amount": 10484820078,
+        "pe_ttm": 23.9193,
+        "dividend_yield": 0.0075,
+        "stock_price": 602.5,
+        "market_capitalization": 5509795433315,
+        "market_capitalization_a_share": 5509795433315
+      },
+      {
+        "date": "2025-12-08",
+        "symbol": "00700",
+        "trade_volume": 13421327,
+        "stock_name": "腾讯控股",
+        "stock_change_percent": -0.0082,
+        "ps_ttm": 7.1752,
+        "pb": 4.3185,
+        "turnover_rate": 0.0015,
+        "pcf_ttm": 18.02,
+        "trade_amount": 8134379992,
+        "pe_ttm": 24.0185,
+        "dividend_yield": 0.0075,
+        "stock_price": 605,
+        "market_capitalization": 5532657655030,
+        "market_capitalization_a_share": 5532657655030
       }
     ]
   }

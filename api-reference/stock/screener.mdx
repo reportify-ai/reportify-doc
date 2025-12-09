@@ -38,11 +38,21 @@ openapi: 'POST /v1/stock/screener'
 | &nbsp;&nbsp;items   | array   | 股票列表。                                 |
 | &nbsp;&nbsp;&nbsp;&nbsp;ticker            | str     | 股票代码。                                 |
 | &nbsp;&nbsp;&nbsp;&nbsp;name              | str     | 股票名称。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;english_name      | str     | 股票英文名称。                             |
+| &nbsp;&nbsp;&nbsp;&nbsp;chinese_name      | str     | 股票中文名称。                             |
+| &nbsp;&nbsp;&nbsp;&nbsp;country           | str     | 国家代码。                                 |
+| &nbsp;&nbsp;&nbsp;&nbsp;exchange          | str     | 交易所代码。                               |
 | &nbsp;&nbsp;&nbsp;&nbsp;price             | number  | 当前价格。                                 |
-| &nbsp;&nbsp;&nbsp;&nbsp;change_percentage | number  | 涨跌幅。                                   |
+| &nbsp;&nbsp;&nbsp;&nbsp;change_percentage | number  | 涨跌幅（小数形式）。                       |
+| &nbsp;&nbsp;&nbsp;&nbsp;change            | number  | 涨跌额。                                   |
+| &nbsp;&nbsp;&nbsp;&nbsp;day_high          | number  | 最高价。                                   |
+| &nbsp;&nbsp;&nbsp;&nbsp;open              | number  | 开盘价。                                   |
+| &nbsp;&nbsp;&nbsp;&nbsp;day_low           | number  | 最低价。                                   |
 | &nbsp;&nbsp;&nbsp;&nbsp;market_cap        | number  | 市值。                                     |
-| &nbsp;&nbsp;&nbsp;&nbsp;pe_ttm            | number  | 市盈率（TTM）。                            |
+| &nbsp;&nbsp;&nbsp;&nbsp;volume            | int     | 成交量。                                   |
+| &nbsp;&nbsp;&nbsp;&nbsp;timestamp         | str     | 时间戳（ISO 8601 格式）。                  |
 | &nbsp;&nbsp;&nbsp;&nbsp;dividend_yield    | number  | 股息率。                                   |
+| &nbsp;&nbsp;&nbsp;&nbsp;pe_ttm            | number  | 市盈率（TTM）。                            |
 
 ### 请求示例
 
@@ -87,30 +97,58 @@ print(response.json())
         "ticker": "00700",
         "name": "腾讯控股",
         "english_name": "TENCENT",
+        "chinese_name": "腾讯控股",
         "country": "HK",
         "exchange": "HK",
         "price": 602.5,
         "change_percentage": -0.0041,
         "change": -2.5,
         "day_high": 610,
+        "open": 609.5,
         "day_low": 596,
         "market_cap": 5509795433315,
         "volume": 17431321,
+        "timestamp": "2025-12-09T16:00:00+08:00",
         "dividend_yield": 0.0075,
-        "pe_ttm": 23.9193,
-        "timestamp": "2025-12-09T16:00:00+08:00"
+        "pe_ttm": 23.9193
       },
       {
         "ticker": "09988",
         "name": "阿里巴巴",
         "english_name": "BABA",
+        "chinese_name": "阿里巴巴",
         "country": "HK",
         "exchange": "HK",
         "price": 150.9,
         "change_percentage": -0.0163,
-        "market_cap": 2880475372644.3,
+        "change": -2.5,
+        "day_high": 156.8,
+        "open": 155.1,
+        "day_low": 150.4,
+        "market_cap": 2880475372644.3003,
+        "volume": 69789164,
+        "timestamp": "2025-12-09T16:00:00+08:00",
         "dividend_yield": 0.0129,
         "pe_ttm": 21.5757
+      },
+      {
+        "ticker": "03750",
+        "name": "宁德时代",
+        "english_name": "CATL",
+        "chinese_name": "宁德时代",
+        "country": "HK",
+        "exchange": "HK",
+        "price": 496,
+        "change_percentage": -0.0207,
+        "change": -10.5,
+        "day_high": 508,
+        "open": 508,
+        "day_low": 493,
+        "market_cap": 2263549579408,
+        "volume": 1948121,
+        "timestamp": "2025-12-09T16:00:00+08:00",
+        "dividend_yield": 0.0022,
+        "pe_ttm": 33.4434
       }
     ]
   }

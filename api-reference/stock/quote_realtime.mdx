@@ -21,18 +21,19 @@ openapi: 'POST /v1/stock/quote-realtime'
 | code                | int     | 响应代码（0 表示成功）。                   |
 | message             | str     | 响应消息。                                 |
 | data                | object  | 实时行情数据。                             |
-| &nbsp;&nbsp;symbol              | str     | 股票代码。                                 |
-| &nbsp;&nbsp;name                | str     | 股票名称。                                 |
-| &nbsp;&nbsp;exchange            | str     | 交易所。                                   |
-| &nbsp;&nbsp;stock_price         | number  | 当前价格。                                 |
-| &nbsp;&nbsp;stock_change        | number  | 涨跌额。                                   |
-| &nbsp;&nbsp;stock_change_percent| number  | 涨跌幅。                                   |
-| &nbsp;&nbsp;stock_open          | number  | 开盘价。                                   |
-| &nbsp;&nbsp;day_high            | number  | 最高价。                                   |
-| &nbsp;&nbsp;day_low             | number  | 最低价。                                   |
-| &nbsp;&nbsp;trade_volume        | int     | 成交量。                                   |
-| &nbsp;&nbsp;trade_amount        | number  | 成交额。                                   |
-| &nbsp;&nbsp;timestamp           | str     | 时间戳。                                   |
+| &nbsp;&nbsp;symbol                  | str     | 股票代码。                                 |
+| &nbsp;&nbsp;trade_volume            | int     | 成交量。                                   |
+| &nbsp;&nbsp;stock_open              | number  | 开盘价。                                   |
+| &nbsp;&nbsp;previous_stock_price    | number  | 前收盘价。                                 |
+| &nbsp;&nbsp;stock_change_percent    | number  | 涨跌幅（百分比形式）。                     |
+| &nbsp;&nbsp;day_high                | number  | 最高价。                                   |
+| &nbsp;&nbsp;trade_amount            | number  | 成交额。                                   |
+| &nbsp;&nbsp;name                    | str     | 股票名称。                                 |
+| &nbsp;&nbsp;day_low                 | number  | 最低价。                                   |
+| &nbsp;&nbsp;exchange                | str     | 交易所代码。                               |
+| &nbsp;&nbsp;stock_price             | number  | 当前价格。                                 |
+| &nbsp;&nbsp;stock_change            | number  | 涨跌额。                                   |
+| &nbsp;&nbsp;timestamp               | str     | 时间戳（ISO 8601 格式）。                  |
 
 ### 请求示例
 
