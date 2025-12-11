@@ -1,0 +1,149 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "Reportify 开发者文档",
+  "colors": {
+    "primary": "#0072ff",
+    "light": "#1677ff",
+    "dark": "#1677ff"
+  },
+  "logo": {
+    "light": "/logo/default.png",
+    "dark": "/logo/default.png"
+  },
+  "favicon": "/logo/favicon.png",
+  "api": {
+    "openapi": [
+      "api-reference/openapi.yaml"
+    ]
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "技术支持",
+        "href": "mailto:hi@reportify.cn"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "工作台",
+      "href": "https://dashboard.reportify.cn"
+    }
+  },
+  "navigation": {
+    "groups": [
+      {
+        "group": "使用说明",
+        "pages": [
+          "introduction",
+          "api-reference/introduction"
+        ]
+      },
+      {
+        "group": "文档接口",
+        "pages": [
+          {
+            "group": "搜索和问答",
+            "pages": [
+              {
+                "group": "v1",
+                "pages": [
+                  "api-reference/search/search",
+                  "api-reference/search/search_chunks",
+                  "api-reference/search/completion"
+                ]
+              },
+              {
+                "group": "v2",
+                "pages": [
+                  "api-reference/search/universal_search",
+                  "api-reference/search/earnings_pack",
+                  "api-reference/search/conference_calls",
+                  "api-reference/search/minutes",
+                  "api-reference/search/reports",
+                  "api-reference/search/filings",
+                  "api-reference/search/news",
+                  "api-reference/search/socials",
+                  "api-reference/search/webpages"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "文档列表和内容",
+            "pages": [
+              "api-reference/docs/docs",
+              "api-reference/docs/docs_tag",
+              "api-reference/docs/docs_symbol",
+              "api-reference/docs/doc",
+              "api-reference/docs/doc_summary"
+            ]
+          },
+          {
+            "group": "知识库和文件管理",
+            "pages": [
+              "api-reference/files/docs_folder_create",
+              "api-reference/files/docs_folder_delete",
+              "api-reference/files/docs_upload",
+              "api-reference/files/docs_upload_form",
+              "api-reference/files/docs_upload_async",
+              "api-reference/files/docs_upload_status",
+              "api-reference/files/docs_delete"
+            ]
+          },
+          {
+            "group": "账号关注",
+            "pages": [
+              "api-reference/channels/channels_search",
+              "api-reference/channels/channels_followings",
+              "api-reference/channels/channels_followings_docs",
+              "api-reference/channels/channels_follow",
+              "api-reference/channels/channels_unfollow"
+            ]
+          },
+          {
+            "group": "概念列表",
+            "pages": [
+              "api-reference/concepts/concepts_latest"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "股票接口",
+        "pages": [
+          {
+            "group": "公司信息",
+            "pages": [
+              "api-reference/stock/company_overview",
+              "api-reference/stock/company_shareholders"
+            ]
+          },
+          {
+            "group": "行情数据",
+            "pages": [
+              "api-reference/stock/company_prices",
+              "api-reference/stock/quote_realtime",
+              "api-reference/stock/index_prices"
+            ]
+          },
+          {
+            "group": "财务数据",
+            "pages": [
+              "api-reference/stock/company_income_statement",
+              "api-reference/stock/company_balance_sheet",
+              "api-reference/stock/company_cashflow_statement",
+              "api-reference/stock/company_revenue_breakdown"
+            ]
+          },
+          {
+            "group": "选股器",
+            "pages": [
+              "api-reference/stock/screener"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
