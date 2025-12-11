@@ -27,15 +27,15 @@
   },
   "navigation": [
     {
-      "group": "入门",
+      "group": "使用说明",
       "pages": [
-        "introduction"
+        "introduction",
+        "api-reference/introduction"
       ]
     },
     {
-      "group": "API",
+      "group": "文档接口",
       "pages": [
-        "api-reference/introduction",
         {
           "group": "搜索和问答",
           "pages": [
@@ -64,37 +64,17 @@
           ]
         },
         {
-          "group": "股票数据",
-          "pages": [
-            "api-reference/stock/company_overview",
-            "api-reference/stock/company_shareholders",
-            "api-reference/stock/company_prices",
-            "api-reference/stock/company_income_statement",
-            "api-reference/stock/company_balance_sheet",
-            "api-reference/stock/company_cashflow_statement",
-            "api-reference/stock/company_revenue_breakdown",
-            "api-reference/stock/index_prices",
-            "api-reference/stock/quote_realtime",
-            "api-reference/stock/screener"
-          ]
-        },
-        {
-          "group": "文档列表",
+          "group": "文档列表和内容",
           "pages": [
             "api-reference/docs/docs",
             "api-reference/docs/docs_tag",
-            "api-reference/docs/docs_symbol"
-          ]
-        },
-        {
-          "group": "文档内容与总结",
-          "pages": [
+            "api-reference/docs/docs_symbol",
             "api-reference/docs/doc",
             "api-reference/docs/doc_summary"
           ]
         },
         {
-          "group": "文档上传与删除",
+          "group": "知识库和文件管理",
           "pages": [
             "api-reference/files/docs_folder_create",
             "api-reference/files/docs_folder_delete",
@@ -122,7 +102,42 @@
           ]
         }
       ]
-    }
+    },
+    {
+      "group": "股票接口",
+      "pages": [
+        {
+          "group": "公司信息",
+          "pages": [
+            "api-reference/stock/company_overview",
+            "api-reference/stock/company_shareholders"
+          ]
+        },
+        {
+          "group": "行情数据",
+          "pages": [
+            "api-reference/stock/company_prices",
+            "api-reference/stock/quote_realtime",
+            "api-reference/stock/index_prices"
+          ]
+        },
+        {
+          "group": "财务数据",
+          "pages": [
+            "api-reference/stock/company_income_statement",
+            "api-reference/stock/company_balance_sheet",
+            "api-reference/stock/company_cashflow_statement",
+            "api-reference/stock/company_revenue_breakdown"
+          ]
+        },
+        {
+          "group": "选股器",
+          "pages": [
+            "api-reference/stock/screener"
+          ]
+        }
+      ]
+    }    
   ],
   "openapi": ["/api-reference/openapi.yaml"]
 }

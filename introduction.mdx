@@ -5,23 +5,26 @@ description: '欢迎使用 Reportify 开发者文档'
 
 ##  Reportify 是什么
 
-Reportify 是一款基于 AI 大模型的投资研究深度内容问答引擎，可以方便的对沪深、港股、美股上市公司财报、电话会议、调研纪要、研报和新闻进行问答、总结、浏览、翻译。
+Reportify 是一款金融投资智能体平台，可以用自然语言构建智能体与自动化流程，结合全球多市场的金融数据与可扩展应用接入，为金融投资的分析、操作与协作提供统一且高效的智能平台
 
 使用方式：
 浏览器直接访问 https://reportify.cn  
 
 Reportify 亮点功能：
-* 支持沪深、港股、美股全市场财报、电话会议、研报、新闻内容聚合
-* 支持各类型多模态文档类型，可以对文本、音频、视频文件进行存储、分析
-* 综合问答，可以针对全站内容和全网内容进行检索而且可以直接给出相应答案，并且带有引用出处
+* 可通过自然语言自定义 Agent，更精确控制 Agent 内容和行为
+* 可通过自然语言自定 Agent 任务，后台自动运行发送邮件提醒
+* 整合众多第三方应用，还可以自定义 MCP 丰富 Agent 能力
+* 内置众多官方 Agent 和海量用户分享 Agent，开箱即用
+* 支持 A 股、港股、美股全市场财报、电话会议、新闻、研报内容聚合，
 * 针对各种文档自动进行总结快速浏览文档核心内容和关键要点
 * 每一个总结和关键要点都有引用出处并且对原文内容进行高亮，方便回溯原文
 * 支持财报、电话会、新闻超长文档全文中英文对照翻译，以及选中文本定向翻译
 * 支持历史问答会话保存，方便回溯和分享，构建投资研究知识库
-* 支持用户自定义上传各种类型文档，方便构建私有知识库
+* 自定义文件上传，多文件问答，最大支持单文件 1GB
+* 通过标签和任意搜索条件订阅最新相关文档实时更新
 
 ## 文档概述
-Reportify API 提供了一组功能强大的接口，旨在帮助用户通过 API 的方式访问 Reporitfy 的服务。通过这些 API，开发者可以实现文件的存储、搜索、问答等功能，并高效地获取和管理文档内容。本 API 文档详细介绍了各个接口的请求方法、参数要求、响应格式和示例，帮助开发者快速集成 Reportify 的功能。
+Reportify API 提供了功能强大的接口，旨在帮助用户通过 API 的方式访问 Reporitfy 的服务。通过这些 API，开发者可以实现文件搜索、上传、问答等功能，并高效地获取和管理文档内容。本 API 文档详细介绍了各个接口的请求方法、参数要求、响应格式和示例，帮助开发者快速集成 Reportify 的功能。
 
 ## 示例应用场景
 - **金融文档聚合**：将多个机构发布的报告集中存储和管理，便于跨公司、跨行业的分析。
@@ -34,25 +37,23 @@ Reportify API 提供了一组功能强大的接口，旨在帮助用户通过 AP
 
 具体文档如下：
 
-### 身份验证
-- [身份验证](/api-reference/introduction)
+### 权限验证
+- [权限验证](/api-reference/introduction)
 
-### API 列表
+### 文档接口
 #### 文档搜索与问答
   - [文档搜索](/api-reference/search/search)
   - [文档块搜索](/api-reference/search/search_chunks)
   - [文档问答](/api-reference/search/completion)
 
-#### 文档列表
+#### 文档列表和内容
   - [根据条件获取文档](/api-reference/docs/docs)
   - [根据股票代码获取相关文档](/api-reference/docs/docs_symbol)
   - [根据标签获取相关文档](/api-reference/docs/docs_tag)
-
-#### 文档内容与总结
   - [文档内容](/api-reference/docs/doc)
   - [文档总结](/api-reference/docs/doc_summary)
 
-#### 文档上传与删除
+#### 知识库和文件管理
   - [文件夹创建](/api-reference/files/docs_folder_create)
   - [文件夹删除](/api-reference/files/docs_folder_delete)
   - [文档上传](/api-reference/files/docs_upload)
@@ -70,3 +71,22 @@ Reportify API 提供了一组功能强大的接口，旨在帮助用户通过 AP
 
 #### 概念列表
   - [最新概念](/api-reference/concepts/concepts_latest)
+
+### 股票接口
+#### 公司信息
+  - [公司概览](/api-reference/stock/company_overview)
+  - [股东信息](/api-reference/stock/company_shareholders)
+
+#### 行情数据
+  - [股票行情](/api-reference/stock/company_prices)
+  - [实时行情](/api-reference/stock/quote_realtime)
+  - [指数行情](/api-reference/stock/index_prices)
+
+#### 财务数据
+  - [财报数据](/api-reference/stock/company_income_statement)
+  - [资产负债表](/api-reference/stock/company_balance_sheet)
+  - [现金流量表](/api-reference/stock/company_cashflow_statement)
+  - [营收分解](/api-reference/stock/company_revenue_breakdown)
+
+#### 选股器
+  - [选股器](/api-reference/stock/screener)
