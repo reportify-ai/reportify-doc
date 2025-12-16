@@ -100,12 +100,6 @@
               "api-reference/channels/channels_follow",
               "api-reference/channels/channels_unfollow"
             ]
-          },
-          {
-            "group": "概念列表",
-            "pages": [
-              "api-reference/concepts/concepts_latest"
-            ]
           }
         ]
       },
@@ -140,6 +134,12 @@
             "group": "选股器",
             "pages": [
               "api-reference/stock/screener"
+            ]
+          },
+          {
+            "group": "热门概念",
+            "pages": [
+              "api-reference/concepts/concepts_latest"
             ]
           }
         ]
