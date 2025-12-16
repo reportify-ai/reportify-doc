@@ -1,0 +1,88 @@
+---
+title: 'Conversation Detail'
+openapi: 'GET /v1/agent/conversations/{conversation_id}'
+mode: 'show'
+---
+
+## 获取智能体对话详情
+
+**URL:** `/v1/agent/conversations/{conversation_id}`  
+**方法:** `GET`  
+**描述:** 获取指定智能体对话的详细信息。
+
+### 路径参数
+
+| 参数名           | 类型    | 必填 | 描述       |
+|------------------|---------|------|------------|
+| conversation_id  | integer | 是   | 对话 ID    |
+
+### 响应参数
+
+| 参数名       | 类型    | 描述                   |
+|--------------|---------|------------------------|
+| id           | integer | 对话 ID                |
+| user_id      | integer | 用户 ID                |
+| agent_id     | integer | 智能体 ID              |
+| type         | string  | 对话类型               |
+| title        | string  | 对话标题               |
+| status       | string  | 对话状态               |
+| meta         | object  | 元数据                 |
+| created_at   | integer | 创建时间戳（毫秒）     |
+| updated_at   | integer | 更新时间戳（毫秒）     |
+| last_message | object  | 最后一条消息           |
+
+### 示例代码
+
+#### cURL 示例
+
+```bash
+curl -X GET "https://api.example.com/v1/agent/conversations/683242877840089" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+#### Python 示例
+
+```python
+import requests
+
+url = "https://api.example.com/v1/agent/conversations/683242877840089"
+headers = {
+    "Authorization": "Bearer YOUR_API_KEY"
+}
+
+response = requests.get(url, headers=headers)
+data = response.json()
+
+print(f"对话标题: {data['title']}")
+print(f"对话状态: {data['status']}")
+print(f"创建时间: {data['created_at']}")
+```
+
+### 响应示例
+
+```json
+{
+  "id": 683242877840089,
+  "user_id": 987654321,
+  "agent_id": 11887655289749510,
+  "type": "agent_chat",
+  "title": "nvidia 最新业绩分析",
+  "status": "active",
+  "meta": {},
+  "created_at": 1765851195760,
+  "updated_at": 1765851195768,
+  "last_message": {
+    "id": 123,
+    "role": "assistant",
+    "content": "...",
+    "created_at": 1765851195768
+  }
+}
+```
+
+### 注意事项
+
+- `conversation_id` 可从创建对话接口的响应中获取
+- `created_at` 和 `updated_at` 为毫秒级时间戳
+- `last_message` 字段包含对话中最后一条消息的信息
+

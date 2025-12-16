@@ -15,7 +15,10 @@
   "api": {
     "openapi": [
       "api-reference/openapi.yaml"
-    ]
+    ],
+    "playground": {
+      "mode": "show"
+    }
   },
   "navbar": {
     "links": [
@@ -140,6 +143,23 @@
             "group": "选股器",
             "pages": [
               "api-reference/stock/screener"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "智能体",
+        "pages": [
+          {
+            "group": "Agent Conversation",
+            "pages": [
+              "api-reference/agent/introduction",
+              "api-reference/agent/conversation_create",
+              "api-reference/agent/conversation_chat",
+              "api-reference/agent/message_events_get",
+              "api-reference/agent/message_cancel",
+              "api-reference/agent/conversation_get",
+              "api-reference/agent/conversation_messages_list"
             ]
           }
         ]

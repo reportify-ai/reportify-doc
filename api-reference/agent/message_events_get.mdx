@@ -1,0 +1,152 @@
+---
+title: 'Fetch Stream Events'
+openapi: 'GET /v1/agent/conversations/{conversation_id}/messages/{assistant_message_id}'
+mode: 'show'
+---
+
+## 获取助手消息事件
+
+**URL:** `/v1/agent/conversations/{conversation_id}/messages/{assistant_message_id}`
+**方法:** `GET`
+**描述:** 获取指定助手消息的所有事件，支持从指定的 offset 开始批量获取，可选择流式（SSE）或非流式（JSON）响应模式。
+
+### 使用场景
+
+- **断点续传**：当客户端断开连接后，可以从上次接收到的 offset 继续获取事件
+- **历史回放**：获取已完成对话的完整事件历史
+- **事件查询**：查询特定消息的所有事件，用于调试或分析
+
+### 路径参数
+
+| 参数名                | 类型    | 必填 | 描述                                     |
+|-----------------------|---------|------|------------------------------------------|
+| conversation_id       | integer | 是   | 对话 ID                                  |
+| assistant_message_id  | string  | 是   | 助手消息 ID（从 chat 接口响应头 X-REPORTIFY-ASSISTANT-MESSAGE-ID 获取） |
+
+### 查询参数
+
+| 参数名      | 类型    | 必填 | 默认值 | 描述                                     |
+|-------------|---------|------|--------|------------------------------------------|
+| stream      | boolean | 否   | true   | 是否使用流式响应（SSE）                  |
+| timeout     | integer | 否   | 1800   | 流式模式的超时时间（秒）                 |
+| from_offset | integer | 否   | 0      | 从指定偏移量开始获取事件（最小值：0）    |
+
+### 响应参数
+
+#### 流式响应（stream=true）
+
+返回 `text/event-stream` 格式的 SSE 流，每个事件的结构与 [智能体对话聊天接口](/api-reference/agent/conversation_chat) 相同。
+
+#### 非流式响应（stream=false）
+
+返回 JSON 格式的事件数组：
+
+| 参数名            | 类型  | 描述                                     |
+|-------------------|-------|------------------------------------------|
+| assistant_events  | array | 事件列表，每个元素为 WorkflowStreamEvent |
+
+### 示例代码
+
+#### cURL 示例（流式响应）
+
+```bash
+curl -X GET "https://api.example.com/v1/agent/conversations/683242877840089/messages/019b24ef238cc97730971a9a0080c99c?stream=true&from_offset=9200" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+#### cURL 示例（非流式响应）
+
+```bash
+curl -X GET "https://api.example.com/v1/agent/conversations/683242877840089/messages/019b24ef238cc97730971a9a0080c99c?stream=false&from_offset=9200" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+#### Python 示例（流式响应）
+
+```python
+import requests
+
+url = "https://api.example.com/v1/agent/conversations/683242877840089/messages/019b24ef238cc97730971a9a0080c99c"
+headers = {
+    "Authorization": "Bearer YOUR_API_KEY"
+}
+params = {
+    "stream": True,
+    "from_offset": 9200
+}
+
+response = requests.get(url, headers=headers, params=params, stream=True)
+
+for line in response.iter_lines():
+    if line:
+        line = line.decode('utf-8')
+        if line.startswith('data: '):
+            event_data = line[6:]  # 去掉 "data: " 前缀
+            print(event_data)
+```
+
+#### Python 示例（非流式响应）
+
+```python
+import requests
+
+url = "https://api.example.com/v1/agent/conversations/683242877840089/messages/019b24ef238cc97730971a9a0080c99c"
+headers = {
+    "Authorization": "Bearer YOUR_API_KEY"
+}
+params = {
+    "stream": False,
+    "from_offset": 9200
+}
+
+response = requests.get(url, headers=headers, params=params)
+data = response.json()
+
+for event in data['assistant_events']:
+    print(f"Event: {event['event_type']}, Offset: {event['offset']}")
+```
+
+### 响应示例
+
+#### 非流式响应示例
+
+```json
+{
+  "assistant_events": [
+    {
+      "event_id": "019b24ef3046f157db389ee55a0a670a3797",
+      "event_type": "streaming",
+      "timestamp": 1765851213894,
+      "response_id": "019b24ef238cc97730971a9a0080c99c",
+      "workflow_id": "11887655289749510",
+      "execution_id": "",
+      "run_id": "019b24ef25015b3e6e9b3d2363cfb36c",
+      "node_id": "start",
+      "agent_id": "workflow_planner",
+      "content": "项目的具体信息，并将这些信息整合到一份专业的AI行业每日深度报告中。",
+      "offset": 9200
+    },
+    {
+      "event_id": "019b24ef49d95c616af6a7b4953fc70a1129",
+      "event_type": "node_start",
+      "timestamp": 1765851220441,
+      "response_id": "019b24ef238cc97730971a9a0080c99c",
+      "workflow_id": "11887655289749510",
+      "execution_id": "",
+      "run_id": "019b24ef49d8a5997ea7d63b8344bfaa",
+      "node_id": "define_report_scope",
+      "node_name": "确定报告范围",
+      "node_type": "agent",
+      "offset": 9216
+    }
+  ]
+}
+```
+
+## 注意事项
+
+- `assistant_message_id` 可从对话聊天接口（stream=true）的 HTTP 响应头 `X-REPORTIFY-ASSISTANT-MESSAGE-ID` 中获取
+- `from_offset` 参数用于指定从哪个偏移量开始获取事件，可以用于断点续传
+- 流式模式下，事件会实时推送；非流式模式下，会一次性返回所有事件
+- 建议在需要实时更新时使用流式模式，在需要批量处理历史数据时使用非流式模式
+

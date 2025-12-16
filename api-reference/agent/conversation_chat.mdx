@@ -1,0 +1,464 @@
+---
+title: 'Chat'
+openapi: 'POST /v1/agent/conversations/{conversation_id}/chat'
+mode: 'show'
+---
+
+## 智能体对话聊天
+
+**URL**: `/v1/agent/conversations/{conversation_id}/chat`  
+**方法**: `POST`  
+**描述**: 与智能体进行对话聊天，支持流式和非流式响应。
+
+### 路径参数
+| 参数名           | 类型    | 必填 | 描述       |
+|------------------|---------|------|------------|
+| conversation_id  | integer | 是   | 对话 ID    |
+
+### 请求参数
+| 参数名     | 类型              | 必填 | 描述                           |
+|------------|-------------------|------|--------------------------------|
+| message    | string            | 是   | 用户消息内容                   |
+| documents  | array[object]     | 否   | 关联的文档列表（默认为空数组） |
+| stream     | boolean           | 否   | 是否使用流式响应（默认 true）  |
+
+#### documents 对象结构
+| 参数名     | 类型   | 必填 | 描述           |
+|------------|--------|------|----------------|
+| doc_id     | string | 是   | 文档 ID        |
+| doc_title  | string | 是   | 文档标题       |
+| file_type  | string | 否   | 文档文件类型   |
+
+### 响应参数（流式 SSE）
+
+响应为 Server-Sent Events (SSE) 流，每个事件包含以下字段。
+
+**响应头**：
+- `X-REPORTIFY-ASSISTANT-MESSAGE-ID`：助手消息 ID，可用于后续调用获取消息事件接口
+
+**响应体（SSE 事件）**：
+
+| 参数名        | 类型    | 描述                                   |
+|---------------|---------|----------------------------------------|
+| event_id      | string  | 唯一事件标识符                         |
+| event_type    | string  | 事件类型（见下方枚举值）               |
+| timestamp     | integer | 事件时间戳（毫秒）                     |
+| response_id   | string  | 响应标识符，用于分组事件               |
+| workflow_id   | string  | 工作流标识符                           |
+| execution_id  | string  | 执行标识符                             |
+| run_id        | string  | 运行标识符，用于关联一组 start 和 end 事件（如 workflow_start 和 workflow_end、tool_start 和 tool_end） |
+| node_id       | string  | 节点标识符                             |
+| node_name     | string  | 节点显示名称                           |
+| node_type     | string  | 节点类型（start, tool, agent, end）    |
+| agent_id      | string  | 智能体标识符                           |
+| agent_name    | string  | 智能体显示名称                         |
+| agent_type    | string  | 智能体类型                             |
+| tool_id       | string  | 工具标识符                             |
+| tool_name     | string  | 工具显示名称                           |
+| input         | object  | 组件的输入数据                         |
+| output        | object  | 组件的输出数据                         |
+| content       | string  | 事件内容（用于流式输出）               |
+| error         | object  | 错误信息（如果事件类型为 error）       |
+| offset        | integer | 事件偏移量                             |
+
+#### event_type 枚举值
+- `init` - 初始化
+- `workflow_start` - 工作流开始
+- `workflow_end` - 工作流结束
+- `node_start` - 节点开始
+- `node_end` - 节点结束
+- `agent_start` - 智能体开始
+- `agent_end` - 智能体结束
+- `tool_start` - 工具开始
+- `tool_end` - 工具结束
+- `stream_start` - 流式开始
+- `streaming` - 流式输出中
+- `stream_end` - 流式结束
+- `usage` - 使用情况
+- `cancel` - 取消
+- `error` - 错误
+
+#### input 对象结构（tool_start 事件）
+当 `event_type` 为 `tool_start` 时，`input` 字段包含工具的输入参数：
+
+| 参数名          | 类型    | 描述           |
+|-----------------|---------|----------------|
+| query           | string  | 搜索查询       |
+| symbols         | array   | 股票代码列表   |
+| start_datetime  | string  | 开始时间       |
+| end_datetime    | string  | 结束时间       |
+| num             | integer | 返回数量       |
+| filetype        | string  | 文件类型       |
+| response_mode   | string  | 响应模式       |
+
+#### output 对象结构
+
+**tool_end 事件的 output：**
+
+当 `event_type` 为 `tool_end` 时，`output` 字段包含工具的输出结果：
+
+| 参数名  | 类型   | 描述                                     |
+|---------|--------|------------------------------------------|
+| content | string | 输出内容（JSON 字符串格式，包含 docs、total_count、took_ms、chunks 等字段） |
+
+**agent_end 事件的 output：**
+
+当 `event_type` 为 `agent_end` 时，`output` 字段包含智能体的输出结果：
+
+| 参数名  | 类型   | 描述                                     |
+|---------|--------|------------------------------------------|
+| content | string | 智能体输出内容（Markdown 格式）          |
+
+**node_end 事件的 output：**
+
+当 `event_type` 为 `node_end` 时，`output` 字段包含节点的输出结果：
+
+| 参数名   | 类型   | 描述                                     |
+|----------|--------|------------------------------------------|
+| content  | string | 节点输出内容（文本或 Markdown 格式）     |
+| filetype | string | 文件类型（如 markdown）                  |
+| filename | string | 文件名                                   |
+| filepath | string | 文件路径                                 |
+
+> **注意**：当 `node_type` 为 `end` 时，output 通常只包含 `content` 字段；当 `node_type` 为 `agent` 时，output 可能包含完整的文件信息。
+
+**workflow_end 事件的 output：**
+
+当 `event_type` 为 `workflow_end` 时，`output` 字段包含工作流的最终输出结果：
+
+| 参数名              | 类型   | 描述                                     |
+|---------------------|--------|------------------------------------------|
+| {node_id}           | object | 输出对象（key 为最后一个 node 的 node_id，如 `generate_daily_report`） |
+| └─ title            | string | 报告标题                                 |
+| └─ filetype         | string | 文件类型（如 markdown）                  |
+| └─ content          | string | 报告完整内容                             |
+| └─ filename         | string | 文件名                                   |
+| └─ filepath         | string | 文件路径                                 |
+
+> **注意**：`output` 是一个字典，其 key 对应工作流中最后一个节点的 `node_id`。例如，如果最后一个节点的 `node_id` 为 `generate_daily_report`，则 output 结构为 `{"generate_daily_report": {...}}`。
+
+### 请求示例
+
+**cURL**
+```bash
+curl --request POST \
+  --url https://api.reportify.cn/v1/agent/conversations/683242877840089/chat \
+  --header 'Authorization: Bearer YOUR_API_TOKEN' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "message": "nvidia 最新业绩分析",
+    "stream": true
+  }'
+```
+
+**Python**
+```python
+import requests
+
+url = "https://api.reportify.cn/v1/agent/conversations/683242877840089/chat"
+headers = {
+    "Authorization": "Bearer YOUR_API_TOKEN",
+    "Content-Type": "application/json"
+}
+data = {
+    "message": "nvidia 最新业绩分析",
+    "stream": True
+}
+
+response = requests.post(url, headers=headers, json=data, stream=True)
+
+# 处理流式响应
+for line in response.iter_lines():
+    if line:
+        print(line.decode('utf-8'))
+```
+
+### 响应示例（SSE 流）
+
+**1. init 事件示例：**
+```json
+{
+  "event_id": "019b24ef23a1f4da18256b402868fae31764",
+  "event_type": "init",
+  "timestamp": 1765851210657,
+  "response_id": "019b24ef238cc97730971a9a0080c99c",
+  "workflow_id": "11887655289749510",
+  "execution_id": "1dfccd9d-c365-4b7a-adae-aa9123684ec4",
+  "run_id": "",
+  "content": "",
+  "offset": 9195
+}
+```
+
+**2. workflow_start 事件示例：**
+```json
+{
+  "event_id": "019b24ef24707069ef923d72561a95812188",
+  "event_type": "workflow_start",
+  "timestamp": 1765851210864,
+  "response_id": "019b24ef238cc97730971a9a0080c99c",
+  "workflow_id": "11887655289749510",
+  "execution_id": "",
+  "run_id": "019b24ef246ef1f8e14609660d1d65be",
+  "offset": 9196
+}
+```
+
+**3. node_start 事件示例：**
+```json
+{
+  "event_id": "019b24ef24a481260ead20b3ff894a845363",
+  "event_type": "node_start",
+  "timestamp": 1765851210916,
+  "response_id": "019b24ef238cc97730971a9a0080c99c",
+  "workflow_id": "11887655289749510",
+  "execution_id": "",
+  "run_id": "019b24ef24a4c38d39a09dee2eff830a",
+  "node_id": "start",
+  "node_name": "开始",
+  "node_type": "start",
+  "offset": 9197
+}
+```
+
+**4. agent_start 事件示例：**
+```json
+{
+  "event_id": "019b24ef4a297981a743b7f6dc55eb043579",
+  "event_type": "agent_start",
+  "timestamp": 1765851220521,
+  "response_id": "019b24ef238cc97730971a9a0080c99c",
+  "workflow_id": "11887655289749510",
+  "execution_id": "",
+  "run_id": "019b24ef4a292fe173c0c73e0e334ce4",
+  "node_id": "define_report_scope",
+  "node_name": "确定报告范围",
+  "node_type": "agent",
+  "agent_id": "agent_action",
+  "agent_name": "执行智能体",
+  "agent_type": "action_agent",
+  "offset": 9217
+}
+```
+
+**5. stream_start 事件示例：**
+```json
+{
+  "event_id": "019b24ef25014cbf7f25f0043effd82c6665",
+  "event_type": "stream_start",
+  "timestamp": 1765851211009,
+  "response_id": "019b24ef238cc97730971a9a0080c99c",
+  "workflow_id": "11887655289749510",
+  "execution_id": "",
+  "run_id": "019b24ef25015b3e6e9b3d2363cfb36c",
+  "node_id": "start",
+  "agent_id": "workflow_planner",
+  "offset": 9198
+}
+```
+
+**6. streaming 事件示例：**
+```json
+{
+  "event_id": "019b24ef2e3b40bc070e30a4843987b35668",
+  "event_type": "streaming",
+  "timestamp": 1765851213371,
+  "response_id": "019b24ef238cc97730971a9a0080c99c",
+  "workflow_id": "11887655289749510",
+  "execution_id": "",
+  "run_id": "019b24ef25015b3e6e9b3d2363cfb36c",
+  "node_id": "start",
+  "agent_id": "workflow_planner",
+  "content": "你的任务是获取关于Google Gemini最新模型评分以及Google IDEA antigravity",
+  "offset": 9199
+}
+```
+
+**7. stream_end 事件示例：**
+```json
+{
+  "event_id": "019b24f3717634bdd262947130af73b52555",
+  "event_type": "stream_end",
+  "timestamp": 1765851492726,
+  "response_id": "019b24ef238cc97730971a9a0080c99c",
+  "workflow_id": "11887655289749510",
+  "execution_id": "",
+  "run_id": "019b24f348b67465f45353c50feb2367",
+  "node_id": "end",
+  "agent_id": "workflow_summarizer",
+  "content": "本次工作流执行成功完成了任务，生成了一份全面的《AI行业每日深度报告》。报告内容直接回应了您的查询，提供了关于Gemini最新模型评分及Google IDEA antigravity项目的具体信息...",
+  "offset": 9861
+}
+```
+
+**8. tool_start 事件示例：**
+```json
+{
+  "event_id": "019b24efea2a626e2cb6f9c22b2683bb9594",
+  "event_type": "tool_start",
+  "timestamp": 1765851261482,
+  "response_id": "019b24ef238cc97730971a9a0080c99c",
+  "workflow_id": "11887655289749510",
+  "execution_id": "",
+  "run_id": "019b24efea2a3e491e920de6003caf6c_5hyy41",
+  "node_id": "collect_upstream_news",
+  "agent_id": "agent_deep_search",
+  "tool_id": "tool_news_search",
+  "tool_name": "新闻搜索",
+  "input": {
+    "query": "NVIDIA AMD Intel GPU 半导体 最新动态",
+    "symbols": ["US:NVDA", "US:AMD", "US:INTC"],
+    "start_datetime": "2025-12-15T00:00:00",
+    "end_datetime": "2025-12-16T02:14:15",
+    "num": 15,
+    "filetype": "json"
+  },
+  "offset": 9323
+}
+```
+
+**9. tool_end 事件示例：**
+```json
+{
+  "event_id": "019b24efec9274b499f96da757fb03a66788",
+  "event_type": "tool_end",
+  "timestamp": 1765851262098,
+  "response_id": "019b24ef238cc97730971a9a0080c99c",
+  "workflow_id": "11887655289749510",
+  "execution_id": "",
+  "run_id": "019b24efdf9629d550ae7803264e3589_n1rz9t",
+  "node_id": "collect_model_layer_news",
+  "agent_id": "agent_deep_search",
+  "tool_id": "tool_news_search",
+  "tool_name": "新闻搜索",
+  "output": {
+    "content": "{\"docs\": [{\"doc_id\": \"1197862772277383168\", \"title\": \"谢尔盖·布林首次复盘：谷歌AI为什么落后，又如何实现绝地反击\", \"summary\": \"...\", \"category\": \"news\", \"published_at\": 1765757942000}], \"total_count\": 10, \"took_ms\": 305, \"chunks\": [...]}"
+  }
+}
+```
+
+**10. agent_end 事件示例：**
+```json
+{
+  "event_id": "019b24efc138c7b1e3adc456762dda377273",
+  "event_type": "agent_end",
+  "timestamp": 1765851251000,
+  "response_id": "019b24ef238cc97730971a9a0080c99c",
+  "workflow_id": "11887655289749510",
+  "execution_id": "",
+  "run_id": "019b24ef4a292fe173c0c73e0e334ce4",
+  "node_id": "define_report_scope",
+  "node_name": "确定报告范围",
+  "node_type": "agent",
+  "agent_id": "agent_action",
+  "agent_name": "执行智能体",
+  "agent_type": "action_agent",
+  "output": {
+    "content": "# AI行业每日深度报告 - 覆盖范围与重点标的清单\n\n## 报告概述\n本报告将全面覆盖AI全产业链上下游，重点关注各环节的核心动态、技术突破、市场趋势和投资机会..."
+  },
+  "offset": 9264
+}
+```
+
+**11. node_end 事件示例：**
+```json
+{
+  "event_id": "019b24f3719913f41c7d391a00efe55a2581",
+  "event_type": "node_end",
+  "timestamp": 1765851492761,
+  "response_id": "019b24ef238cc97730971a9a0080c99c",
+  "workflow_id": "11887655289749510",
+  "execution_id": "",
+  "run_id": "019b24f3485b8f786c3da7168d826202",
+  "node_id": "end",
+  "node_name": "结束",
+  "node_type": "end",
+  "output": {
+    "content": "本次工作流执行成功完成了任务，生成了一份全面的《AI行业每日深度报告》。报告内容直接回应了您的查询，提供了关于Gemini最新模型评分及Google IDEA antigravity项目的具体信息。\n\n**主要输出**是一份日期为2025年12月16日的深度报告..."
+  },
+  "offset": 9863
+}
+```
+
+**12. workflow_end 事件示例：**
+```json
+{
+  "event_id": "019b24f371b1d3759377966a35173d099385",
+  "event_type": "workflow_end",
+  "timestamp": 1765851492785,
+  "response_id": "019b24ef238cc97730971a9a0080c99c",
+  "workflow_id": "11887655289749510",
+  "execution_id": "",
+  "run_id": "019b24ef246ef1f8e14609660d1d65be",
+  "output": {
+    "generate_daily_report": {
+      "title": "AI行业每日深度报告 - 2025年12月16日",
+      "filetype": "markdown",
+      "content": "# AI行业每日深度报告 - 2025年12月16日\n\n## 执行摘要\n2025年12月15日至16日，AI产业链呈现上游需求回暖、模型技术突破...",
+      "filename": "AI行业每日深度报告 - 2025年12月16日.md",
+      "filepath": "/AI行业每日深度报告 - 2025年12月16日.md"
+    }
+  },
+  "offset": 9864
+}
+```
+
+### 事件流程说明
+
+一个完整的对话流程通常包含以下事件序列：
+
+1. **init** → 初始化会话
+2. **workflow_start** → 工作流开始执行
+3. **node_start** → 节点开始（如"开始"节点）
+4. **agent_start** → 智能体开始执行（当节点类型为 agent 时）
+5. **stream_start** → 流式输出开始（智能体开始思考）
+6. **streaming** → 流式内容输出（多次，逐步输出内容）
+7. **stream_end** → 流式输出结束
+8. **tool_start** → 工具调用开始（如新闻搜索）
+9. **tool_end** → 工具调用结束（返回结果）
+10. **agent_end** → 智能体执行结束（包含智能体输出结果）
+11. **node_end** → 节点结束（包含节点输出结果）
+12. **workflow_end** → 工作流执行完成（包含最终输出结果）
+
+#### run_id 关联机制
+
+`run_id` 是用于关联一组 `start` 和 `end` 事件的标识符，帮助追踪事件的配对关系：
+
+- **workflow_start** 和 **workflow_end** 共享同一个 `run_id`
+- **node_start** 和 **node_end** 共享同一个 `run_id`
+- **agent_start** 和 **agent_end** 共享同一个 `run_id`
+- **stream_start** 和 **stream_end** 共享同一个 `run_id`
+- **tool_start** 和 **tool_end** 共享同一个 `run_id`
+
+**示例**：
+```
+workflow_start (run_id: "019b24ef246ef1f8e14609660d1d65be")
+  └─ node_start (run_id: "019b24ef49d8a5997ea7d63b8344bfaa")
+      └─ agent_start (run_id: "019b24ef4a292fe173c0c73e0e334ce4")
+          └─ stream_start (run_id: "019b24ef4a44a7c23dd40234adf42709")
+              └─ streaming (run_id: "019b24ef4a44a7c23dd40234adf42709")
+              └─ streaming (run_id: "019b24ef4a44a7c23dd40234adf42709")
+              └─ stream_end (run_id: "019b24ef4a44a7c23dd40234adf42709")
+          └─ tool_start (run_id: "019b24efea2a3e491e920de6003caf6c_5hyy41")
+              └─ tool_end (run_id: "019b24efea2a3e491e920de6003caf6c_5hyy41")
+          └─ agent_end (run_id: "019b24ef4a292fe173c0c73e0e334ce4")
+      └─ node_end (run_id: "019b24ef49d8a5997ea7d63b8344bfaa")
+  └─ workflow_end (run_id: "019b24ef246ef1f8e14609660d1d65be")
+```
+
+> **注意**：
+> - 实际流程中可能包含**多个节点**、**多个智能体**、**多个工具调用**，事件会按照执行顺序依次返回
+> - 通过 `run_id` 可以准确匹配每个 `start` 事件对应的 `end` 事件
+> - 当节点类型为 `agent` 时，会触发 `agent_start` 和 `agent_end` 事件
+> - 同一个智能体内可能有多个流式输出（stream_start/streaming/stream_end）和多个工具调用（tool_start/tool_end）
+> - `agent_end` 事件的 `output` 字段包含智能体的输出内容
+> - `node_end` 事件的 `output` 字段包含节点的输出内容（可能包含文件信息）
+> - `workflow_end` 事件的 `output` 字段包含工作流的最终输出结果（如生成的报告）
+
+### 错误响应
+| 状态码 | 描述                     |
+|--------|--------------------------|
+| 400    | 请求错误                 |
+| 422    | 请求参数验证失败         |
+| 500    | 服务器内部错误           |
+
