@@ -1,0 +1,102 @@
+---
+title: 'Cancel'
+openapi: 'POST /v1/agent/conversations/{conversation_id}/messages/{assistant_message_id}/cancel'
+mode: 'show'
+---
+
+## 取消智能体执行
+
+**URL:** `/v1/agent/conversations/{conversation_id}/messages/{assistant_message_id}/cancel`  
+**方法:** `POST`  
+**描述:** 取消正在执行的智能体任务。
+
+### 使用场景
+
+- **中止长时间运行的任务**：当智能体执行时间过长时，可以主动取消
+- **用户取消操作**：用户不再需要当前任务的结果
+
+### 路径参数
+
+| 参数名                | 类型    | 必填 | 描述                                     |
+|-----------------------|---------|------|------------------------------------------|
+| conversation_id       | integer | 是   | 对话 ID                                  |
+| assistant_message_id  | string  | 是   | 助手消息 ID（从 chat 接口响应头 X-REPORTIFY-ASSISTANT-MESSAGE-ID 获取） |
+
+### 响应参数
+
+| 参数名      | 类型   | 描述                                     |
+|-------------|--------|------------------------------------------|
+| response_id | string | 响应 ID       |
+| status      | string | 取消状态                                 |
+
+### 示例代码
+
+#### cURL 示例
+
+```bash
+curl -X POST "https://api.example.com/v1/agent/conversations/683242877840089/messages/019b24ef238cc97730971a9a0080c99c/cancel" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+#### Python 示例
+
+```python
+import requests
+
+url = "https://api.example.com/v1/agent/conversations/683242877840089/messages/019b24ef238cc97730971a9a0080c99c/cancel"
+headers = {
+    "Authorization": "Bearer YOUR_API_KEY"
+}
+
+response = requests.post(url, headers=headers)
+data = response.json()
+
+print(f"响应 ID: {data['response_id']}")
+print(f"取消状态: {data['status']}")
+```
+
+#### Python 示例（完整流程）
+
+```python
+import requests
+import time
+
+# 1. 发起对话
+chat_url = "https://api.example.com/v1/agent/conversations/683242877840089/chat"
+headers = {
+    "Authorization": "Bearer YOUR_API_KEY",
+    "Content-Type": "application/json"
+}
+chat_data = {
+    "message": "生成一份详细的市场分析报告",
+    "stream": True
+}
+
+response = requests.post(chat_url, headers=headers, json=chat_data, stream=True)
+assistant_message_id = response.headers.get('X-REPORTIFY-ASSISTANT-MESSAGE-ID')
+
+# 2. 等待一段时间后决定取消
+time.sleep(5)
+
+# 3. 取消执行
+cancel_url = f"https://api.example.com/v1/agent/conversations/683242877840089/messages/{assistant_message_id}/cancel"
+cancel_response = requests.post(cancel_url, headers=headers)
+print(cancel_response.json())
+```
+
+### 响应示例
+
+```json
+{
+  "response_id": "019b24ef238cc97730971a9a0080c99c",
+  "status": "cancelled"
+}
+```
+
+### 注意事项
+
+- 只能取消正在执行中的任务，已完成或已失败的任务无法取消
+- 取消操作是异步的，可能需要几秒钟才能完全停止执行
+- 取消后，可以通过获取消息事件接口查看取消前已生成的事件
+- `assistant_message_id` 可从对话聊天接口（stream=true）的 HTTP 响应头 `X-REPORTIFY-ASSISTANT-MESSAGE-ID` 中获取
+

@@ -1,0 +1,224 @@
+---
+title: 'Introduction'
+description: 'Agent Conversation API 介绍和快速开始指南'
+---
+
+## 概述
+
+Agent Conversation API 提供了一套完整的接口，用于与智能体进行对话交互。通过这些 API，您可以：
+
+- 创建和管理智能体对话会话
+- 实时接收智能体的响应流
+- 查询历史消息和对话详情
+- 控制智能体的执行流程
+
+## 核心功能
+
+### 🤖 智能体对话
+
+与智能体进行自然语言交互，支持流式（SSE）和非流式两种响应模式。智能体可以执行复杂的工作流，包括：
+
+- 信息检索和分析
+- 工具调用和数据处理
+- 报告生成和内容创作
+
+### 📊 事件流监控
+
+通过 Server-Sent Events (SSE) 实时监控智能体的执行过程，包括：
+
+- 工作流启动和结束
+- 节点执行状态
+- 智能体思考过程
+- 工具调用详情
+- 流式内容输出
+
+### 📝 历史记录管理
+
+完整的对话历史记录功能：
+
+- 查询对话详情
+- 获取消息列表（支持分页）
+- 回溯事件流
+- 断点续传
+
+## API 列表
+
+### 1. [Create Conversation](/api-reference/agent/conversation_create)
+创建一个新的智能体对话会话。
+
+**使用场景**：开始与智能体的新对话
+
+### 2. [Chat](/api-reference/agent/conversation_chat)
+与智能体进行对话聊天，支持流式和非流式响应。
+
+**使用场景**：发送消息给智能体并接收响应
+
+### 3. [Fetch Stream Events](/api-reference/agent/message_events_get)
+获取指定助手消息的所有事件，支持从指定的 offset 开始批量获取。
+
+**使用场景**：断点续传、历史回放、事件查询
+
+### 4. [Cancel](/api-reference/agent/message_cancel)
+取消正在执行的智能体任务。
+
+**使用场景**：中止长时间运行的任务、用户取消操作
+
+### 5. [Conversation Detail](/api-reference/agent/conversation_get)
+获取指定智能体对话的详细信息。
+
+**使用场景**：查看对话状态、获取最后一条消息
+
+### 6. [Conversation Messages History](/api-reference/agent/conversation_messages_list)
+获取指定对话的消息列表，支持分页查询。
+
+**使用场景**：查看历史消息、实现聊天记录功能
+
+## 快速开始
+
+### 步骤 1：创建对话
+
+```bash
+curl -X POST "https://api.example.com/v1/agent/conversations" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "agent_id": 11887655289749510,
+    "title": "nvidia 最新业绩分析"
+  }'
+```
+
+响应：
+```json
+{
+  "id": 683242877840089,
+  "agent_id": 11887655289749510,
+  "title": "nvidia 最新业绩分析",
+  "status": "active"
+}
+```
+
+### 步骤 2：发起对话
+
+```bash
+curl -X POST "https://api.example.com/v1/agent/conversations/683242877840089/chat" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "message": "请分析 NVIDIA 最新一季度的财报表现",
+    "stream": true
+  }' \
+  --no-buffer
+```
+
+### 步骤 3：接收事件流
+
+智能体会通过 SSE 流返回执行过程中的各种事件：
+
+```
+data: {"event_type":"init","event_id":"...","timestamp":1765851195760}
+
+data: {"event_type":"workflow_start","workflow_id":"...","node_id":"start"}
+
+data: {"event_type":"streaming","content":"正在分析 NVIDIA 财报数据..."}
+
+data: {"event_type":"workflow_end","output":{...}}
+```
+
+## 认证
+
+所有 API 请求都需要在 HTTP 请求头中包含 Bearer Token：
+
+```
+Authorization: Bearer YOUR_API_KEY
+```
+
+## 响应格式
+
+### 流式响应（SSE）
+
+使用 `stream=true` 时，响应格式为 `text/event-stream`：
+
+```
+data: {"event_id":"...","event_type":"...","content":"..."}
+```
+
+### 非流式响应（JSON）
+
+使用 `stream=false` 时，响应格式为 `application/json`：
+
+```json
+{
+  "assistant_events": [
+    {"event_id":"...","event_type":"..."},
+    ...
+  ]
+}
+```
+
+## 错误处理
+
+API 使用标准的 HTTP 状态码：
+
+- `200` - 请求成功
+- `400` - 请求参数错误
+- `401` - 认证失败
+- `422` - 验证错误
+- `500` - 服务器内部错误
+
+错误响应示例：
+
+```json
+{
+  "detail": "Invalid conversation_id"
+}
+```
+
+## 最佳实践
+
+### 1. 使用流式响应
+
+对于需要实时反馈的场景，建议使用 `stream=true`，这样可以：
+- 更快地看到智能体的响应
+- 实时监控执行进度
+- 提供更好的用户体验
+
+### 2. 保存 assistant_message_id
+
+从 Chat 接口的响应头 `X-REPORTIFY-ASSISTANT-MESSAGE-ID` 中获取并保存 `assistant_message_id`，用于：
+- 获取消息事件
+- 取消执行
+- 事件回溯
+
+### 3. 实现断点续传
+
+使用 `from_offset` 参数实现断点续传：
+```bash
+curl -X GET "https://api.example.com/v1/agent/conversations/{conversation_id}/messages/{assistant_message_id}?from_offset=9200"
+```
+
+### 4. 合理使用分页
+
+获取消息列表时，建议：
+- 每次请求不超过 50 条消息
+- 使用 `before_message_id` 实现向前翻页
+- 缓存已加载的消息
+
+## 下一步
+
+选择一个 API 开始使用：
+
+<CardGroup cols={2}>
+  <Card title="Create Conversation" icon="plus" href="/api-reference/agent/conversation_create">
+    创建新的对话会话
+  </Card>
+  <Card title="Chat" icon="comments" href="/api-reference/agent/conversation_chat">
+    与智能体对话
+  </Card>
+  <Card title="Fetch Stream Events" icon="stream" href="/api-reference/agent/message_events_get">
+    获取事件流
+  </Card>
+  <Card title="Cancel" icon="stop" href="/api-reference/agent/message_cancel">
+    取消执行
+  </Card>
+</CardGroup>
+

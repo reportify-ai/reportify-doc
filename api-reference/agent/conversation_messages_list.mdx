@@ -1,0 +1,158 @@
+---
+title: 'Conversation Messages History'
+openapi: 'GET /v1/agent/conversations/{conversation_id}/messages'
+mode: 'show'
+---
+
+## 获取对话消息列表
+
+**URL:** `/v1/agent/conversations/{conversation_id}/messages`  
+**方法:** `GET`  
+**描述:** 获取指定对话的消息列表，支持分页查询。
+
+### 路径参数
+
+| 参数名           | 类型    | 必填 | 描述       |
+|------------------|---------|------|------------|
+| conversation_id  | integer | 是   | 对话 ID    |
+
+### 查询参数
+
+| 参数名            | 类型    | 必填 | 默认值 | 描述                                     |
+|-------------------|---------|------|--------|------------------------------------------|
+| limit             | integer | 否   | 10     | 返回的消息数量（最小值：1，最大值：100）|
+| before_message_id | integer | 否   | -      | 获取此消息 ID 之前创建的消息             |
+
+### 响应参数
+
+| 参数名   | 类型  | 描述                                     |
+|----------|-------|------------------------------------------|
+| messages | array | 消息列表，每个元素为消息对象             |
+
+#### 消息对象结构
+
+| 参数名                | 类型    | 描述                                     |
+|-----------------------|---------|------------------------------------------|
+| id                    | integer | 消息 ID                                  |
+| user_id               | integer | 用户 ID                                  |
+| conversation_id       | integer | 对话 ID                                  |
+| turn_id               | integer | 对话轮次 ID                              |
+| role                  | string  | 消息角色（user 或 assistant）            |
+| reply_to_message_id   | integer | 回复的消息 ID（可为 null）               |
+| content               | object  | 消息内容（可为 null）                    |
+| status                | string  | 消息状态                                 |
+| error_info            | object  | 错误信息（可为 null）                    |
+| assistant_message_id  | string  | 助手消息 ID（可为 null）                 |
+| created_at            | integer | 创建时间戳（毫秒）                       |
+| updated_at            | integer | 更新时间戳（毫秒）                       |
+| assistant_events      | array   | 助手事件列表（可为 null）                |
+
+### 示例代码
+
+#### cURL 示例
+
+```bash
+curl -X GET "https://api.example.com/v1/agent/conversations/683242877840089/messages?limit=20" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+#### cURL 示例（分页查询）
+
+```bash
+curl -X GET "https://api.example.com/v1/agent/conversations/683242877840089/messages?limit=20&before_message_id=12345" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+#### Python 示例
+
+```python
+import requests
+
+url = "https://api.example.com/v1/agent/conversations/683242877840089/messages"
+headers = {
+    "Authorization": "Bearer YOUR_API_KEY"
+}
+params = {
+    "limit": 20
+}
+
+response = requests.get(url, headers=headers, params=params)
+data = response.json()
+
+for message in data['messages']:
+    print(f"消息 ID: {message['id']}, 角色: {message['role']}")
+```
+
+#### Python 示例（分页查询）
+
+```python
+import requests
+
+url = "https://api.example.com/v1/agent/conversations/683242877840089/messages"
+headers = {
+    "Authorization": "Bearer YOUR_API_KEY"
+}
+
+# 获取第一页
+params = {"limit": 20}
+response = requests.get(url, headers=headers, params=params)
+data = response.json()
+
+# 获取下一页（使用最后一条消息的 ID）
+if data['messages']:
+    last_message_id = data['messages'][-1]['id']
+    params = {"limit": 20, "before_message_id": last_message_id}
+    response = requests.get(url, headers=headers, params=params)
+    next_page = response.json()
+```
+
+### 响应示例
+
+```json
+{
+  "messages": [
+    {
+      "id": 12346,
+      "user_id": 987654321,
+      "conversation_id": 683242877840089,
+      "turn_id": 1,
+      "role": "assistant",
+      "reply_to_message_id": 12345,
+      "content": {
+        "text": "根据最新的财报数据，NVIDIA Q4 2024表现强劲..."
+      },
+      "status": "completed",
+      "error_info": null,
+      "assistant_message_id": "019b24ef238cc97730971a9a0080c99c",
+      "created_at": 1765851195768,
+      "updated_at": 1765851210657,
+      "assistant_events": null
+    },
+    {
+      "id": 12345,
+      "user_id": 987654321,
+      "conversation_id": 683242877840089,
+      "turn_id": 1,
+      "role": "user",
+      "reply_to_message_id": null,
+      "content": {
+        "text": "nvidia 最新业绩分析"
+      },
+      "status": "completed",
+      "error_info": null,
+      "assistant_message_id": null,
+      "created_at": 1765851195760,
+      "updated_at": 1765851195760,
+      "assistant_events": null
+    }
+  ]
+}
+```
+
+### 注意事项
+
+- 消息按创建时间倒序排列（最新的消息在前）
+- 使用 `before_message_id` 参数可以实现向前翻页
+- `limit` 参数的有效范围为 1-100
+- 建议每次请求不超过 50 条消息，以获得更好的性能
+
