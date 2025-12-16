@@ -150,10 +150,10 @@
       {
         "group": "智能体",
         "pages": [
+          "api-reference/agent/introduction",
           {
-            "group": "Agent Conversation",
+            "group": "智能体接口",
             "pages": [
-              "api-reference/agent/introduction",
               "api-reference/agent/conversation_create",
               "api-reference/agent/conversation_chat",
               "api-reference/agent/message_events_get",
