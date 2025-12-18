@@ -1,0 +1,150 @@
+---
+title: 'IPO Calendar HK'
+openapi: 'POST /v1/stock/ipo-calendar-hk'
+mode: 'show'
+---
+
+## 查询香港股票 IPO 日历
+
+**URL:** `/v1/stock/ipo-calendar-hk`  
+**方法:** `POST`  
+**描述:** 根据状态查询香港股票 IPO 日历信息。
+
+### 请求参数
+
+| 参数名 | 类型   | 必填 | 描述                                    |
+|--------|--------|------|----------------------------------------|
+| status | string | 是   | IPO 状态：Priced（已定价）、Hearing（聆讯中）、Filing（申请中） |
+
+### 响应参数
+
+| 参数名  | 类型    | 描述           |
+|---------|---------|----------------|
+| status  | integer | HTTP 状态码    |
+| code    | integer | 业务状态码     |
+| message | string  | 响应消息       |
+| data    | object  | 响应数据       |
+
+#### data 对象结构
+
+| 参数名 | 类型  | 描述         |
+|--------|-------|--------------|
+| items  | array | IPO 项目列表 |
+
+#### IPO 项目对象结构
+
+| 参数名              | 类型   | 描述                     |
+|---------------------|--------|--------------------------|
+| temporary_symbol    | string | 临时股票代码             |
+| symbol              | string | 正式股票代码             |
+| ipo_name            | string | IPO 公司名称             |
+| ipo_date            | string | IPO 日期（ISO 8601）     |
+| sortTime            | integer| 排序时间戳（毫秒）       |
+| notice_item_list    | array  | 公告列表                 |
+
+#### 公告对象结构
+
+| 参数名                      | 类型   | 描述                 |
+|-----------------------------|--------|----------------------|
+| notice_type                 | string | 公告类型             |
+| notice_date                 | string | 公告日期（ISO 8601） |
+| notice_report_content_url   | string | 公告文件 URL         |
+| notice_report_title         | string | 公告标题             |
+
+### 示例代码
+
+#### cURL 示例
+
+```bash
+curl -X POST "https://api.example.com/v1/stock/ipo-calendar-hk" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "status": "Hearing"
+  }'
+```
+
+#### Python 示例
+
+```python
+import requests
+
+url = "https://api.example.com/v1/stock/ipo-calendar-hk"
+headers = {
+    "Authorization": "Bearer YOUR_API_KEY",
+    "Content-Type": "application/json"
+}
+data = {
+    "status": "Hearing"
+}
+
+response = requests.post(url, headers=headers, json=data)
+result = response.json()
+
+print(f"状态码: {result['status']}")
+print(f"IPO 项目数量: {len(result['data']['items'])}")
+
+for item in result['data']['items']:
+    print(f"\n公司: {item['ipo_name']}")
+    print(f"股票代码: {item['symbol']}")
+    print(f"IPO 日期: {item['ipo_date']}")
+    print(f"公告数量: {len(item['notice_item_list'])}")
+```
+
+### 响应示例
+
+```json
+{
+  "status": 200,
+  "code": 0,
+  "message": "",
+  "data": {
+    "items": [
+      {
+        "temporary_symbol": "H0062",
+        "symbol": "03317",
+        "ipo_name": "深圳迅策科技股份有限公司",
+        "ipo_date": "2025-12-30T13:00:00+08:00",
+        "sortTime": 1767070800000,
+        "notice_item_list": [
+          {
+            "notice_type": "聆讯后资料集或相关材料",
+            "notice_date": "2025-12-17T00:00:00+08:00",
+            "notice_report_content_url": "https://reportify-1252068037.cos.ap-beijing.myqcloud.com/media/production/H00622881b5846b132d3dac0d32989b264b27.pdf",
+            "notice_report_title": "PHIP (1st submission)"
+          },
+          {
+            "notice_type": "聆讯后资料集或相关材料",
+            "notice_date": "2025-12-17T00:00:00+08:00",
+            "notice_report_content_url": "https://reportify-1252068037.cos.ap-beijing.myqcloud.com/media/production/H0062e6c4073ec55d6b9db37c53793eacdb14.pdf",
+            "notice_report_title": "聆讯后资料集（第一次呈交）"
+          },
+          {
+            "notice_type": "申请版本或相关材料",
+            "notice_date": "2025-09-22T00:00:00+08:00",
+            "notice_report_content_url": "https://reportify-1252068037.cos.ap-beijing.myqcloud.com/media/production/H0062d2544f69b6f576694e857530fa579d11.pdf",
+            "notice_report_title": "Application Proof (1st submission)"
+          },
+          {
+            "notice_type": "申请版本或相关材料",
+            "notice_date": "2025-09-22T00:00:00+08:00",
+            "notice_report_content_url": "https://reportify-1252068037.cos.ap-beijing.myqcloud.com/media/production/H00621e5c66eeb84340b2f246f872647598d8.pdf",
+            "notice_report_title": "申请版本（第一次呈交）"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+### 注意事项
+
+- **status 参数值**：
+  - `Priced` - 已定价的 IPO
+  - `Hearing` - 正在聆讯中的 IPO
+  - `Filing` - 正在申请中的 IPO
+- **时间格式**：所有日期时间字段使用 ISO 8601 格式，包含时区信息
+- **sortTime**：毫秒级时间戳，用于排序
+- **公告文件**：`notice_report_content_url` 提供 PDF 文件的下载链接
+
