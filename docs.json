@@ -14,7 +14,7 @@
   "favicon": "/logo/favicon.png",
   "api": {
     "openapi": [
-      "api-reference/openapi.yaml"
+      "apis/openapi.yaml"
     ],
     "playground": {
       "mode": "show"
@@ -39,7 +39,7 @@
         "group": "使用说明",
         "pages": [
           "introduction",
-          "api-reference/introduction"
+          "apis/introduction"
         ]
       },
       {
@@ -47,61 +47,65 @@
         "pages": [
           {
             "group": "搜索和问答",
+            "icon": "magnifying-glass",
             "pages": [
               {
                 "group": "v1",
                 "pages": [
-                  "api-reference/search/search",
-                  "api-reference/search/search_chunks",
-                  "api-reference/search/completion"
+                  "apis/search/search",
+                  "apis/search/search_chunks",
+                  "apis/search/completion"
                 ]
               },
               {
                 "group": "v2",
                 "pages": [
-                  "api-reference/search/universal_search",
-                  "api-reference/search/earnings_pack",
-                  "api-reference/search/conference_calls",
-                  "api-reference/search/minutes",
-                  "api-reference/search/reports",
-                  "api-reference/search/filings",
-                  "api-reference/search/news",
-                  "api-reference/search/socials",
-                  "api-reference/search/webpages"
+                  "apis/search/universal_search",
+                  "apis/search/earnings_pack",
+                  "apis/search/conference_calls",
+                  "apis/search/minutes",
+                  "apis/search/reports",
+                  "apis/search/filings",
+                  "apis/search/news",
+                  "apis/search/socials",
+                  "apis/search/webpages"
                 ]
               }
             ]
           },
           {
             "group": "文档列表和内容",
+            "icon": "list",
             "pages": [
-              "api-reference/docs/docs",
-              "api-reference/docs/docs_tag",
-              "api-reference/docs/docs_symbol",
-              "api-reference/docs/doc",
-              "api-reference/docs/doc_summary"
+              "apis/docs/docs",
+              "apis/docs/docs_tag",
+              "apis/docs/docs_symbol",
+              "apis/docs/doc",
+              "apis/docs/doc_summary"
             ]
           },
           {
             "group": "知识库和文件管理",
+            "icon": "database",
             "pages": [
-              "api-reference/files/docs_folder_create",
-              "api-reference/files/docs_folder_delete",
-              "api-reference/files/docs_upload",
-              "api-reference/files/docs_upload_form",
-              "api-reference/files/docs_upload_async",
-              "api-reference/files/docs_upload_status",
-              "api-reference/files/docs_delete"
+              "apis/files/docs_folder_create",
+              "apis/files/docs_folder_delete",
+              "apis/files/docs_upload",
+              "apis/files/docs_upload_form",
+              "apis/files/docs_upload_async",
+              "apis/files/docs_upload_status",
+              "apis/files/docs_delete"
             ]
           },
           {
             "group": "账号关注",
+            "icon": "user-plus",
             "pages": [
-              "api-reference/channels/channels_search",
-              "api-reference/channels/channels_followings",
-              "api-reference/channels/channels_followings_docs",
-              "api-reference/channels/channels_follow",
-              "api-reference/channels/channels_unfollow"
+              "apis/channels/channels_search",
+              "apis/channels/channels_followings",
+              "apis/channels/channels_followings_docs",
+              "apis/channels/channels_follow",
+              "apis/channels/channels_unfollow"
             ]
           }
         ]
@@ -111,45 +115,51 @@
         "pages": [
           {
             "group": "公司信息",
+            "icon": "building",
             "pages": [
-              "api-reference/stock/company_overview",
-              "api-reference/stock/company_shareholders"
+              "apis/stock/company_overview",
+              "apis/stock/company_shareholders"
             ]
           },
           {
             "group": "行情数据",
+            "icon": "chart-candlestick",
             "pages": [
-              "api-reference/stock/company_prices",
-              "api-reference/stock/quote_realtime",
-              "api-reference/stock/index_prices"
+              "apis/stock/company_prices",
+              "apis/stock/quote_realtime",
+              "apis/stock/index_prices"
             ]
           },
           {
             "group": "财务数据",
+            "icon": "file-invoice",
             "pages": [
-              "api-reference/stock/company_income_statement",
-              "api-reference/stock/company_balance_sheet",
-              "api-reference/stock/company_cashflow_statement",
-              "api-reference/stock/company_revenue_breakdown"
+              "apis/stock/company_income_statement",
+              "apis/stock/company_balance_sheet",
+              "apis/stock/company_cashflow_statement",
+              "apis/stock/company_revenue_breakdown"
             ]
           },
           {
             "group": "选股器",
+            "icon": "filter",
             "pages": [
-              "api-reference/stock/screener"
+              "apis/stock/screener"
             ]
           },
           {
             "group": "日历数据",
+            "icon": "calendar",
             "pages": [
-              "api-reference/stock/ipo_calendar_hk",
-              "api-reference/stock/earnings_calendar"
+              "apis/stock/ipo_calendar_hk",
+              "apis/stock/earnings_calendar"
             ]
           },
           {
             "group": "热门概念",
+            "icon": "fire",
             "pages": [
-              "api-reference/concepts/concepts_latest"
+              "apis/concepts/concepts_latest"
             ]
           }
         ]
@@ -157,16 +167,17 @@
       {
         "group": "智能体",
         "pages": [
-          "api-reference/agent/introduction",
+          "apis/agent/introduction",
           {
             "group": "智能体接口",
+            "icon": "code",
             "pages": [
-              "api-reference/agent/conversation_create",
-              "api-reference/agent/conversation_chat",
-              "api-reference/agent/message_events_get",
-              "api-reference/agent/message_cancel",
-              "api-reference/agent/conversation_get",
-              "api-reference/agent/conversation_messages_list"
+              "apis/agent/conversation_create",
+              "apis/agent/conversation_chat",
+              "apis/agent/message_events_get",
+              "apis/agent/message_cancel",
+              "apis/agent/conversation_get",
+              "apis/agent/conversation_messages_list"
             ]
           }
         ]
@@ -174,7 +185,36 @@
       {
         "group": "MCP",
         "pages": [
-          "api-reference/mcp/introduction"
+          "mcp/introduction"
+        ]
+      },
+      {
+        "group": "SDK",
+        "pages": [
+          {
+            "group": "Python",
+            "icon": "python",
+            "pages": [
+              "sdks/python/overview",
+              "sdks/python/search",
+              "sdks/python/stock",
+              "sdks/python/timeline",
+              "sdks/python/kb",
+              "sdks/python/docs"
+            ]
+          },
+          {
+            "group": "TypeScript",
+            "icon": "js",
+            "pages": [
+              "sdks/typescript/overview",
+              "sdks/typescript/search",
+              "sdks/typescript/stock",
+              "sdks/typescript/timeline",
+              "sdks/typescript/kb",
+              "sdks/typescript/docs"
+            ]
+          }
         ]
       }
     ]

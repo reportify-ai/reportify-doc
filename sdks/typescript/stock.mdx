@@ -1,0 +1,286 @@
+---
+title: '股票数据'
+description: 'TypeScript SDK 股票数据模块'
+icon: 'chart-line'
+---
+
+## 公司信息
+
+### overview()
+
+获取公司概览信息。
+
+```typescript
+const info = await client.stock.overview('US:AAPL');
+console.log(info.name, info.sector, info.industry);
+```
+
+<ParamField path="symbol" type="string" required>
+  股票代码，格式：`市场:代码`，如 `US:AAPL`, `HK:0700`, `CN:600519`
+</ParamField>
+
+<ResponseField name="返回值" type="Promise<CompanyOverview>">
+  公司信息
+</ResponseField>
+
+---
+
+### shareholders()
+
+获取主要股东列表。
+
+```typescript
+const shareholders = await client.stock.shareholders('US:AAPL');
+shareholders.forEach(holder => {
+  console.log(holder.name, holder.percentage);
+});
+```
+
+<ParamField path="symbol" type="string" required>
+  股票代码
+</ParamField>
+
+---
+
+## 财务报表
+
+### incomeStatement()
+
+获取利润表数据。
+
+```typescript
+const income = await client.stock.incomeStatement('US:AAPL', {
+  period: 'quarterly',
+  limit: 8
+});
+console.log(income[0].revenue, income[0].netIncome);
+```
+
+<ParamField path="symbol" type="string" required>
+  股票代码
+</ParamField>
+
+<ParamField path="options.period" type="string" default="annual">
+  报告期间：`annual`（年报）或 `quarterly`（季报）
+</ParamField>
+
+<ParamField path="options.limit" type="number" default="10">
+  返回期数
+</ParamField>
+
+<ResponseField name="返回值" type="Promise<IncomeStatement[]>">
+  利润表数据数组
+</ResponseField>
+
+---
+
+### balanceSheet()
+
+获取资产负债表数据。
+
+```typescript
+const balance = await client.stock.balanceSheet('US:AAPL', { period: 'annual' });
+console.log(balance[0].totalAssets, balance[0].totalLiabilities);
+```
+
+<ParamField path="symbol" type="string" required>
+  股票代码
+</ParamField>
+
+<ParamField path="options.period" type="string" default="annual">
+  报告期间：`annual` 或 `quarterly`
+</ParamField>
+
+<ParamField path="options.limit" type="number" default="10">
+  返回期数
+</ParamField>
+
+---
+
+### cashflowStatement()
+
+获取现金流量表数据。
+
+```typescript
+const cashflow = await client.stock.cashflowStatement('US:AAPL');
+console.log(cashflow[0].operatingCashflow);
+```
+
+---
+
+### revenueBreakdown()
+
+获取营收分解数据。
+
+```typescript
+const breakdown = await client.stock.revenueBreakdown('US:AAPL', {
+  breakdownType: 'segment'
+});
+```
+
+<ParamField path="symbol" type="string" required>
+  股票代码
+</ParamField>
+
+<ParamField path="options.breakdownType" type="string" default="segment">
+  分解类型：`segment`（业务分部）, `product`（产品）, `region`（地区）
+</ParamField>
+
+---
+
+## 行情数据
+
+### prices()
+
+获取历史股价数据。
+
+```typescript
+const prices = await client.stock.prices('US:AAPL', {
+  startDate: '2024-01-01',
+  endDate: '2024-06-30',
+  limit: 100
+});
+prices.forEach(p => console.log(p.date, p.close, p.volume));
+```
+
+<ParamField path="symbol" type="string" required>
+  股票代码
+</ParamField>
+
+<ParamField path="options.startDate" type="string">
+  开始日期，格式：`YYYY-MM-DD`
+</ParamField>
+
+<ParamField path="options.endDate" type="string">
+  结束日期，格式：`YYYY-MM-DD`
+</ParamField>
+
+<ParamField path="options.limit" type="number" default="100">
+  返回记录数
+</ParamField>
+
+---
+
+### kline()
+
+获取 K 线数据。
+
+```typescript
+const kline = await client.stock.kline('US:TSLA', {
+  interval: '1d',
+  adjust: 'forward',
+  limit: 100
+});
+```
+
+<ParamField path="symbol" type="string" required>
+  股票代码
+</ParamField>
+
+<ParamField path="options.interval" type="string" default="1d">
+  时间周期：`1d`（日线）, `1w`（周线）, `1m`（月线）
+</ParamField>
+
+<ParamField path="options.adjust" type="string" default="forward">
+  复权类型：`forward`（前复权）, `backward`（后复权）, `none`（不复权）
+</ParamField>
+
+---
+
+### quote()
+
+获取实时行情。
+
+```typescript
+const quotes = await client.stock.quote(['US:AAPL', 'US:MSFT', 'US:GOOGL']);
+quotes.forEach(q => console.log(q.symbol, q.price, q.changePercent));
+```
+
+<ParamField path="symbols" type="string | string[]" required>
+  单个或多个股票代码
+</ParamField>
+
+---
+
+## 选股和日历
+
+### screener()
+
+股票筛选器。
+
+```typescript
+const stocks = await client.stock.screener({
+  market: 'US',
+  minMarketCap: 10000000000,  // 100亿美元
+  maxPe: 30,
+  limit: 50
+});
+```
+
+---
+
+### earningsCalendar()
+
+财报日历。
+
+```typescript
+const calendar = await client.stock.earningsCalendar({
+  area: 'us',
+  startDate: '2024-01-01',
+  endDate: '2024-01-31'
+});
+```
+
+---
+
+### ipoCalendarHk()
+
+港股 IPO 日历。
+
+```typescript
+const ipos = await client.stock.ipoCalendarHk({ status: 'Filing' });
+```
+
+---
+
+## 类型定义
+
+```typescript
+interface IncomeStatement {
+  date: string;
+  revenue: number;
+  grossProfit: number;
+  operatingIncome: number;
+  netIncome: number;
+  eps: number;
+  ebitda: number;
+}
+
+interface BalanceSheet {
+  date: string;
+  totalAssets: number;
+  totalLiabilities: number;
+  totalEquity: number;
+  cash: number;
+  totalDebt: number;
+}
+
+interface PriceData {
+  date: string;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+  marketCap: number;
+}
+
+interface Quote {
+  symbol: string;
+  price: number;
+  change: number;
+  changePercent: number;
+  volume: number;
+  marketCap: number;
+}
+```

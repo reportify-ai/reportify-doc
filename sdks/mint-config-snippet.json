@@ -1,0 +1,66 @@
+{
+  "_comment": "将以下内容合并到你的 mint.json 文件中",
+  
+  "navigation": [
+    {
+      "_comment": "添加到 navigation 数组中",
+      "group": "SDK",
+      "pages": [
+        {
+          "group": "Python SDK",
+          "icon": "python",
+          "pages": [
+            "sdk/python/overview",
+            "sdk/python/search",
+            "sdk/python/stock",
+            "sdk/python/timeline",
+            "sdk/python/kb",
+            "sdk/python/docs"
+          ]
+        },
+        {
+          "group": "TypeScript SDK",
+          "icon": "js",
+          "pages": [
+            "sdk/typescript/overview",
+            "sdk/typescript/search",
+            "sdk/typescript/stock",
+            "sdk/typescript/timeline",
+            "sdk/typescript/kb",
+            "sdk/typescript/docs"
+          ]
+        }
+      ]
+    }
+  ],
+
+  "tabs": [
+    {
+      "_comment": "如果使用 tabs，可以添加 SDK tab",
+      "name": "SDK",
+      "url": "sdk"
+    }
+  ],
+
+  "anchors": [
+    {
+      "_comment": "可选：添加快捷链接",
+      "name": "Python SDK",
+      "icon": "python",
+      "url": "sdk/python/overview"
+    },
+    {
+      "name": "TypeScript SDK",
+      "icon": "js",
+      "url": "sdk/typescript/overview"
+    }
+  ],
+
+  "_instructions": [
+    "1. 将 sdks/docs/python/ 目录复制到你的 Mintlify 项目的 sdk/python/ 目录",
+    "2. 将 sdks/docs/typescript/ 目录复制到你的 Mintlify 项目的 sdk/typescript/ 目录",
+    "3. 将上面的 navigation 部分合并到你的 mint.json 的 navigation 数组中",
+    "4. 可选：添加 tabs 或 anchors 配置",
+    "5. 运行 mintlify dev 预览效果"
+  ]
+}

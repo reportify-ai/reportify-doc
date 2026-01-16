@@ -1,0 +1,169 @@
+---
+title: '文档内容'
+description: 'Python SDK 文档模块 - 获取文档详情和总结'
+icon: 'file-lines'
+---
+
+## 概述
+
+文档模块用于获取单个文档的详细内容和总结。
+
+## get()
+
+获取文档详情。
+
+```python
+doc = client.docs.get("doc_abc123")
+print(doc["title"])
+print(doc["content"])
+```
+
+<ParamField path="doc_id" type="string" required>
+  文档 ID
+</ParamField>
+
+<ResponseField name="返回值" type="dict">
+  文档详情，包含完整内容
+</ResponseField>
+
+---
+
+## summary()
+
+获取文档总结。
+
+```python
+summary = client.docs.summary("doc_abc123")
+print(summary["summary"])
+print(summary["key_points"])
+```
+
+<ParamField path="doc_id" type="string" required>
+  文档 ID
+</ParamField>
+
+<ResponseField name="返回值" type="dict">
+  文档总结，包含摘要和关键要点
+</ResponseField>
+
+---
+
+## list_by_symbol()
+
+获取指定股票的相关文档列表。
+
+```python
+docs = client.docs.list_by_symbol(
+    symbol="US:AAPL",
+    categories=["news", "filings"],
+    num=20
+)
+```
+
+<ParamField path="symbol" type="string" required>
+  股票代码，格式：`市场:代码`
+</ParamField>
+
+<ParamField path="categories" type="list[str]">
+  文档类别筛选
+</ParamField>
+
+<ParamField path="num" type="int" default="10">
+  返回数量
+</ParamField>
+
+<ParamField path="start_date" type="str">
+  开始日期
+</ParamField>
+
+<ParamField path="end_date" type="str">
+  结束日期
+</ParamField>
+
+---
+
+## list_by_label()
+
+获取指定标签的文档列表。
+
+```python
+docs = client.docs.list_by_label(
+    label="财报",
+    num=20
+)
+```
+
+<ParamField path="label" type="string" required>
+  文档标签
+</ParamField>
+
+<ParamField path="num" type="int" default="10">
+  返回数量
+</ParamField>
+
+<ParamField path="start_date" type="str">
+  开始日期
+</ParamField>
+
+<ParamField path="end_date" type="str">
+  结束日期
+</ParamField>
+
+---
+
+## 返回数据结构
+
+### 文档详情
+
+```python
+{
+    "doc_id": "abc123",
+    "title": "Tesla Q4 2024 Earnings Call Transcript",
+    "content": "完整文档内容...",
+    "category": "transcripts",
+    "published_at": 1704067200000,
+    "channel_name": "Tesla Inc.",
+    "companies": [
+        {
+            "name": "Tesla",
+            "stocks": [{"symbol": "US:TSLA"}]
+        }
+    ],
+    "url": "https://...",
+    "word_count": 15000
+}
+```
+
+### 文档总结
+
+```python
+{
+    "doc_id": "abc123",
+    "summary": "Tesla 在 Q4 财报电话会议中报告了...",
+    "key_points": [
+        "交付量创历史新高",
+        "毛利率环比提升",
+        "Cybertruck 产能爬坡顺利"
+    ],
+    "sentiment": "positive"
+}
+```
+
+## 使用场景
+
+```python
+# 搜索文档后获取详情
+results = client.search("Tesla earnings", num=5)
+for result in results:
+    doc_id = result["doc_id"]
+    
+    # 获取完整内容
+    detail = client.docs.get(doc_id)
+    print(f"标题: {detail['title']}")
+    print(f"字数: {detail.get('word_count', 'N/A')}")
+    
+    # 获取 AI 总结
+    summary = client.docs.summary(doc_id)
+    print(f"摘要: {summary['summary'][:200]}...")
+    print()
+```

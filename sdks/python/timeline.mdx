@@ -1,0 +1,126 @@
+---
+title: '时间线'
+description: 'Python SDK 时间线模块 - 获取关注内容的最新动态'
+icon: 'timeline'
+---
+
+## 概述
+
+时间线模块提供用户关注内容的最新动态，包括关注的公司、主题、机构、公众号和社交媒体。
+
+## companies()
+
+获取关注公司的最新动态。
+
+```python
+timeline = client.timeline.companies(num=20)
+for item in timeline:
+    print(item["title"], item["published_at"])
+```
+
+<ParamField path="num" type="int" default="10">
+  返回结果数量，范围 1-100
+</ParamField>
+
+<ResponseField name="返回值" type="list[dict]">
+  时间线条目列表，每条包含 `title`, `summary`, `published_at`, `category` 等
+</ResponseField>
+
+---
+
+## topics()
+
+获取关注主题的最新动态。
+
+```python
+timeline = client.timeline.topics(num=20)
+```
+
+<ParamField path="num" type="int" default="10">
+  返回结果数量，范围 1-100
+</ParamField>
+
+---
+
+## institutes()
+
+获取关注机构（券商、基金等）的最新动态。
+
+```python
+timeline = client.timeline.institutes(num=20)
+```
+
+<ParamField path="num" type="int" default="10">
+  返回结果数量，范围 1-100
+</ParamField>
+
+---
+
+## public_media()
+
+获取关注公众号的最新动态。
+
+```python
+timeline = client.timeline.public_media(num=20)
+```
+
+<ParamField path="num" type="int" default="10">
+  返回结果数量，范围 1-100
+</ParamField>
+
+---
+
+## social_media()
+
+获取关注社交媒体账号的最新动态。
+
+```python
+timeline = client.timeline.social_media(num=20)
+```
+
+<ParamField path="num" type="int" default="10">
+  返回结果数量，范围 1-100
+</ParamField>
+
+---
+
+## 返回数据结构
+
+```python
+{
+    "doc_id": "abc123",
+    "title": "Tesla Q4 Earnings Preview",
+    "summary": "分析师预计 Tesla 将...",
+    "category": "reports",
+    "published_at": 1704067200000,
+    "channel_name": "Morgan Stanley",
+    "companies": [
+        {
+            "name": "Tesla",
+            "stocks": [{"symbol": "US:TSLA"}]
+        }
+    ],
+    "labels": ["财报预览", "电动车"]
+}
+```
+
+## 使用场景
+
+```python
+# 每日晨会：获取所有关注内容的最新动态
+companies = client.timeline.companies(num=10)
+topics = client.timeline.topics(num=10)
+institutes = client.timeline.institutes(num=10)
+
+print("=== 关注公司动态 ===")
+for item in companies:
+    print(f"- {item['title']}")
+
+print("\n=== 关注主题动态 ===")
+for item in topics:
+    print(f"- {item['title']}")
+
+print("\n=== 关注机构动态 ===")
+for item in institutes:
+    print(f"- {item['title']}")
+```

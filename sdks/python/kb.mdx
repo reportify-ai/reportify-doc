@@ -1,0 +1,76 @@
+---
+title: '知识库'
+description: 'Python SDK 知识库模块 - 搜索用户上传的私有文档'
+icon: 'folder'
+---
+
+## 概述
+
+知识库模块用于搜索用户上传到 Reportify 的私有文档，支持按文件夹筛选。
+
+## search()
+
+在知识库中搜索文档。
+
+```python
+results = client.kb.search(
+    query="投资策略",
+    folder_ids=["folder_abc123"],
+    num=10
+)
+
+for result in results:
+    print(result["title"], result["score"])
+```
+
+<ParamField path="query" type="string" required>
+  搜索关键词
+</ParamField>
+
+<ParamField path="folder_ids" type="list[str]">
+  文件夹 ID 列表，不传则搜索全部文件夹
+</ParamField>
+
+<ParamField path="num" type="int" default="10">
+  返回结果数量
+</ParamField>
+
+<ResponseField name="返回值" type="list[dict]">
+  搜索结果列表
+</ResponseField>
+
+---
+
+## 返回数据结构
+
+```python
+{
+    "doc_id": "kb_doc_123",
+    "title": "2024年投资策略报告.pdf",
+    "content": "本报告分析了2024年的市场趋势...",
+    "score": 0.95,
+    "folder_id": "folder_abc123",
+    "folder_name": "投资研究",
+    "created_at": 1704067200000
+}
+```
+
+## 使用场景
+
+```python
+# 搜索特定文件夹的文档
+results = client.kb.search(
+    query="季度报告",
+    folder_ids=["folder_quarterly_reports"]
+)
+
+# 搜索所有知识库文档
+all_results = client.kb.search(query="财务分析")
+
+# 结合文档搜索和知识库搜索
+public_docs = client.search("Tesla analysis")
+private_docs = client.kb.search("Tesla analysis")
+
+print(f"公开文档: {len(public_docs)} 条")
+print(f"私有文档: {len(private_docs)} 条")
+```

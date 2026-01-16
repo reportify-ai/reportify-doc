@@ -1,0 +1,203 @@
+---
+title: '搜索方法'
+description: 'Python SDK 文档搜索功能'
+icon: 'magnifying-glass'
+---
+
+## search()
+
+搜索所有类型的文档。
+
+```python
+docs = client.search(
+    query="Tesla earnings",
+    num=10,
+    categories=["news", "reports"],
+    symbols=["US:TSLA"],
+    start_date="2024-01-01",
+    end_date="2024-12-31"
+)
+```
+
+<ParamField path="query" type="string" required>
+  搜索关键词
+</ParamField>
+
+<ParamField path="num" type="int" default="10">
+  返回结果数量，最大 100
+</ParamField>
+
+<ParamField path="categories" type="list[str]">
+  文档类别过滤，可选值：`news`, `reports`, `filings`, `transcripts`, `socials`
+</ParamField>
+
+<ParamField path="symbols" type="list[str]">
+  股票代码过滤，格式：`市场:代码`，如 `US:AAPL`, `HK:0700`, `CN:600519`
+</ParamField>
+
+<ParamField path="start_date" type="str">
+  开始日期，格式：`YYYY-MM-DD`
+</ParamField>
+
+<ParamField path="end_date" type="str">
+  结束日期，格式：`YYYY-MM-DD`
+</ParamField>
+
+<ResponseField name="返回值" type="list[dict]">
+  文档列表，每个文档包含 `title`, `summary`, `category`, `published_at` 等字段
+</ResponseField>
+
+---
+
+## search_news()
+
+搜索新闻文章。
+
+```python
+news = client.search_news(
+    query="Apple iPhone",
+    num=10,
+    symbols=["US:AAPL"]
+)
+```
+
+<ParamField path="query" type="string" required>
+  搜索关键词
+</ParamField>
+
+<ParamField path="num" type="int" default="10">
+  返回结果数量
+</ParamField>
+
+<ParamField path="symbols" type="list[str]">
+  股票代码过滤
+</ParamField>
+
+<ParamField path="start_date" type="str">
+  开始日期
+</ParamField>
+
+<ParamField path="end_date" type="str">
+  结束日期
+</ParamField>
+
+---
+
+## search_reports()
+
+搜索研究报告。
+
+```python
+reports = client.search_reports(
+    query="semiconductor analysis",
+    num=10
+)
+```
+
+<ParamField path="query" type="string" required>
+  搜索关键词
+</ParamField>
+
+<ParamField path="num" type="int" default="10">
+  返回结果数量
+</ParamField>
+
+<ParamField path="symbols" type="list[str]">
+  股票代码过滤
+</ParamField>
+
+<ParamField path="start_date" type="str">
+  开始日期
+</ParamField>
+
+<ParamField path="end_date" type="str">
+  结束日期
+</ParamField>
+
+---
+
+## search_filings()
+
+搜索公司公告和财报。
+
+```python
+filings = client.search_filings(
+    query="10-K annual report",
+    symbols=["US:AAPL"]
+)
+```
+
+<ParamField path="query" type="string" required>
+  搜索关键词
+</ParamField>
+
+<ParamField path="num" type="int" default="10">
+  返回结果数量
+</ParamField>
+
+<ParamField path="symbols" type="list[str]">
+  股票代码过滤
+</ParamField>
+
+<ParamField path="start_date" type="str">
+  开始日期
+</ParamField>
+
+<ParamField path="end_date" type="str">
+  结束日期
+</ParamField>
+
+---
+
+## search_transcripts()
+
+搜索财报电话会议纪要。
+
+```python
+transcripts = client.search_transcripts(
+    query="guidance revenue",
+    symbols=["US:TSLA"]
+)
+```
+
+<ParamField path="query" type="string" required>
+  搜索关键词
+</ParamField>
+
+<ParamField path="num" type="int" default="10">
+  返回结果数量
+</ParamField>
+
+<ParamField path="symbols" type="list[str]">
+  股票代码过滤
+</ParamField>
+
+<ParamField path="start_date" type="str">
+  开始日期
+</ParamField>
+
+<ParamField path="end_date" type="str">
+  结束日期
+</ParamField>
+
+---
+
+## 返回数据结构
+
+```python
+{
+    "doc_id": "abc123",
+    "title": "Tesla Q4 2024 Earnings Call",
+    "summary": "Tesla reported record deliveries...",
+    "category": "transcripts",
+    "published_at": 1704067200000,  # 毫秒时间戳
+    "channel_name": "Tesla Inc.",
+    "companies": [
+        {
+            "name": "Tesla",
+            "stocks": [{"symbol": "US:TSLA", "market": "US", "ticker": "TSLA"}]
+        }
+    ],
+    "url": "https://..."
+}
+```

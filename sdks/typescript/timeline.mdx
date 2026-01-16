@@ -1,0 +1,124 @@
+---
+title: '时间线'
+description: 'TypeScript SDK 时间线模块 - 获取关注内容的最新动态'
+icon: 'timeline'
+---
+
+## 概述
+
+时间线模块提供用户关注内容的最新动态，包括关注的公司、主题、机构、公众号和社交媒体。
+
+## companies()
+
+获取关注公司的最新动态。
+
+```typescript
+const timeline = await client.timeline.companies({ num: 20 });
+timeline.forEach(item => {
+  console.log(item.title, item.publishedAt);
+});
+```
+
+<ParamField path="options.num" type="number" default="10">
+  返回结果数量，范围 1-100
+</ParamField>
+
+<ResponseField name="返回值" type="Promise<TimelineItem[]>">
+  时间线条目列表
+</ResponseField>
+
+---
+
+## topics()
+
+获取关注主题的最新动态。
+
+```typescript
+const timeline = await client.timeline.topics({ num: 20 });
+```
+
+<ParamField path="options.num" type="number" default="10">
+  返回结果数量，范围 1-100
+</ParamField>
+
+---
+
+## institutes()
+
+获取关注机构（券商、基金等）的最新动态。
+
+```typescript
+const timeline = await client.timeline.institutes({ num: 20 });
+```
+
+<ParamField path="options.num" type="number" default="10">
+  返回结果数量，范围 1-100
+</ParamField>
+
+---
+
+## publicMedia()
+
+获取关注公众号的最新动态。
+
+```typescript
+const timeline = await client.timeline.publicMedia({ num: 20 });
+```
+
+<ParamField path="options.num" type="number" default="10">
+  返回结果数量，范围 1-100
+</ParamField>
+
+---
+
+## socialMedia()
+
+获取关注社交媒体账号的最新动态。
+
+```typescript
+const timeline = await client.timeline.socialMedia({ num: 20 });
+```
+
+<ParamField path="options.num" type="number" default="10">
+  返回结果数量，范围 1-100
+</ParamField>
+
+---
+
+## 类型定义
+
+```typescript
+interface TimelineItem {
+  docId: string;
+  title: string;
+  summary: string;
+  category: string;
+  publishedAt: number;
+  channelName: string;
+  companies: Array<{
+    name: string;
+    stocks: Array<{ symbol: string }>;
+  }>;
+  labels: string[];
+}
+```
+
+## 使用场景
+
+```typescript
+// 每日晨会：获取所有关注内容的最新动态
+const [companies, topics, institutes] = await Promise.all([
+  client.timeline.companies({ num: 10 }),
+  client.timeline.topics({ num: 10 }),
+  client.timeline.institutes({ num: 10 })
+]);
+
+console.log('=== 关注公司动态 ===');
+companies.forEach(item => console.log(`- ${item.title}`));
+
+console.log('\n=== 关注主题动态 ===');
+topics.forEach(item => console.log(`- ${item.title}`));
+
+console.log('\n=== 关注机构动态 ===');
+institutes.forEach(item => console.log(`- ${item.title}`));
+```

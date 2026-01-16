@@ -1,0 +1,110 @@
+---
+title: 'Python SDK'
+description: '使用 Python SDK 访问 Reportify API'
+icon: 'python'
+---
+
+## 安装
+
+<CodeGroup>
+
+```bash pip
+pip install reportify-sdk
+```
+
+```bash poetry
+poetry add reportify-sdk
+```
+
+</CodeGroup>
+
+## 快速开始
+
+```python
+from reportify_sdk import Reportify
+
+# 初始化客户端
+client = Reportify(api_key="your-api-key")
+
+# 搜索文档
+docs = client.search("Tesla earnings", num=10)
+for doc in docs:
+    print(doc["title"])
+
+# 获取股票财务数据（返回 pandas DataFrame）
+income = client.stock.income_statement("US:AAPL", period="quarterly")
+print(income.head())
+```
+
+## 特性
+
+<CardGroup cols={2}>
+  <Card title="文档搜索" icon="magnifying-glass">
+    支持多种文档类型搜索：新闻、研报、公告、电话会议纪要等
+  </Card>
+  <Card title="股票数据" icon="chart-line">
+    获取财务报表、行情数据，返回 pandas DataFrame 格式
+  </Card>
+  <Card title="时间线" icon="timeline">
+    获取关注公司、主题、机构的最新动态
+  </Card>
+  <Card title="知识库" icon="folder">
+    搜索用户上传的私有文档
+  </Card>
+</CardGroup>
+
+## 配置选项
+
+<ParamField path="api_key" type="string" required>
+  你的 Reportify API 密钥，可在[开发者中心](https://reportify.cn/settings/api)获取
+</ParamField>
+
+<ParamField path="base_url" type="string" default="https://api.reportify.cn">
+  API 基础 URL，通常不需要修改
+</ParamField>
+
+<ParamField path="timeout" type="float" default="30.0">
+  请求超时时间（秒）
+</ParamField>
+
+## 错误处理
+
+```python
+from reportify_sdk import (
+    Reportify,
+    AuthenticationError,
+    RateLimitError,
+    NotFoundError,
+    APIError,
+)
+
+try:
+    docs = client.search("Tesla")
+except AuthenticationError:
+    print("API Key 无效")
+except RateLimitError:
+    print("请求过于频繁，请稍后重试")
+except NotFoundError:
+    print("资源不存在")
+except APIError as e:
+    print(f"API 错误: {e.message}")
+```
+
+## 上下文管理器
+
+```python
+# 自动关闭连接
+with Reportify(api_key="your-api-key") as client:
+    docs = client.search("Tesla")
+```
+
+## 下一步
+
+<CardGroup cols={2}>
+  <Card title="搜索方法" icon="search" href="/sdk/python/search">
+    了解文档搜索功能
+  </Card>
+  <Card title="股票数据" icon="chart-bar" href="/sdk/python/stock">
+    获取财务报表和行情数据
+  </Card>
+</CardGroup>

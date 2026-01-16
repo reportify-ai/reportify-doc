@@ -1,0 +1,146 @@
+---
+title: 'TypeScript SDK'
+description: '使用 TypeScript/JavaScript SDK 访问 Reportify API'
+icon: 'js'
+---
+
+## 安装
+
+<CodeGroup>
+
+```bash npm
+npm install reportify-sdk
+```
+
+```bash yarn
+yarn add reportify-sdk
+```
+
+```bash pnpm
+pnpm add reportify-sdk
+```
+
+</CodeGroup>
+
+## 快速开始
+
+```typescript
+import { Reportify } from 'reportify-sdk';
+
+// 初始化客户端
+const client = new Reportify({ apiKey: 'your-api-key' });
+
+// 搜索文档
+const docs = await client.search('Tesla earnings', { num: 10 });
+docs.forEach(doc => console.log(doc.title));
+
+// 获取股票财务数据
+const income = await client.stock.incomeStatement('US:AAPL', { period: 'quarterly' });
+console.log(income);
+```
+
+## 特性
+
+<CardGroup cols={2}>
+  <Card title="文档搜索" icon="magnifying-glass">
+    支持多种文档类型搜索：新闻、研报、公告、电话会议纪要等
+  </Card>
+  <Card title="股票数据" icon="chart-line">
+    获取财务报表、行情数据，完整类型定义
+  </Card>
+  <Card title="时间线" icon="timeline">
+    获取关注公司、主题、机构的最新动态
+  </Card>
+  <Card title="知识库" icon="folder">
+    搜索用户上传的私有文档
+  </Card>
+</CardGroup>
+
+## 配置选项
+
+<ParamField path="apiKey" type="string" required>
+  你的 Reportify API 密钥，可在[开发者中心](https://reportify.cn/settings/api)获取
+</ParamField>
+
+<ParamField path="baseUrl" type="string" default="https://api.reportify.cn">
+  API 基础 URL，通常不需要修改
+</ParamField>
+
+<ParamField path="timeout" type="number" default="30000">
+  请求超时时间（毫秒）
+</ParamField>
+
+## 错误处理
+
+```typescript
+import { 
+  Reportify, 
+  AuthenticationError, 
+  RateLimitError, 
+  NotFoundError, 
+  APIError 
+} from 'reportify-sdk';
+
+try {
+  const docs = await client.search('Tesla');
+} catch (error) {
+  if (error instanceof AuthenticationError) {
+    console.error('API Key 无效');
+  } else if (error instanceof RateLimitError) {
+    console.error('请求过于频繁，请稍后重试');
+  } else if (error instanceof NotFoundError) {
+    console.error('资源不存在');
+  } else if (error instanceof APIError) {
+    console.error(`API 错误: ${error.message}`);
+  }
+}
+```
+
+## TypeScript 支持
+
+SDK 提供完整的 TypeScript 类型定义：
+
+```typescript
+import type { 
+  Document, 
+  SearchOptions, 
+  IncomeStatement,
+  BalanceSheet,
+  TimelineItem 
+} from 'reportify-sdk';
+
+const options: SearchOptions = {
+  num: 10,
+  categories: ['news', 'reports'],
+  symbols: ['US:TSLA']
+};
+
+const docs: Document[] = await client.search('Tesla', options);
+```
+
+## ESM 和 CommonJS
+
+SDK 同时支持 ES Modules 和 CommonJS：
+
+<CodeGroup>
+
+```typescript ESM
+import { Reportify } from 'reportify-sdk';
+```
+
+```javascript CommonJS
+const { Reportify } = require('reportify-sdk');
+```
+
+</CodeGroup>
+
+## 下一步
+
+<CardGroup cols={2}>
+  <Card title="搜索方法" icon="search" href="/sdk/typescript/search">
+    了解文档搜索功能
+  </Card>
+  <Card title="股票数据" icon="chart-bar" href="/sdk/typescript/stock">
+    获取财务报表和行情数据
+  </Card>
+</CardGroup>

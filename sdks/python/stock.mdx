@@ -1,0 +1,340 @@
+---
+title: '股票数据'
+description: 'Python SDK 股票数据模块，返回 pandas DataFrame'
+icon: 'chart-line'
+---
+
+<Note>
+股票数据模块的方法返回 **pandas DataFrame**，方便进行数据分析。
+</Note>
+
+## 公司信息
+
+### overview()
+
+获取公司概览信息。
+
+```python
+info = client.stock.overview("US:AAPL")
+print(info["name"], info["sector"], info["industry"])
+```
+
+<ParamField path="symbol" type="string" required>
+  股票代码，格式：`市场:代码`，如 `US:AAPL`, `HK:0700`, `CN:600519`
+</ParamField>
+
+<ResponseField name="返回值" type="dict">
+  公司信息，包含 `name`, `description`, `sector`, `industry`, `market_cap` 等
+</ResponseField>
+
+---
+
+### shareholders()
+
+获取主要股东列表。
+
+```python
+shareholders = client.stock.shareholders("US:AAPL")
+for holder in shareholders:
+    print(holder["name"], holder["percentage"])
+```
+
+<ParamField path="symbol" type="string" required>
+  股票代码
+</ParamField>
+
+<ResponseField name="返回值" type="list[dict]">
+  股东列表，包含 `name`, `shares`, `percentage` 等
+</ResponseField>
+
+---
+
+## 财务报表
+
+### income_statement()
+
+获取利润表数据。
+
+```python
+income = client.stock.income_statement(
+    symbol="US:AAPL",
+    period="quarterly",
+    limit=8
+)
+print(income[["revenue", "net_income", "eps"]].head())
+```
+
+<ParamField path="symbol" type="string" required>
+  股票代码
+</ParamField>
+
+<ParamField path="period" type="string" default="annual">
+  报告期间：`annual`（年报）或 `quarterly`（季报）
+</ParamField>
+
+<ParamField path="limit" type="int" default="10">
+  返回期数
+</ParamField>
+
+<ResponseField name="返回值" type="DataFrame">
+  利润表数据，以日期为索引，包含 `revenue`, `gross_profit`, `operating_income`, `net_income`, `eps` 等列
+</ResponseField>
+
+---
+
+### balance_sheet()
+
+获取资产负债表数据。
+
+```python
+balance = client.stock.balance_sheet("US:AAPL", period="annual")
+print(balance[["total_assets", "total_liabilities", "total_equity"]].head())
+```
+
+<ParamField path="symbol" type="string" required>
+  股票代码
+</ParamField>
+
+<ParamField path="period" type="string" default="annual">
+  报告期间：`annual` 或 `quarterly`
+</ParamField>
+
+<ParamField path="limit" type="int" default="10">
+  返回期数
+</ParamField>
+
+<ResponseField name="返回值" type="DataFrame">
+  资产负债表数据
+</ResponseField>
+
+---
+
+### cashflow_statement()
+
+获取现金流量表数据。
+
+```python
+cashflow = client.stock.cashflow_statement("US:AAPL")
+print(cashflow[["operating_cashflow", "investing_cashflow", "financing_cashflow"]].head())
+```
+
+<ParamField path="symbol" type="string" required>
+  股票代码
+</ParamField>
+
+<ParamField path="period" type="string" default="annual">
+  报告期间：`annual` 或 `quarterly`
+</ParamField>
+
+<ParamField path="limit" type="int" default="10">
+  返回期数
+</ParamField>
+
+<ResponseField name="返回值" type="DataFrame">
+  现金流量表数据
+</ResponseField>
+
+---
+
+### revenue_breakdown()
+
+获取营收分解数据。
+
+```python
+breakdown = client.stock.revenue_breakdown("US:AAPL", breakdown_type="segment")
+print(breakdown)
+```
+
+<ParamField path="symbol" type="string" required>
+  股票代码
+</ParamField>
+
+<ParamField path="breakdown_type" type="string" default="segment">
+  分解类型：`segment`（业务分部）, `product`（产品）, `region`（地区）
+</ParamField>
+
+---
+
+## 行情数据
+
+### prices()
+
+获取历史股价数据。
+
+```python
+prices = client.stock.prices(
+    symbol="US:AAPL",
+    start_date="2024-01-01",
+    end_date="2024-06-30",
+    limit=100
+)
+print(prices[["close", "volume", "market_cap"]].tail())
+```
+
+<ParamField path="symbol" type="string" required>
+  股票代码
+</ParamField>
+
+<ParamField path="start_date" type="str">
+  开始日期，格式：`YYYY-MM-DD`
+</ParamField>
+
+<ParamField path="end_date" type="str">
+  结束日期，格式：`YYYY-MM-DD`
+</ParamField>
+
+<ParamField path="limit" type="int" default="100">
+  返回记录数
+</ParamField>
+
+<ResponseField name="返回值" type="DataFrame">
+  股价数据，包含 `close`, `volume`, `market_cap`, `pe`, `ps` 等
+</ResponseField>
+
+---
+
+### kline()
+
+获取 K 线数据。
+
+```python
+kline = client.stock.kline(
+    symbol="US:TSLA",
+    interval="1d",
+    adjust="forward",
+    limit=100
+)
+print(kline[["open", "high", "low", "close", "volume"]].tail())
+```
+
+<ParamField path="symbol" type="string" required>
+  股票代码
+</ParamField>
+
+<ParamField path="interval" type="string" default="1d">
+  时间周期：`1d`（日线）, `1w`（周线）, `1m`（月线）
+</ParamField>
+
+<ParamField path="adjust" type="string" default="forward">
+  复权类型：`forward`（前复权）, `backward`（后复权）, `none`（不复权）
+</ParamField>
+
+<ParamField path="start_date" type="str">
+  开始日期
+</ParamField>
+
+<ParamField path="end_date" type="str">
+  结束日期
+</ParamField>
+
+<ParamField path="limit" type="int" default="100">
+  返回记录数
+</ParamField>
+
+---
+
+### quote()
+
+获取实时行情。
+
+```python
+quotes = client.stock.quote(["US:AAPL", "US:MSFT", "US:GOOGL"])
+print(quotes[["symbol", "price", "change_percent"]])
+```
+
+<ParamField path="symbols" type="str | list[str]" required>
+  单个或多个股票代码
+</ParamField>
+
+<ResponseField name="返回值" type="DataFrame">
+  实时行情数据
+</ResponseField>
+
+---
+
+## 选股和日历
+
+### screener()
+
+股票筛选器。
+
+```python
+stocks = client.stock.screener(
+    market="US",
+    min_market_cap=1e10,  # 100亿美元以上
+    max_pe=30,
+    limit=50
+)
+```
+
+<ParamField path="market" type="str">
+  市场：`US`, `HK`, `CN`
+</ParamField>
+
+<ParamField path="sector" type="str">
+  行业板块
+</ParamField>
+
+<ParamField path="min_market_cap" type="float">
+  最小市值
+</ParamField>
+
+<ParamField path="max_market_cap" type="float">
+  最大市值
+</ParamField>
+
+<ParamField path="min_pe" type="float">
+  最小市盈率
+</ParamField>
+
+<ParamField path="max_pe" type="float">
+  最大市盈率
+</ParamField>
+
+<ParamField path="limit" type="int" default="50">
+  返回数量
+</ParamField>
+
+---
+
+### earnings_calendar()
+
+财报日历。
+
+```python
+calendar = client.stock.earnings_calendar(
+    area="us",
+    start_date="2024-01-01",
+    end_date="2024-01-31"
+)
+```
+
+<ParamField path="area" type="string" default="us">
+  市场区域：`us`, `hk`, `cn`
+</ParamField>
+
+<ParamField path="start_date" type="str">
+  开始日期
+</ParamField>
+
+<ParamField path="end_date" type="str">
+  结束日期
+</ParamField>
+
+<ParamField path="symbol" type="str">
+  指定股票代码
+</ParamField>
+
+---
+
+### ipo_calendar_hk()
+
+港股 IPO 日历。
+
+```python
+ipos = client.stock.ipo_calendar_hk(status="Filing")
+```
+
+<ParamField path="status" type="string" default="Filing">
+  IPO 状态：`Filing`（申报）, `Hearing`（聆讯）, `Priced`（定价）
+</ParamField>
