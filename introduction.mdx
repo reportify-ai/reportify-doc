@@ -8,98 +8,128 @@ icon: 'house'
 
 Reportify 是一个金融投资智能体平台，可以用自然语言构建智能体与自动化流程，结合全球多市场的金融数据与可扩展应用接入，为金融投资的分析、操作与协作提供统一且高效的智能化方案。
 
-使用方式：
-浏览器直接访问 https://reportify.cn  
+<Info>
+  浏览器直接访问 [https://reportify.cn](https://reportify.cn) 开始使用
+</Info>
 
-Reportify 亮点功能：
-* 可通过自然语言自定义 Agent，更精确控制 Agent 内容和行为
-* 可通过自然语言自定 Agent 任务，后台自动运行发送邮件提醒
-* 整合众多第三方应用，还可以自定义 MCP 丰富 Agent 能力
-* 内置众多官方 Agent 和海量用户分享 Agent，开箱即用
-* 支持 A 股、港股、美股全市场财报、电话会议、新闻、研报内容聚合，
-* 针对各种文档自动进行总结快速浏览文档核心内容和关键要点
-* 每一个总结和关键要点都有引用出处并且对原文内容进行高亮，方便回溯原文
-* 支持财报、电话会、新闻超长文档全文中英文对照翻译，以及选中文本定向翻译
-* 支持历史问答会话保存，方便回溯和分享，构建投资研究知识库
-* 自定义文件上传，多文件问答，最大支持单文件 1GB
-* 通过标签和任意搜索条件订阅最新相关文档实时更新
+## 核心功能
 
-## 文档概述
-Reportify API 提供了功能强大的接口，旨在帮助用户通过 API 的方式访问 Reporitfy 的服务。通过这些 API，开发者可以实现文件搜索、上传、问答等功能，并高效地获取和管理文档内容。本 API 文档详细介绍了各个接口的请求方法、参数要求、响应格式和示例，帮助开发者快速集成 Reportify 的功能。
+<CardGroup cols={2}>
+  <Card title="智能体定制" icon="robot" color="#0072ff">
+    通过自然语言自定义 Agent，精确控制内容和行为，支持自动化任务和邮件提醒
+  </Card>
+  <Card title="多源应用集成" icon="plug" color="#0072ff">
+    整合众多第三方应用，支持自定义 MCP 扩展，内置海量官方和用户分享的 Agent
+  </Card>
+  <Card title="全市场数据聚合" icon="database" color="#0072ff">
+    覆盖 A 股、港股、美股财报、电话会议、新闻、研报等全方位金融数据
+  </Card>
+  <Card title="智能文档分析" icon="sparkles" color="#0072ff">
+    自动总结文档核心内容，支持引用追溯、中英对照翻译、多文件问答
+  </Card>
+  <Card title="投研知识管理" icon="book-open" color="#0072ff">
+    历史问答会话保存，标签订阅实时更新，构建个人投资研究知识库
+  </Card>
+  <Card title="大文件处理" icon="file-arrow-up" color="#0072ff">
+    自定义文件上传，支持多文件问答，单文件最大 1GB
+  </Card>
+</CardGroup>
 
-## 示例应用场景
-- **金融文档聚合**：将多个机构发布的报告集中存储和管理，便于跨公司、跨行业的分析。
-- **智能内容检索和问答**：通过语义搜索和问答，快速定位特定领域或事件的关键信息，支持精准决策。
-- **报告生成与总结**：利用文档内容与总结功能，为研究员、分析师提供简洁、直接的文档摘要，提升工作效率。
+## API 文档概述
 
-## 快速入门
-在开始使用 API 前，请确保获取到一个有效的 API 密钥，并在请求的 `Authorization` 头中添加 `Bearer {API_KEY}` 以进行身份验证。
-每个接口的请求示例和响应示例都采用 JSON 格式，开发者可以使用常见的 HTTP 客户端（如 `cURL`、`requests`）进行 API 测试与集成。
+Reportify API 提供了功能强大的接口，旨在帮助用户通过 API 的方式访问 Reportify 的服务。通过这些 API，开发者可以实现文件搜索、上传、问答等功能，并高效地获取和管理文档内容。本 API 文档详细介绍了各个接口的请求方法、参数要求、响应格式和示例，帮助开发者快速集成 Reportify 的功能。
 
-具体文档如下：
+<CardGroup cols={3}>
+  <Card title="金融文档聚合" icon="folder-tree">
+    将多个机构发布的报告集中存储和管理，便于跨公司、跨行业的分析
+  </Card>
+  <Card title="智能内容检索" icon="magnifying-glass">
+    通过语义搜索和问答，快速定位特定领域或事件的关键信息，支持精准决策
+  </Card>
+  <Card title="报告生成与总结" icon="file-lines">
+    利用文档内容与总结功能，为研究员、分析师提供简洁、直接的文档摘要
+  </Card>
+</CardGroup>
 
-### 权限验证
-- [权限验证](/api-reference/introduction)
+## 快速开始
 
-### 文档接口
-#### 文档搜索与问答
-  - [文档搜索](/api-reference/search/search)
-  - [文档块搜索](/api-reference/search/search_chunks)
-  - [文档问答](/api-reference/search/completion)
+<Steps>
+  <Step title="获取 API 密钥">
+    登录 [Reportify 开发者中心](https://reportify.cn/developer) 获取您的 API Key
+    
+    <Info>
+      请妥善保管您的 API Key，不要在公开场所泄露
+    </Info>
+  </Step>
+  
+  <Step title="配置认证">
+    在所有 API 请求的 `Authorization` 头中添加 Bearer Token
+    
+    <CodeGroup>
+    ```bash cURL
+    curl -X POST "https://api.reportify.cn/v1/search" \
+      -H "Authorization: Bearer YOUR_API_KEY" \
+      -H "Content-Type: application/json"
+    ```
+    
+    ```python Python
+    import requests
 
-#### 文档列表和内容
-  - [根据条件获取文档](/api-reference/docs/docs)
-  - [根据股票代码获取相关文档](/api-reference/docs/docs_symbol)
-  - [根据标签获取相关文档](/api-reference/docs/docs_tag)
-  - [文档内容](/api-reference/docs/doc)
-  - [文档总结](/api-reference/docs/doc_summary)
+    headers = {
+        "Authorization": "Bearer YOUR_API_KEY",
+        "Content-Type": "application/json"
+    }
+    
+    response = requests.post(
+        "https://api.reportify.cn/v1/search",
+        headers=headers
+    )
+    ```
+    
+    ```javascript JavaScript
+    const headers = {
+      'Authorization': 'Bearer YOUR_API_KEY',
+      'Content-Type': 'application/json'
+    };
 
-#### 知识库和文件管理
-  - [文件夹创建](/api-reference/files/docs_folder_create)
-  - [文件夹删除](/api-reference/files/docs_folder_delete)
-  - [文档上传](/api-reference/files/docs_upload)
-  - [原文件上传](/api-reference/files/docs_upload_form)
-  - [文档异步上传](/api-reference/files/docs_upload_async)
-  - [文档上传状态](/api-reference/files/docs_upload_status)
-  - [文档删除](/api-reference/files/docs_delete)
+    fetch('https://api.reportify.cn/v1/search', {
+      method: 'POST',
+      headers: headers
+    });
+    ```
+    </CodeGroup>
+  </Step>
+  
+  <Step title="开始调用">
+    查看下方的 API 文档，选择您需要的接口开始使用
+  </Step>
+</Steps>
 
-#### 账号关注
-  - [根据条件搜索账号](/api-reference/channels/channels_search)
-  - [关注账号列表](/api-reference/channels/channels_followings)
-  - [关注账号文档列表](/api-reference/channels/channels_followings_docs)
-  - [关注账号](/api-reference/channels/channels_follow)
-  - [取消关注账号](/api-reference/channels/channels_unfollow)
+## API 接口导航
 
-### 股票接口
-#### 公司信息
-  - [公司概览](/api-reference/stock/company_overview)
-  - [股东信息](/api-reference/stock/company_shareholders)
-
-#### 行情数据
-  - [股票行情](/api-reference/stock/company_prices)
-  - [实时行情](/api-reference/stock/quote_realtime)
-  - [指数行情](/api-reference/stock/index_prices)
-
-#### 财务数据
-  - [财报数据](/api-reference/stock/company_income_statement)
-  - [资产负债表](/api-reference/stock/company_balance_sheet)
-  - [现金流量表](/api-reference/stock/company_cashflow_statement)
-  - [营收分解](/api-reference/stock/company_revenue_breakdown)
-
-#### 选股器
-  - [选股器](/api-reference/stock/screener)
-
-#### 热门概念
-  - [最新概念](/api-reference/concepts/concepts_latest)
-
-### 智能体
-  - [智能体介绍](/api-reference/agent/introduction)
-  - [创建智能体对话](/api-reference/agent/conversation_create)
-  - [智能体对话聊天](/api-reference/agent/conversation_chat)
-  - [获取智能体对话消息事件](/api-reference/agent/message_events_get)
-  - [取消智能体对话](/api-reference/agent/message_cancel)
-  - [获取智能体对话详情](/api-reference/agent/conversation_get)
-  - [获取智能体对话消息列表](/api-reference/agent/conversation_messages_list)
-
-### MCP
-  - [MCP 服务介绍](/api-reference/mcp/introduction)
+<CardGroup cols={2}>
+  <Card title="权限验证" icon="key" href="/apis/introduction">
+    了解如何获取和使用 API Key 进行身份验证
+  </Card>
+  <Card title="文档搜索" icon="magnifying-glass" href="/apis/search/search">
+    搜索金融文档，支持语义搜索和内容块检索
+  </Card>
+  <Card title="文档管理" icon="folder" href="/apis/docs/docs">
+    获取、管理和操作文档内容
+  </Card>
+  <Card title="文件上传" icon="upload" href="/apis/files/docs_upload">
+    上传自定义文件到知识库
+  </Card>
+  <Card title="股票数据" icon="chart-line" href="/apis/stock/company_overview">
+    获取公司信息、行情数据和财务报表
+  </Card>
+  <Card title="智能体对话" icon="robot" href="/apis/agent/introduction">
+    与 AI 智能体进行对话交互
+  </Card>
+  <Card title="MCP 服务" icon="plug" href="/mcp/introduction">
+    通过 MCP 协议访问 Reportify 服务
+  </Card>
+  <Card title="Python SDK" icon="python" href="/sdks/python/overview">
+    使用 Python SDK 快速集成
+  </Card>
+</CardGroup>
