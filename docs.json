@@ -140,6 +140,13 @@
             ]
           },
           {
+            "group": "日历数据",
+            "pages": [
+              "api-reference/stock/ipo_calendar_hk",
+              "api-reference/stock/earnings_calendar"
+            ]
+          },
+          {
             "group": "热门概念",
             "pages": [
               "api-reference/concepts/concepts_latest"

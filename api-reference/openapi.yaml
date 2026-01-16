@@ -988,6 +988,86 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
       - BearerAuth: []
+  /v1/stock/ipo-calendar-hk:
+    post:
+      tags:
+      - openapi-stock-tools
+      summary: Stock IPO Calendar HK
+      description: Query Hong Kong stock IPO calendar by status
+      operationId: stock_ipo_calendar_hk_reportify_api_v1_stock_ipo_calendar_hk_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StockIPOCalendarHKInput'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StockAPIResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - BearerAuth: []
+  /v1/stock/earnings-calendar:
+    post:
+      tags:
+      - openapi-stock-tools
+      summary: Stock Earnings Calendar
+      description: Query stock earnings calendar by area and date range
+      operationId: stock_earnings_calendar_reportify_api_v1_stock_earnings_calendar_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StockEarningsCalendarInput'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StockAPIResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - BearerAuth: []
   /v1/chat/completion:
     post:
       tags:
@@ -1676,6 +1756,23 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
+    ErrorResponse:
+      properties:
+        status:
+          type: integer
+          title: Status
+          description: HTTP status code
+        code:
+          type: integer
+          title: Code
+          description: Error code
+        message:
+          type: string
+          title: Message
+          description: Error message
+      type: object
+      title: ErrorResponse
+      description: Standard error response
     OAIChannelDocPagination:
       properties:
         total_count:
@@ -3494,6 +3591,55 @@ components:
       type: object
       title: StockScreenerInput
       description: Input schema for stock screener
+    StockIPOCalendarHKInput:
+      properties:
+        status:
+          type: string
+          enum:
+          - Priced
+          - Hearing
+          - Filing
+          title: Status
+          description: 'IPO status: Priced, Hearing, or Filing'
+          example: Hearing
+      type: object
+      required:
+      - status
+      title: StockIPOCalendarHKInput
+      description: Input schema for StockIPOCalendarHKTool
+    StockEarningsCalendarInput:
+      properties:
+        area:
+          type: string
+          enum:
+          - cn
+          - hk
+          - us
+          title: Area
+          description: 'Market area: cn, hk, or us'
+          example: cn
+        symbol:
+          type: string
+          title: Symbol
+          description: Stock symbol (optional)
+          example: '000300'
+        start_date:
+          type: string
+          title: Start Date
+          description: Start date (YYYY-MM-DD)
+          example: '2025-11-20'
+        end_date:
+          type: string
+          title: End Date
+          description: End date (YYYY-MM-DD)
+          example: '2025-12-31'
+      type: object
+      required:
+      - area
+      - start_date
+      - end_date
+      title: StockEarningsCalendarInput
+      description: Input schema for StockEarningsCalendarTool
     StockAPIResponse:
       properties:
         status:
