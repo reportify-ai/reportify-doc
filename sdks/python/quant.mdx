@@ -1,339 +1,394 @@
 ---
-title: '量化分析'
-description: 'Python SDK 量化分析模块 - 技术指标、因子、行情和回测'
-icon: 'chart-mixed'
+title: "量化分析"
+description: "技术指标、因子计算、行情数据和回测功能"
+icon: "chart-mixed"
 ---
 
-<Note>
-量化分析模块的方法返回 **pandas DataFrame**，方便进行数据分析和可视化。
-</Note>
+# Quant Module
 
-## 概述
+`quant` 模块提供量化分析工具，包括技术指标计算、因子分析、OHLCV 行情数据和策略回测。
 
-量化分析模块提供以下功能：
-- **技术指标** - MA, RSI, MACD, 布林带等
-- **因子数据** - 动量、价值、质量、规模等因子
-- **行情数据** - 实时行情和历史 OHLCV
-- **回测引擎** - 策略回测和绩效分析
+公式语法基于 Mai-language，兼容通达信/同花顺。
 
----
-
-## 技术指标
-
-### indicators()
-
-获取技术指标数据。
+## 快速开始
 
 ```python
-df = client.quant.indicators(
-    symbols=["US:AAPL", "US:MSFT"],
-    indicators=["ma", "rsi", "macd"],
-    start_date="2024-01-01",
-    params={"ma_period": 20, "rsi_period": 14}
+from reportify_sdk import Reportify
+
+client = Reportify(api_key="your-api-key")
+
+# 计算 RSI 指标
+df = client.quant.compute_indicators(["000001"], "RSI(14)")
+
+# 因子选股
+stocks = client.quant.screen(formula="RSI(14) < 30")
+
+# 获取 OHLCV 数据
+ohlcv = client.quant.ohlcv("000001")
+
+# 策略回测
+result = client.quant.backtest(
+    symbol="000001",
+    formula="CROSS(MA(5), MA(20))",
+    start_date="2023-01-01",
+    end_date="2024-01-01"
 )
-print(df[["close", "ma_20", "rsi_14", "macd"]])
 ```
 
-<ParamField path="symbols" type="list[str]" required>
-  股票代码列表，格式：`市场:代码`
-</ParamField>
-
-<ParamField path="indicators" type="list[str]" required>
-  指标名称列表，如 `ma`, `rsi`, `macd`, `bollinger`, `atr`, `obv`
-</ParamField>
-
-<ParamField path="start_date" type="str">
-  开始日期 (YYYY-MM-DD)
-</ParamField>
-
-<ParamField path="end_date" type="str">
-  结束日期 (YYYY-MM-DD)
-</ParamField>
-
-<ParamField path="interval" type="str" default="1d">
-  数据周期：`1d`（日线）, `1w`（周线）, `1m`（月线）
-</ParamField>
-
-<ParamField path="params" type="dict">
-  指标参数，如 `{"ma_period": 20, "rsi_period": 14}`
-</ParamField>
-
 ---
 
-### indicator_list()
+## 指标 (Indicators)
 
-获取可用指标列表。
+### list_indicators()
+
+获取可用技术指标列表。
 
 ```python
-indicators = client.quant.indicator_list()
+indicators = client.quant.list_indicators()
+
 for ind in indicators:
     print(f"{ind['name']}: {ind['description']}")
+    print(f"  输出字段: {ind['fields']}")
 ```
+
+**返回字段：**
+- `name`: 指标名称（如 MACD, RSI, KDJ）
+- `description`: 指标描述
+- `fields`: 输出字段（如 MACD 返回 ["dif", "dea", "macd"]）
 
 ---
 
-## 因子数据
+### compute_indicators()
 
-### factors()
-
-获取因子数据。
+计算技术指标值。
 
 ```python
-df = client.quant.factors(
-    symbols=["US:AAPL", "US:MSFT", "US:GOOGL"],
-    factors=["momentum", "value", "quality"],
-    frequency="monthly"
+df = client.quant.compute_indicators(
+    symbols=["000001", "600519"],
+    formula="RSI(14)",
+    market="cn",           # 可选，默认 "cn"
+    start_date="2024-01-01",  # 可选
+    end_date="2024-06-01"     # 可选
 )
 ```
 
-<ParamField path="symbols" type="list[str]" required>
-  股票代码列表
-</ParamField>
+**参数：**
 
-<ParamField path="factors" type="list[str]" required>
-  因子名称列表，如 `momentum`, `value`, `quality`, `size`, `volatility`
-</ParamField>
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `symbols` | `list[str]` | 是 | 股票代码列表 |
+| `formula` | `str` | 是 | 指标公式 |
+| `market` | `str` | 否 | 市场（cn/hk/us），默认 cn |
+| `start_date` | `str` | 否 | 开始日期，默认 3 个月前 |
+| `end_date` | `str` | 否 | 结束日期，默认今天 |
 
-<ParamField path="start_date" type="str">
-  开始日期
-</ParamField>
-
-<ParamField path="end_date" type="str">
-  结束日期
-</ParamField>
-
-<ParamField path="frequency" type="str" default="daily">
-  数据频率：`daily`, `weekly`, `monthly`
-</ParamField>
-
----
-
-### factor_exposure()
-
-获取因子暴露度。
+**公式示例：**
 
 ```python
-exposure = client.quant.factor_exposure(
-    symbols=["US:AAPL", "US:GOOGL", "US:TSLA"]
-)
-print(exposure[["symbol", "momentum", "value", "quality"]])
+# RSI 指标
+df = client.quant.compute_indicators(["000001"], "RSI(14)")
+print(df[["symbol", "date", "rsi"]])
+
+# MACD 指标（默认参数）
+df = client.quant.compute_indicators(["000001"], "MACD()")
+print(df[["symbol", "date", "dif", "dea", "macd"]])
+
+# MACD 指标（自定义参数）
+df = client.quant.compute_indicators(["000001"], "MACD(12, 26, 9)")
+
+# KDJ 指标
+df = client.quant.compute_indicators(["000001"], "KDJ(9, 3, 3)")
+print(df[["symbol", "date", "k", "d", "j"]])
+
+# 布林带
+df = client.quant.compute_indicators(["000001"], "BOLL(20, 2)")
+print(df[["symbol", "date", "upper", "mid", "lower"]])
 ```
 
-<ParamField path="symbols" type="list[str]" required>
-  股票代码列表
-</ParamField>
-
-<ParamField path="date" type="str">
-  指定日期，默认最新
-</ParamField>
-
 ---
 
-### factor_list()
+## 因子 (Factors)
 
-获取可用因子列表。
+### list_factors()
+
+获取可用因子列表（变量和函数）。
 
 ```python
-factors = client.quant.factor_list()
+factors = client.quant.list_factors()
+
 for f in factors:
-    print(f"{f['name']}: {f['category']}")
+    print(f"{f['name']} ({f['type']}, level {f['level']}): {f['description']}")
 ```
+
+**因子分级：**
+- **Level 0 变量**: CLOSE, OPEN, HIGH, LOW, VOLUME 及别名
+- **Level 0 函数**: MA, EMA, REF, HHV, LLV, STD 等核心函数
+- **Level 1 函数**: CROSS, COUNT, EVERY 等应用函数
+- **Level 2 函数**: MACD, KDJ, RSI, BOLL 等技术指标
 
 ---
 
-## 行情数据
+### compute_factors()
 
-### quotes()
-
-获取实时行情。
+计算因子值，使用 Mai-language 语法。
 
 ```python
-quotes = client.quant.quotes(
-    symbols=["US:AAPL", "US:MSFT", "US:GOOGL"]
-)
-print(quotes[["symbol", "price", "change", "volume"]])
-```
-
-<ParamField path="symbols" type="list[str]" required>
-  股票代码列表
-</ParamField>
-
-<ParamField path="fields" type="list[str]">
-  指定返回字段
-</ParamField>
-
----
-
-### quotes_history()
-
-获取历史行情数据。
-
-```python
-history = client.quant.quotes_history(
-    symbols=["US:AAPL"],
+df = client.quant.compute_factors(
+    symbols=["000001"],
+    formula="RSI(14)",
+    market="cn",
     start_date="2024-01-01",
-    end_date="2024-06-30",
-    interval="1d",
-    adjust="forward"
+    end_date="2024-06-01"
 )
-print(history[["open", "high", "low", "close", "volume"]])
 ```
 
-<ParamField path="symbols" type="list[str]" required>
-  股票代码列表
-</ParamField>
+**公式示例：**
 
-<ParamField path="start_date" type="str">
-  开始日期
-</ParamField>
+```python
+# 简单指标
+df = client.quant.compute_factors(["000001"], "RSI(14)")
 
-<ParamField path="end_date" type="str">
-  结束日期
-</ParamField>
+# 获取 MACD 的 DIF 线
+df = client.quant.compute_factors(["000001"], "MACD().dif")
 
-<ParamField path="interval" type="str" default="1d">
-  数据周期：`1d`, `1w`, `1m`
-</ParamField>
+# 收盘价是否高于 20 日均线（布尔值）
+df = client.quant.compute_factors(["000001"], "CLOSE > MA(20)")
 
-<ParamField path="adjust" type="str" default="forward">
-  复权类型：`forward`（前复权）, `backward`（后复权）, `none`（不复权）
-</ParamField>
+# MA20 偏离度（百分比）
+df = client.quant.compute_factors(["000001"], "(CLOSE - MA(20)) / MA(20) * 100")
 
-<ParamField path="limit" type="int" default="100">
-  每个股票返回的最大记录数
-</ParamField>
+# 复合条件
+df = client.quant.compute_factors(["000001"], "(CLOSE > MA(20)) & (MA(20) > MA(60))")
+```
+
+**支持的运算符：**
+
+| 类型 | 运算符 | 说明 |
+|------|--------|------|
+| 比较 | `>`, `<`, `>=`, `<=`, `==`, `!=` | 比较运算 |
+| 逻辑与 | `&` | 注意：不是 `AND` |
+| 逻辑或 | `\|` | 注意：不是 `OR` |
+| 算术 | `+`, `-`, `*`, `/` | 四则运算 |
+
+**支持的变量：**
+
+| 变量 | 别名 | 说明 |
+|------|------|------|
+| `CLOSE` | `C` | 收盘价 |
+| `OPEN` | `O` | 开盘价 |
+| `HIGH` | `H` | 最高价 |
+| `LOW` | `L` | 最低价 |
+| `VOLUME` | `V`, `VOL` | 成交量 |
 
 ---
 
-## 回测
+### screen()
+
+因子选股，筛选满足条件的股票。
+
+```python
+stocks = client.quant.screen(
+    formula="RSI(14) < 30",
+    market="cn",            # 可选
+    check_date="2024-06-01",  # 可选，默认最新交易日
+    symbols=None              # 可选，None 表示全市场
+)
+```
+
+**参数：**
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `formula` | `str` | 是 | 选股公式 |
+| `market` | `str` | 否 | 市场，默认 cn |
+| `check_date` | `str` | 否 | 检查日期，默认最新交易日 |
+| `symbols` | `list[str]` | 否 | 股票池，None 表示全市场 |
+
+**选股示例：**
+
+```python
+# RSI 超卖
+stocks = client.quant.screen(formula="RSI(14) < 30")
+
+# 金叉
+stocks = client.quant.screen(formula="CROSS(MA(5), MA(10))")
+
+# 上升趋势
+stocks = client.quant.screen(formula="(CLOSE > MA(20)) & (MA(20) > MA(60))")
+
+# 突破布林带上轨
+stocks = client.quant.screen(formula="CLOSE > BOLL(20, 2).upper")
+
+# 在指定股票池中筛选
+stocks = client.quant.screen(
+    formula="RSI(14) < 30",
+    symbols=["000001", "600519", "000002"]
+)
+```
+
+---
+
+## 行情 (Quotes)
+
+### ohlcv()
+
+获取单个股票的 OHLCV 日线数据。
+
+```python
+df = client.quant.ohlcv(
+    symbol="000001",
+    market="cn",
+    start_date="2024-01-01",
+    end_date="2024-06-01"
+)
+
+print(df[["date", "open", "high", "low", "close", "volume"]])
+```
+
+**参数：**
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `symbol` | `str` | 是 | 股票代码 |
+| `market` | `str` | 否 | 市场，默认 cn |
+| `start_date` | `str` | 否 | 开始日期，默认 1 个月前 |
+| `end_date` | `str` | 否 | 结束日期，默认今天 |
+
+---
+
+### ohlcv_batch()
+
+批量获取多个股票的 OHLCV 数据。
+
+```python
+df = client.quant.ohlcv_batch(
+    symbols=["000001", "600519", "000002"],
+    market="cn",
+    start_date="2024-01-01",
+    end_date="2024-06-01"
+)
+
+print(df[["symbol", "date", "close", "volume"]])
+```
+
+数据按日期（降序）、股票代码排序。
+
+---
+
+## 回测 (Backtest)
 
 ### backtest()
 
-运行策略回测。
+执行策略回测。
 
 ```python
 result = client.quant.backtest(
-    strategy={
-        "type": "momentum",
-        "universe": ["US:AAPL", "US:MSFT", "US:GOOGL", "US:AMZN", "US:META"],
-        "rebalance": "monthly",
-        "top_n": 3,
-        "lookback": 60  # 60天动量
-    },
-    start_date="2020-01-01",
+    symbol="000001",
+    formula="CROSS(MA(5), MA(20))",  # 金叉买入信号
+    start_date="2023-01-01",
     end_date="2024-01-01",
-    initial_capital=1000000,
-    benchmark="US:SPY"
+    market="cn",
+    initial_cash=100000,  # 初始资金
+    commission=0.0003,    # 佣金费率
+    stop_loss=0.05,       # 止损 5%
+    sizer_percent=99,     # 仓位 99%
+    auto_close=True       # 自动平仓
+)
+```
+
+**参数：**
+
+| 参数 | 类型 | 必填 | 默认值 | 说明 |
+|------|------|------|--------|------|
+| `symbol` | `str` | 是 | - | 股票代码 |
+| `formula` | `str` | 是 | - | 策略公式 |
+| `start_date` | `str` | 是 | - | 回测开始日期 |
+| `end_date` | `str` | 是 | - | 回测结束日期 |
+| `market` | `str` | 否 | cn | 市场 |
+| `initial_cash` | `float` | 否 | 100000 | 初始资金 |
+| `commission` | `float` | 否 | 0 | 佣金费率 |
+| `stop_loss` | `float` | 否 | 0 | 止损比例（0 表示不设置） |
+| `sizer_percent` | `int` | 否 | 99 | 仓位百分比 |
+| `auto_close` | `bool` | 否 | True | 是否自动平仓 |
+
+**返回结果：**
+
+```python
+{
+    "success": True,
+    "initial_cash": 100000,
+    "final_cash": 115000,
+    "total_return": 15000,
+    "total_return_pct": 0.15,
+    "max_drawdown": 0.08,
+    "profit_factor": 1.5,
+    "win_rate": 0.6,
+    "total_trades": 10,
+    "trades": [...]
+}
+```
+
+**使用示例：**
+
+```python
+# 金叉策略回测
+result = client.quant.backtest(
+    symbol="000001",
+    formula="CROSS(MA(5), MA(20))",
+    start_date="2023-01-01",
+    end_date="2024-01-01"
 )
 
-print(f"Total Return: {result['metrics']['total_return']:.2%}")
-print(f"Sharpe Ratio: {result['metrics']['sharpe_ratio']:.2f}")
-print(f"Max Drawdown: {result['metrics']['max_drawdown']:.2%}")
-```
-
-<ParamField path="strategy" type="dict" required>
-  策略配置，包含 `type`, `universe`, `rebalance` 等参数
-</ParamField>
-
-<ParamField path="start_date" type="str" required>
-  回测开始日期 (YYYY-MM-DD)
-</ParamField>
-
-<ParamField path="end_date" type="str" required>
-  回测结束日期 (YYYY-MM-DD)
-</ParamField>
-
-<ParamField path="initial_capital" type="float" default="1000000">
-  初始资金
-</ParamField>
-
-<ParamField path="benchmark" type="str">
-  基准标的，如 `US:SPY`
-</ParamField>
-
----
-
-### backtest_result()
-
-获取回测结果。
-
-```python
-result = client.quant.backtest_result("bt_abc123")
-print(result["metrics"])
-```
-
----
-
-### backtest_returns()
-
-获取回测收益序列。
-
-```python
-returns = client.quant.backtest_returns("bt_abc123")
-print(returns[["portfolio_value", "daily_return", "cumulative_return"]])
-
-# 绘制收益曲线
-returns["cumulative_return"].plot(title="Portfolio Returns")
-```
-
----
-
-### backtest_trades()
-
-获取回测交易记录。
-
-```python
-trades = client.quant.backtest_trades("bt_abc123")
-print(trades[["date", "symbol", "action", "quantity", "price", "value"]])
+print(f"总收益: {result['total_return']:.2f}")
+print(f"收益率: {result['total_return_pct']:.2%}")
+print(f"最大回撤: {result['max_drawdown']:.2%}")
+print(f"胜率: {result['win_rate']:.2%}")
+print(f"盈亏比: {result['profit_factor']:.2f}")
+print(f"交易次数: {result['total_trades']}")
 ```
 
 ---
 
 ## 完整示例
 
+### 技术分析工作流
+
 ```python
 from reportify_sdk import Reportify
-import matplotlib.pyplot as plt
 
 client = Reportify(api_key="your-api-key")
 
-# 1. 获取技术指标
-indicators = client.quant.indicators(
-    symbols=["US:AAPL"],
-    indicators=["ma", "rsi"],
-    start_date="2024-01-01",
-    params={"ma_period": 20}
-)
+# 1. 获取股票数据
+df = client.quant.ohlcv("000001", start_date="2024-01-01")
 
-# 2. 绘制价格和MA
-fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 8), sharex=True)
-ax1.plot(indicators.index, indicators["close"], label="Price")
-ax1.plot(indicators.index, indicators["ma_20"], label="MA(20)")
-ax1.legend()
-ax1.set_title("AAPL Price with MA(20)")
+# 2. 计算多个指标
+rsi = client.quant.compute_indicators(["000001"], "RSI(14)")
+macd = client.quant.compute_indicators(["000001"], "MACD()")
+boll = client.quant.compute_indicators(["000001"], "BOLL(20, 2)")
 
-# 3. 绘制RSI
-ax2.plot(indicators.index, indicators["rsi_14"])
-ax2.axhline(y=70, color='r', linestyle='--')
-ax2.axhline(y=30, color='g', linestyle='--')
-ax2.set_title("RSI(14)")
+# 3. 合并数据
+import pandas as pd
+data = df.merge(rsi[["date", "rsi"]], on="date")
+data = data.merge(macd[["date", "dif", "dea", "macd"]], on="date")
+data = data.merge(boll[["date", "upper", "mid", "lower"]], on="date")
 
-plt.tight_layout()
-plt.show()
+print(data.tail())
+```
 
-# 4. 运行回测
-result = client.quant.backtest(
-    strategy={
-        "type": "momentum",
-        "universe": ["US:AAPL", "US:MSFT", "US:GOOGL"],
-        "rebalance": "monthly",
-        "top_n": 2
-    },
-    start_date="2022-01-01",
-    end_date="2024-01-01",
-    benchmark="US:SPY"
-)
+### 选股并回测
 
-print(f"总收益: {result['metrics']['total_return']:.2%}")
-print(f"夏普比率: {result['metrics']['sharpe_ratio']:.2f}")
+```python
+# 1. 选股：RSI 超卖
+oversold_stocks = client.quant.screen(formula="RSI(14) < 30")
+print(f"发现 {len(oversold_stocks)} 只超卖股票")
+
+# 2. 对每只股票进行回测
+for stock in oversold_stocks[:5]:  # 取前 5 只
+    result = client.quant.backtest(
+        symbol=stock["symbol"],
+        formula="CROSS(RSI(14), 30)",  # RSI 上穿 30 买入
+        start_date="2023-01-01",
+        end_date="2024-01-01"
+    )
+    print(f"{stock['symbol']}: 收益率 {result['total_return_pct']:.2%}")
 ```

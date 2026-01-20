@@ -34,7 +34,7 @@ mode: 'show'
 #### cURL 示例
 
 ```bash
-curl -X POST "https://api.example.com/v1/agent/conversations/683242877840089/messages/019b24ef238cc97730971a9a0080c99c/cancel" \
+curl -X POST "https://api.reportify.cn/v1/agent/conversations/683242877840089/messages/019b24ef238cc97730971a9a0080c99c/cancel" \
   -H "Authorization: Bearer YOUR_API_KEY"
 ```
 
@@ -43,7 +43,7 @@ curl -X POST "https://api.example.com/v1/agent/conversations/683242877840089/mes
 ```python
 import requests
 
-url = "https://api.example.com/v1/agent/conversations/683242877840089/messages/019b24ef238cc97730971a9a0080c99c/cancel"
+url = "https://api.reportify.cn/v1/agent/conversations/683242877840089/messages/019b24ef238cc97730971a9a0080c99c/cancel"
 headers = {
     "Authorization": "Bearer YOUR_API_KEY"
 }
@@ -62,7 +62,7 @@ import requests
 import time
 
 # 1. 发起对话
-chat_url = "https://api.example.com/v1/agent/conversations/683242877840089/chat"
+chat_url = "https://api.reportify.cn/v1/agent/conversations/683242877840089/chat"
 headers = {
     "Authorization": "Bearer YOUR_API_KEY",
     "Content-Type": "application/json"
@@ -79,7 +79,7 @@ assistant_message_id = response.headers.get('X-REPORTIFY-ASSISTANT-MESSAGE-ID')
 time.sleep(5)
 
 # 3. 取消执行
-cancel_url = f"https://api.example.com/v1/agent/conversations/683242877840089/messages/{assistant_message_id}/cancel"
+cancel_url = f"https://api.reportify.cn/v1/agent/conversations/683242877840089/messages/{assistant_message_id}/cancel"
 cancel_response = requests.post(cancel_url, headers=headers)
 print(cancel_response.json())
 ```

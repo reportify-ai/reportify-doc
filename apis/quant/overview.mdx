@@ -1,61 +1,133 @@
 ---
 title: '量化分析介绍'
-description: '量化分析 API - 技术指标、因子数据、行情和回测'
+description: '量化分析 API - 技术指标、因子选股、行情数据和策略回测'
 icon: 'book-open'
 ---
 
 ## 概述
 
-量化分析 API 提供专业的量化投资工具，包括：
+量化分析 API 提供专业的量化投资工具，支持技术指标计算、因子选股、行情数据查询和策略回测。
 
 <CardGroup cols={2}>
   <Card title="技术指标" icon="chart-line" href="/apis/quant/indicators">
-    获取 MA、RSI、MACD、布林带等技术指标数据
+    计算 RSI、MACD、KDJ、BOLL 等技术指标数据
   </Card>
-  <Card title="因子数据" icon="database" href="/apis/quant/factors">
-    获取动量、价值、质量、规模等因子数据
+  <Card title="因子选股" icon="filter" href="/apis/quant/factors">
+    因子计算和基于因子公式的股票筛选
   </Card>
   <Card title="行情数据" icon="chart-candlestick" href="/apis/quant/quotes">
-    实时行情和历史 OHLCV 数据
+    获取 OHLCV 日线数据（单只或批量）
   </Card>
   <Card title="策略回测" icon="flask" href="/apis/quant/backtest">
     运行策略回测并获取绩效分析
   </Card>
 </CardGroup>
 
-## 支持的技术指标
+## 公式语法
 
-| 指标 | 代码 | 描述 |
+量化 API 使用类似通达信/同花顺的 Mai 语言公式语法。
+
+### 支持的变量
+
+| 变量 | 别名 | 描述 |
 |------|------|------|
-| 移动平均线 | `ma` | Simple Moving Average |
-| 指数移动平均 | `ema` | Exponential Moving Average |
-| 相对强弱指数 | `rsi` | Relative Strength Index |
-| MACD | `macd` | Moving Average Convergence Divergence |
-| 布林带 | `bollinger` | Bollinger Bands |
-| 平均真实波幅 | `atr` | Average True Range |
-| 成交量加权 | `obv` | On-Balance Volume |
-| 随机指标 | `kdj` | Stochastic Oscillator |
+| `CLOSE` | `C` | 收盘价 |
+| `OPEN` | `O` | 开盘价 |
+| `HIGH` | `H` | 最高价 |
+| `LOW` | `L` | 最低价 |
+| `VOLUME` | `V`, `VOL` | 成交量 |
 
-## 支持的因子
+### 支持的运算符
 
-| 因子 | 代码 | 描述 |
-|------|------|------|
-| 动量因子 | `momentum` | 价格动量 |
-| 价值因子 | `value` | 估值指标 |
-| 质量因子 | `quality` | 盈利质量 |
-| 规模因子 | `size` | 市值规模 |
-| 波动因子 | `volatility` | 价格波动 |
-| 成长因子 | `growth` | 成长性指标 |
+| 类型 | 运算符 | 示例 |
+|------|--------|------|
+| 比较 | `>`, `<`, `>=`, `<=`, `==`, `!=` | `CLOSE > MA(20)` |
+| 逻辑与 | `&` | `(RSI(14) < 30) & (CLOSE > MA(20))` |
+| 逻辑或 | `\|` | `(RSI(14) < 30) \| (RSI(14) > 70)` |
+| 算术 | `+`, `-`, `*`, `/` | `(CLOSE - MA(20)) / MA(20) * 100` |
+
+### 支持的函数
+
+<AccordionGroup>
+  <Accordion title="Level 0 - 基础函数">
+    | 函数 | 描述 | 示例 |
+    |------|------|------|
+    | `MA(N)` | N 日简单移动平均 | `MA(20)` |
+    | `EMA(N)` | N 日指数移动平均 | `EMA(12)` |
+    | `SMA(N, M)` | 平滑移动平均 | `SMA(9, 1)` |
+    | `REF(X, N)` | 引用 N 天前的值 | `REF(CLOSE, 1)` |
+    | `HHV(X, N)` | N 周期最高值 | `HHV(HIGH, 20)` |
+    | `LLV(X, N)` | N 周期最低值 | `LLV(LOW, 20)` |
+    | `STD(X, N)` | N 周期标准差 | `STD(CLOSE, 20)` |
+    | `SUM(X, N)` | N 周期求和 | `SUM(VOLUME, 5)` |
+    | `ABS(X)` | 绝对值 | `ABS(CLOSE - OPEN)` |
+    | `MAX(X, Y)` | 取最大值 | `MAX(CLOSE, OPEN)` |
+    | `MIN(X, Y)` | 取最小值 | `MIN(CLOSE, OPEN)` |
+    | `IF(C, A, B)` | 条件选择 | `IF(CLOSE > OPEN, 1, 0)` |
+  </Accordion>
+  
+  <Accordion title="Level 1 - 应用函数">
+    | 函数 | 描述 | 示例 |
+    |------|------|------|
+    | `CROSS(A, B)` | A 上穿 B | `CROSS(MA(5), MA(10))` |
+    | `CROSSDOWN(A, B)` | A 下穿 B | `CROSSDOWN(MA(5), MA(10))` |
+    | `COUNT(X, N)` | N 周期内满足条件的天数 | `COUNT(CLOSE > OPEN, 10)` |
+    | `EVERY(X, N)` | N 周期内全部满足条件 | `EVERY(CLOSE > MA(20), 5)` |
+    | `EXIST(X, N)` | N 周期内存在满足条件 | `EXIST(CLOSE > HHV(HIGH, 60), 5)` |
+    | `BARSLAST(X)` | 上次满足条件到现在的周期数 | `BARSLAST(CROSS(MA(5), MA(10)))` |
+  </Accordion>
+  
+  <Accordion title="Level 2 - 技术指标">
+    | 函数 | 描述 | 返回字段 |
+    |------|------|----------|
+    | `RSI(N)` | 相对强弱指数 | `rsi` |
+    | `MACD(S, L, M)` | MACD 指标 | `dif`, `dea`, `macd` |
+    | `KDJ(N, M1, M2)` | KDJ 随机指标 | `k`, `d`, `j` |
+    | `BOLL(N, P)` | 布林带 | `upper`, `mid`, `lower` |
+    | `WR(N)` | 威廉指标 | `wr` |
+    | `ATR(N)` | 平均真实波幅 | `atr` |
+    | `CCI(N)` | 商品通道指数 | `cci` |
+    | `BIAS(N)` | 乖离率 | `bias` |
+    | `PSY(N)` | 心理线 | `psy` |
+  </Accordion>
+</AccordionGroup>
 
 ## 股票代码格式
 
-所有 API 使用统一的股票代码格式：`市场:代码`
+| 市场 | market 参数 | 股票代码示例 |
+|------|-------------|--------------|
+| A 股 | `cn` | `000001`, `600519`, `688001` |
+| 港股 | `hk` | `00700`, `09988` |
+| 美股 | `us` | `AAPL`, `TSLA`, `NVDA` |
 
-| 市场 | 格式 | 示例 |
-|------|------|------|
-| 美股 | `US:代码` | `US:AAPL`, `US:TSLA` |
-| 港股 | `HK:代码` | `HK:00700`, `HK:09988` |
-| A股 | `CN:代码` | `CN:600519`, `CN:000001` |
+<Note>
+市场参数默认为 `cn`（A 股市场）。股票代码不需要带市场前缀，通过 `market` 参数指定市场。
+</Note>
+
+## 公式示例
+
+```python
+# RSI 超卖
+"RSI(14) < 30"
+
+# 金叉
+"CROSS(MA(5), MA(10))"
+
+# MACD DIF 线
+"MACD().dif"
+
+# 收盘价偏离 20 日均线的百分比
+"(CLOSE - MA(20)) / MA(20) * 100"
+
+# RSI 超卖且价格在 20 日均线上方
+"(RSI(14) < 30) & (CLOSE > MA(20))"
+
+# 价格突破布林带上轨
+"CLOSE > BOLL(20, 2).upper"
+
+# 多头排列：5日线 > 10日线 > 20日线
+"(MA(5) > MA(10)) & (MA(10) > MA(20))"
+```
 
 ## 错误码
 

@@ -1,0 +1,238 @@
+---
+title: '批量获取 OHLCV 数据'
+description: '批量获取多只股票的 OHLCV 日线数据'
+api: 'POST /v1/quant/quotes/ohlcv/batch'
+---
+
+批量获取多只股票的 OHLCV（开高低收量）日线数据。
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://api.reportify.cn/v1/quant/quotes/ohlcv/batch \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "market": "cn",
+    "symbols": ["000001", "000002", "600519"],
+    "start_date": "2026-01-01",
+    "end_date": "2026-01-10"
+  }'
+```
+
+```python Python
+import requests
+
+response = requests.post(
+    "https://api.reportify.cn/v1/quant/quotes/ohlcv/batch",
+    headers={"Authorization": "Bearer <token>"},
+    json={
+        "market": "cn",
+        "symbols": ["000001", "000002", "600519"],
+        "start_date": "2026-01-01",
+        "end_date": "2026-01-10"
+    }
+)
+print(response.json())
+```
+
+```typescript TypeScript
+const response = await fetch('https://api.reportify.cn/v1/quant/quotes/ohlcv/batch', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer <token>',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    market: 'cn',
+    symbols: ['000001', '000002', '600519'],
+    start_date: '2026-01-01',
+    end_date: '2026-01-10'
+  })
+});
+const data = await response.json();
+```
+
+</CodeGroup>
+
+## 请求参数
+
+<ParamField body="market" type="string" default="cn">
+  股票市场：`cn`（A股）, `hk`（港股）, `us`（美股）
+</ParamField>
+
+<ParamField body="symbols" type="string[]" required>
+  股票代码列表（至少 1 个）
+</ParamField>
+
+<ParamField body="start_date" type="string">
+  开始日期，格式：`YYYY-MM-DD`（默认：1 个月前）
+</ParamField>
+
+<ParamField body="end_date" type="string">
+  结束日期，格式：`YYYY-MM-DD`（默认：今天）
+</ParamField>
+
+## 响应参数
+
+<ResponseField name="datas" type="array">
+  OHLCV 数据列表，按日期（降序）和股票代码排序
+  <Expandable title="数据字段">
+    <ResponseField name="date" type="string">
+      日期
+    </ResponseField>
+    <ResponseField name="symbol" type="string">
+      股票代码
+    </ResponseField>
+    <ResponseField name="open" type="number">
+      开盘价
+    </ResponseField>
+    <ResponseField name="high" type="number">
+      最高价
+    </ResponseField>
+    <ResponseField name="low" type="number">
+      最低价
+    </ResponseField>
+    <ResponseField name="close" type="number">
+      收盘价
+    </ResponseField>
+    <ResponseField name="volume" type="integer">
+      成交量
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="metadata" type="object">
+  查询元数据
+</ResponseField>
+
+## 响应示例
+
+```json
+{
+  "datas": [
+    {
+      "date": "2026-01-10",
+      "symbol": "000001",
+      "open": 12.15,
+      "high": 12.48,
+      "low": 12.10,
+      "close": 12.35,
+      "volume": 98765432
+    },
+    {
+      "date": "2026-01-10",
+      "symbol": "000002",
+      "open": 15.80,
+      "high": 16.20,
+      "low": 15.65,
+      "close": 16.05,
+      "volume": 76543210
+    },
+    {
+      "date": "2026-01-10",
+      "symbol": "600519",
+      "open": 1680.00,
+      "high": 1705.00,
+      "low": 1675.00,
+      "close": 1698.50,
+      "volume": 3456789
+    },
+    {
+      "date": "2026-01-09",
+      "symbol": "000001",
+      "open": 12.00,
+      "high": 12.25,
+      "low": 11.95,
+      "close": 12.15,
+      "volume": 87654321
+    },
+    {
+      "date": "2026-01-09",
+      "symbol": "000002",
+      "open": 15.50,
+      "high": 15.95,
+      "low": 15.40,
+      "close": 15.80,
+      "volume": 65432109
+    },
+    {
+      "date": "2026-01-09",
+      "symbol": "600519",
+      "open": 1665.00,
+      "high": 1688.00,
+      "low": 1660.00,
+      "close": 1680.00,
+      "volume": 2987654
+    }
+  ],
+  "metadata": {
+    "market": "cn",
+    "symbols": ["000001", "000002", "600519"],
+    "start_date": "2026-01-01",
+    "end_date": "2026-01-10",
+    "count": 6
+  }
+}
+```
+
+## 使用示例
+
+### 计算涨跌幅
+
+```python
+import requests
+from collections import defaultdict
+
+response = requests.post(
+    "https://api.reportify.cn/v1/quant/quotes/ohlcv/batch",
+    headers={"Authorization": "Bearer <token>"},
+    json={
+        "market": "cn",
+        "symbols": ["000001", "000002", "600519"],
+        "start_date": "2026-01-08",
+        "end_date": "2026-01-10"
+    }
+)
+data = response.json()
+
+# 按股票分组
+by_symbol = defaultdict(list)
+for row in data["datas"]:
+    by_symbol[row["symbol"]].append(row)
+
+# 计算区间涨跌幅
+for symbol, rows in by_symbol.items():
+    rows.sort(key=lambda x: x["date"])
+    if len(rows) >= 2:
+        change = (rows[-1]["close"] - rows[0]["close"]) / rows[0]["close"] * 100
+        print(f"{symbol}: {change:.2f}%")
+```
+
+### 批量获取港股数据
+
+```python
+response = requests.post(
+    "https://api.reportify.cn/v1/quant/quotes/ohlcv/batch",
+    headers={"Authorization": "Bearer <token>"},
+    json={
+        "market": "hk",
+        "symbols": ["00700", "09988", "09618"],
+        "start_date": "2026-01-01"
+    }
+)
+```
+
+### 批量获取美股数据
+
+```python
+response = requests.post(
+    "https://api.reportify.cn/v1/quant/quotes/ohlcv/batch",
+    headers={"Authorization": "Bearer <token>"},
+    json={
+        "market": "us",
+        "symbols": ["AAPL", "MSFT", "GOOGL", "NVDA"],
+        "start_date": "2026-01-01"
+    }
+)
+```

@@ -172,9 +172,13 @@
             "group": "量化分析接口",
             "icon": "chart-mixed",
             "pages": [
-              "apis/quant/indicators",
-              "apis/quant/factors",
-              "apis/quant/quotes",
+              "apis/quant/indicators_list",
+              "apis/quant/indicators_compute",
+              "apis/quant/factors_list",
+              "apis/quant/factors_compute",
+              "apis/quant/factors_screen",
+              "apis/quant/quotes_ohlcv",
+              "apis/quant/quotes_ohlcv_batch",
               "apis/quant/backtest"
             ]
           }

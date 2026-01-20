@@ -1,0 +1,182 @@
+---
+title: '计算因子数据'
+description: '计算指定股票的因子数据'
+api: 'POST /v1/quant/factors/compute'
+---
+
+计算指定股票的因子数据，支持数值因子和布尔因子。
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://api.reportify.cn/v1/quant/factors/compute \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "market": "cn",
+    "symbols": ["000001", "000002"],
+    "formula": "RSI(14)",
+    "start_date": "2026-01-01",
+    "end_date": "2026-01-10"
+  }'
+```
+
+```python Python
+import requests
+
+response = requests.post(
+    "https://api.reportify.cn/v1/quant/factors/compute",
+    headers={"Authorization": "Bearer <token>"},
+    json={
+        "market": "cn",
+        "symbols": ["000001", "000002"],
+        "formula": "RSI(14)",
+        "start_date": "2026-01-01",
+        "end_date": "2026-01-10"
+    }
+)
+print(response.json())
+```
+
+```typescript TypeScript
+const response = await fetch('https://api.reportify.cn/v1/quant/factors/compute', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer <token>',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    market: 'cn',
+    symbols: ['000001', '000002'],
+    formula: 'RSI(14)',
+    start_date: '2026-01-01',
+    end_date: '2026-01-10'
+  })
+});
+```
+
+</CodeGroup>
+
+## 请求参数
+
+<ParamField body="market" type="string" default="cn">
+  股票市场：`cn`（A股）, `hk`（港股）, `us`（美股）
+</ParamField>
+
+<ParamField body="symbols" type="string[]" required>
+  股票代码列表
+</ParamField>
+
+<ParamField body="formula" type="string" required>
+  因子公式
+</ParamField>
+
+<ParamField body="start_date" type="string">
+  开始日期，格式：`YYYY-MM-DD`（默认：3 个月前）
+</ParamField>
+
+<ParamField body="end_date" type="string">
+  结束日期，格式：`YYYY-MM-DD`（默认：今天）
+</ParamField>
+
+### 公式示例
+
+| 公式 | 类型 | 描述 |
+|------|------|------|
+| `RSI(14)` | 数值 | RSI 指标值 |
+| `MACD().dif` | 数值 | MACD DIF 线 |
+| `CLOSE > MA(20)` | 布尔 | 收盘价高于 20 日均线 |
+| `(CLOSE - MA(20)) / MA(20) * 100` | 数值 | 偏离 MA20 的百分比 |
+
+### 运算符
+
+| 类型 | 运算符 | 示例 |
+|------|--------|------|
+| 比较 | `>`, `<`, `>=`, `<=`, `==`, `!=` | `CLOSE > MA(20)` |
+| 逻辑与 | `&` | `(RSI(14) < 30) & (CLOSE > MA(20))` |
+| 逻辑或 | `\|` | `(RSI(14) < 30) \| (RSI(14) > 70)` |
+| 算术 | `+`, `-`, `*`, `/` | `(CLOSE - MA(20)) / MA(20) * 100` |
+
+## 响应参数
+
+<ResponseField name="datas" type="array">
+  因子数据列表，包含 symbol、date 和因子值
+</ResponseField>
+
+<ResponseField name="metadata" type="object">
+  计算元数据
+</ResponseField>
+
+## 响应示例
+
+### 数值因子
+
+```json
+{
+  "datas": [
+    {
+      "symbol": "000001",
+      "date": "2026-01-10",
+      "value": 58.32
+    },
+    {
+      "symbol": "000001",
+      "date": "2026-01-09",
+      "value": 56.78
+    }
+  ],
+  "metadata": {
+    "formula": "RSI(14)",
+    "market": "cn",
+    "count": 2
+  }
+}
+```
+
+### 布尔因子
+
+```json
+{
+  "datas": [
+    {
+      "symbol": "000001",
+      "date": "2026-01-10",
+      "value": true
+    },
+    {
+      "symbol": "000002",
+      "date": "2026-01-10",
+      "value": false
+    }
+  ],
+  "metadata": {
+    "formula": "CLOSE > MA(20)",
+    "market": "cn",
+    "count": 2
+  }
+}
+```
+
+### MACD DIF 线
+
+```json
+{
+  "datas": [
+    {
+      "symbol": "000001",
+      "date": "2026-01-10",
+      "value": 0.125
+    },
+    {
+      "symbol": "000001",
+      "date": "2026-01-09",
+      "value": 0.118
+    }
+  ],
+  "metadata": {
+    "formula": "MACD().dif",
+    "market": "cn",
+    "count": 2
+  }
+}
+```

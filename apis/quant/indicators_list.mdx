@@ -1,0 +1,117 @@
+---
+title: '获取指标列表'
+description: '获取所有可用的技术指标定义'
+api: 'GET /v1/quant/indicators'
+---
+
+获取所有可用的技术指标定义，包括指标名称、描述和返回字段。
+
+<CodeGroup>
+
+```bash cURL
+curl https://api.reportify.cn/v1/quant/indicators \
+  -H "Authorization: Bearer <token>"
+```
+
+```python Python
+import requests
+
+response = requests.get(
+    "https://api.reportify.cn/v1/quant/indicators",
+    headers={"Authorization": "Bearer <token>"}
+)
+print(response.json())
+```
+
+```typescript TypeScript
+const response = await fetch('https://api.reportify.cn/v1/quant/indicators', {
+  headers: {
+    'Authorization': 'Bearer <token>'
+  }
+});
+const data = await response.json();
+```
+
+</CodeGroup>
+
+## 响应参数
+
+返回 `IndicatorMeta[]` 数组，指标列表。
+
+<Expandable title="IndicatorMeta 字段">
+  <ResponseField name="name" type="string">
+    指标名称，用于公式中（如 MACD, RSI, KDJ）
+  </ResponseField>
+  <ResponseField name="description" type="string">
+    指标描述
+  </ResponseField>
+  <ResponseField name="fields" type="string[]">
+    返回字段名列表（如 MACD 返回 `["dif", "dea", "macd"]`）
+  </ResponseField>
+</Expandable>
+
+## 响应示例
+
+```json
+[
+  {
+    "name": "RSI",
+    "description": "Relative Strength Index",
+    "fields": ["rsi"]
+  },
+  {
+    "name": "MACD",
+    "description": "Moving Average Convergence Divergence",
+    "fields": ["dif", "dea", "macd"]
+  },
+  {
+    "name": "KDJ",
+    "description": "Stochastic Oscillator",
+    "fields": ["k", "d", "j"]
+  },
+  {
+    "name": "BOLL",
+    "description": "Bollinger Bands",
+    "fields": ["upper", "mid", "lower"]
+  },
+  {
+    "name": "WR",
+    "description": "Williams %R",
+    "fields": ["wr"]
+  },
+  {
+    "name": "ATR",
+    "description": "Average True Range",
+    "fields": ["atr"]
+  },
+  {
+    "name": "CCI",
+    "description": "Commodity Channel Index",
+    "fields": ["cci"]
+  },
+  {
+    "name": "BIAS",
+    "description": "Bias Ratio",
+    "fields": ["bias"]
+  },
+  {
+    "name": "PSY",
+    "description": "Psychological Line",
+    "fields": ["psy"]
+  }
+]
+```
+
+## 支持的指标
+
+| 指标 | 公式 | 返回字段 | 描述 |
+|------|------|----------|------|
+| RSI | `RSI(N)` | `rsi` | 相对强弱指数 |
+| MACD | `MACD(S, L, M)` | `dif`, `dea`, `macd` | 指数平滑异同移动平均 |
+| KDJ | `KDJ(N, M1, M2)` | `k`, `d`, `j` | 随机指标 |
+| BOLL | `BOLL(N, P)` | `upper`, `mid`, `lower` | 布林带 |
+| WR | `WR(N)` | `wr` | 威廉指标 |
+| ATR | `ATR(N)` | `atr` | 平均真实波幅 |
+| CCI | `CCI(N)` | `cci` | 商品通道指数 |
+| BIAS | `BIAS(N)` | `bias` | 乖离率 |
+| PSY | `PSY(N)` | `psy` | 心理线 |

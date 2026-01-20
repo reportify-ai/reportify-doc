@@ -1,0 +1,193 @@
+---
+title: '获取 OHLCV 数据'
+description: '获取单只股票的 OHLCV 日线数据'
+api: 'GET /v1/quant/quotes/ohlcv'
+---
+
+获取单只股票的 OHLCV（开高低收量）日线数据。
+
+<CodeGroup>
+
+```bash cURL
+curl "https://api.reportify.cn/v1/quant/quotes/ohlcv?symbol=000001&market=cn&start_date=2026-01-01&end_date=2026-01-10" \
+  -H "Authorization: Bearer <token>"
+```
+
+```python Python
+import requests
+
+response = requests.get(
+    "https://api.reportify.cn/v1/quant/quotes/ohlcv",
+    headers={"Authorization": "Bearer <token>"},
+    params={
+        "symbol": "000001",
+        "market": "cn",
+        "start_date": "2026-01-01",
+        "end_date": "2026-01-10"
+    }
+)
+print(response.json())
+```
+
+```typescript TypeScript
+const params = new URLSearchParams({
+  symbol: '000001',
+  market: 'cn',
+  start_date: '2026-01-01',
+  end_date: '2026-01-10'
+});
+
+const response = await fetch(
+  `https://api.reportify.cn/v1/quant/quotes/ohlcv?${params}`,
+  {
+    headers: {
+      'Authorization': 'Bearer <token>'
+    }
+  }
+);
+const data = await response.json();
+```
+
+</CodeGroup>
+
+## 请求参数
+
+<ParamField query="symbol" type="string" required>
+  股票代码
+</ParamField>
+
+<ParamField query="market" type="string" default="cn">
+  股票市场：`cn`（A股）, `hk`（港股）, `us`（美股）
+</ParamField>
+
+<ParamField query="start_date" type="string">
+  开始日期，格式：`YYYY-MM-DD`（默认：1 个月前）
+</ParamField>
+
+<ParamField query="end_date" type="string">
+  结束日期，格式：`YYYY-MM-DD`（默认：今天）
+</ParamField>
+
+## 响应参数
+
+<ResponseField name="datas" type="array">
+  OHLCV 数据列表，按日期排序
+  <Expandable title="数据字段">
+    <ResponseField name="date" type="string">
+      日期
+    </ResponseField>
+    <ResponseField name="symbol" type="string">
+      股票代码
+    </ResponseField>
+    <ResponseField name="open" type="number">
+      开盘价
+    </ResponseField>
+    <ResponseField name="high" type="number">
+      最高价
+    </ResponseField>
+    <ResponseField name="low" type="number">
+      最低价
+    </ResponseField>
+    <ResponseField name="close" type="number">
+      收盘价
+    </ResponseField>
+    <ResponseField name="volume" type="integer">
+      成交量
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="metadata" type="object">
+  查询元数据
+</ResponseField>
+
+## 响应示例
+
+```json
+{
+  "datas": [
+    {
+      "date": "2026-01-10",
+      "symbol": "000001",
+      "open": 12.15,
+      "high": 12.48,
+      "low": 12.10,
+      "close": 12.35,
+      "volume": 98765432
+    },
+    {
+      "date": "2026-01-09",
+      "symbol": "000001",
+      "open": 12.00,
+      "high": 12.25,
+      "low": 11.95,
+      "close": 12.15,
+      "volume": 87654321
+    },
+    {
+      "date": "2026-01-08",
+      "symbol": "000001",
+      "open": 11.85,
+      "high": 12.10,
+      "low": 11.80,
+      "close": 12.00,
+      "volume": 76543210
+    }
+  ],
+  "metadata": {
+    "symbol": "000001",
+    "market": "cn",
+    "start_date": "2026-01-01",
+    "end_date": "2026-01-10",
+    "count": 3
+  }
+}
+```
+
+## 使用示例
+
+### 获取最近行情
+
+不传日期参数，默认获取最近 1 个月数据：
+
+```python
+import requests
+
+response = requests.get(
+    "https://api.reportify.cn/v1/quant/quotes/ohlcv",
+    headers={"Authorization": "Bearer <token>"},
+    params={"symbol": "600519", "market": "cn"}
+)
+data = response.json()
+
+for row in data["datas"][:5]:
+    print(f"{row['date']}: 开{row['open']} 高{row['high']} 低{row['low']} 收{row['close']}")
+```
+
+### 获取港股数据
+
+```python
+response = requests.get(
+    "https://api.reportify.cn/v1/quant/quotes/ohlcv",
+    headers={"Authorization": "Bearer <token>"},
+    params={
+        "symbol": "00700",
+        "market": "hk",
+        "start_date": "2026-01-01"
+    }
+)
+```
+
+### 获取美股数据
+
+```python
+response = requests.get(
+    "https://api.reportify.cn/v1/quant/quotes/ohlcv",
+    headers={"Authorization": "Bearer <token>"},
+    params={
+        "symbol": "AAPL",
+        "market": "us",
+        "start_date": "2026-01-01"
+    }
+)
+```

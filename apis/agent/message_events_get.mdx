@@ -50,14 +50,14 @@ mode: 'show'
 #### cURL 示例（流式响应）
 
 ```bash
-curl -X GET "https://api.example.com/v1/agent/conversations/683242877840089/messages/019b24ef238cc97730971a9a0080c99c?stream=true&from_offset=9200" \
+curl -X GET "https://api.reportify.cn/v1/agent/conversations/683242877840089/messages/019b24ef238cc97730971a9a0080c99c?stream=true&from_offset=9200" \
   -H "Authorization: Bearer YOUR_API_KEY"
 ```
 
 #### cURL 示例（非流式响应）
 
 ```bash
-curl -X GET "https://api.example.com/v1/agent/conversations/683242877840089/messages/019b24ef238cc97730971a9a0080c99c?stream=false&from_offset=9200" \
+curl -X GET "https://api.reportify.cn/v1/agent/conversations/683242877840089/messages/019b24ef238cc97730971a9a0080c99c?stream=false&from_offset=9200" \
   -H "Authorization: Bearer YOUR_API_KEY"
 ```
 
@@ -66,7 +66,7 @@ curl -X GET "https://api.example.com/v1/agent/conversations/683242877840089/mess
 ```python
 import requests
 
-url = "https://api.example.com/v1/agent/conversations/683242877840089/messages/019b24ef238cc97730971a9a0080c99c"
+url = "https://api.reportify.cn/v1/agent/conversations/683242877840089/messages/019b24ef238cc97730971a9a0080c99c"
 headers = {
     "Authorization": "Bearer YOUR_API_KEY"
 }
@@ -90,7 +90,7 @@ for line in response.iter_lines():
 ```python
 import requests
 
-url = "https://api.example.com/v1/agent/conversations/683242877840089/messages/019b24ef238cc97730971a9a0080c99c"
+url = "https://api.reportify.cn/v1/agent/conversations/683242877840089/messages/019b24ef238cc97730971a9a0080c99c"
 headers = {
     "Authorization": "Bearer YOUR_API_KEY"
 }

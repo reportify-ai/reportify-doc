@@ -1,31 +1,32 @@
 ---
 title: '策略回测'
 description: '运行量化策略回测并获取绩效分析'
-api: 'POST /v2/quant/backtest'
+api: 'POST /v1/quant/backtest'
 ---
 
 ## 运行策略回测
 
-提交策略进行回测，返回绩效指标和交易记录。
+执行策略回测，返回绩效指标和交易记录。
+
+```bash
+POST /v1/quant/backtest
+```
 
 <CodeGroup>
 
 ```bash cURL
-curl -X POST https://api.reportify.cn/v2/quant/backtest \
+curl -X POST https://api.reportify.cn/v1/quant/backtest \
   -H "Authorization: Bearer <token>" \
   -H "Content-Type: application/json" \
   -d '{
-    "strategy": {
-      "type": "momentum",
-      "universe": ["US:AAPL", "US:MSFT", "US:GOOGL", "US:AMZN", "US:META"],
-      "rebalance": "monthly",
-      "top_n": 3,
-      "lookback": 60
-    },
-    "start_date": "2020-01-01",
-    "end_date": "2024-01-01",
-    "initial_capital": 1000000,
-    "benchmark": "US:SPY"
+    "start_date": "2024-01-01",
+    "end_date": "2025-01-01",
+    "market": "cn",
+    "symbol": "000001",
+    "formula": "CROSS(MA(5), MA(10))",
+    "initial_cash": 100000,
+    "commission": 0.0003,
+    "sizer_percent": 99
   }'
 ```
 
@@ -33,41 +34,46 @@ curl -X POST https://api.reportify.cn/v2/quant/backtest \
 import requests
 
 response = requests.post(
-    "https://api.reportify.cn/v2/quant/backtest",
+    "https://api.reportify.cn/v1/quant/backtest",
     headers={"Authorization": "Bearer <token>"},
     json={
-        "strategy": {
-            "type": "momentum",
-            "universe": ["US:AAPL", "US:MSFT", "US:GOOGL", "US:AMZN", "US:META"],
-            "rebalance": "monthly",
-            "top_n": 3,
-            "lookback": 60
-        },
-        "start_date": "2020-01-01",
-        "end_date": "2024-01-01",
-        "initial_capital": 1000000,
-        "benchmark": "US:SPY"
+        "start_date": "2024-01-01",
+        "end_date": "2025-01-01",
+        "market": "cn",
+        "symbol": "000001",
+        "formula": "CROSS(MA(5), MA(10))",
+        "initial_cash": 100000,
+        "commission": 0.0003,
+        "sizer_percent": 99
     }
 )
 print(response.json())
 ```
 
+```typescript TypeScript
+const response = await fetch('https://api.reportify.cn/v1/quant/backtest', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer <token>',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    start_date: '2024-01-01',
+    end_date: '2025-01-01',
+    market: 'cn',
+    symbol: '000001',
+    formula: 'CROSS(MA(5), MA(10))',
+    initial_cash: 100000,
+    commission: 0.0003,
+    sizer_percent: 99
+  })
+});
+const data = await response.json();
+```
+
 </CodeGroup>
 
 ### 请求参数
-
-<ParamField body="strategy" type="object" required>
-  策略配置
-  
-  <Expandable title="策略参数">
-    - `type`: 策略类型（`momentum`, `value`, `equal_weight`, `custom`）
-    - `universe`: 股票池列表
-    - `rebalance`: 调仓频率（`daily`, `weekly`, `monthly`, `quarterly`）
-    - `top_n`: 选股数量
-    - `lookback`: 回看期（天）
-    - `weights`: 自定义权重（可选）
-  </Expandable>
-</ParamField>
 
 <ParamField body="start_date" type="string" required>
   回测开始日期，格式：`YYYY-MM-DD`
@@ -77,39 +83,95 @@ print(response.json())
   回测结束日期，格式：`YYYY-MM-DD`
 </ParamField>
 
-<ParamField body="initial_capital" type="number" default="1000000">
-  初始资金
+<ParamField body="market" type="string" default="cn">
+  股票市场：`cn`（A股）, `hk`（港股）, `us`（美股）
 </ParamField>
 
-<ParamField body="benchmark" type="string">
-  基准标的，如 `US:SPY`
+<ParamField body="symbol" type="string" required>
+  股票代码
+</ParamField>
+
+<ParamField body="formula" type="string" required>
+  交易策略公式，当公式为真时买入
+  
+  <Expandable title="公式示例">
+    - `CROSS(MA(5), MA(10))` - 均线金叉买入
+    - `RSI(14) < 30` - RSI 超卖买入
+    - `CLOSE > BOLL(20, 2).upper` - 突破布林带上轨买入
+    - `(RSI(14) < 30) & (CLOSE > MA(20))` - 组合条件
+  </Expandable>
+</ParamField>
+
+<ParamField body="initial_cash" type="number" default="100000">
+  初始资金（元）
+</ParamField>
+
+<ParamField body="commission" type="number" default="0">
+  佣金费率（如 0.0003 表示万三）
+</ParamField>
+
+<ParamField body="stop_loss" type="number" default="0">
+  止损比例（如 0.1 表示 10% 止损，0 表示不止损）
+</ParamField>
+
+<ParamField body="sizer_percent" type="integer" default="99">
+  仓位百分比（1-100，99 表示每次买入使用 99% 资金）
+</ParamField>
+
+<ParamField body="auto_close" type="boolean" default="true">
+  是否在回测结束时自动平仓
 </ParamField>
 
 ### 响应参数
 
-<ResponseField name="backtest_id" type="string">
-  回测任务 ID，用于查询详细结果
+<ResponseField name="success" type="boolean">
+  回测是否成功
 </ResponseField>
 
-<ResponseField name="status" type="string">
-  任务状态：`pending`, `running`, `completed`, `failed`
+<ResponseField name="initial_cash" type="number">
+  初始资金
 </ResponseField>
 
-<ResponseField name="metrics" type="object">
-  绩效指标（任务完成后返回）
+<ResponseField name="final_cash" type="number">
+  最终资金
+</ResponseField>
+
+<ResponseField name="total_return" type="number">
+  总收益（元）
+</ResponseField>
+
+<ResponseField name="total_return_pct" type="number">
+  总收益率（如 0.156 表示 15.6%）
+</ResponseField>
+
+<ResponseField name="max_drawdown" type="number">
+  最大回撤（如 -0.082 表示 -8.2%）
+</ResponseField>
+
+<ResponseField name="profit_factor" type="number">
+  盈利因子（总盈利 / 总亏损）
+</ResponseField>
+
+<ResponseField name="win_rate" type="number">
+  胜率（如 0.65 表示 65%）
+</ResponseField>
+
+<ResponseField name="total_trades" type="integer">
+  总交易次数
+</ResponseField>
+
+<ResponseField name="trades" type="array">
+  交易详情列表
   
-  <Expandable title="指标字段">
-    - `total_return`: 总收益率
-    - `annualized_return`: 年化收益率
-    - `sharpe_ratio`: 夏普比率
-    - `max_drawdown`: 最大回撤
-    - `win_rate`: 胜率
-    - `volatility`: 波动率
-    - `calmar_ratio`: 卡玛比率
-    - `sortino_ratio`: 索提诺比率
-    - `alpha`: Alpha
-    - `beta`: Beta
-    - `information_ratio`: 信息比率
+  <Expandable title="Trade 字段">
+    - `date`: 交易日期
+    - `action`: 交易动作（`buy` 或 `sell`）
+    - `price`: 成交价格
+    - `size`: 成交数量
+    - `value`: 成交金额
+    - `commission`: 佣金
+    - `pnl`: 盈亏（卖出时）
+    - `pnl_pct`: 盈亏比例
   </Expandable>
 </ResponseField>
 
@@ -117,121 +179,51 @@ print(response.json())
 
 ```json
 {
-  "status": 200,
-  "code": 0,
-  "backtest_id": "bt_abc123def456",
-  "status": "completed",
-  "metrics": {
-    "total_return": 0.856,
-    "annualized_return": 0.168,
-    "sharpe_ratio": 1.25,
-    "max_drawdown": -0.182,
-    "win_rate": 0.58,
-    "volatility": 0.185,
-    "calmar_ratio": 0.92,
-    "sortino_ratio": 1.45,
-    "alpha": 0.052,
-    "beta": 1.12,
-    "information_ratio": 0.68
-  },
-  "summary": {
-    "start_date": "2020-01-01",
-    "end_date": "2024-01-01",
-    "initial_capital": 1000000,
-    "final_value": 1856000,
-    "total_trades": 156,
-    "benchmark_return": 0.625
-  }
-}
-```
-
----
-
-## 获取回测结果
-
-根据回测 ID 获取详细结果。
-
-```bash
-GET /v2/quant/backtest/{backtest_id}
-```
-
-### 路径参数
-
-<ParamField path="backtest_id" type="string" required>
-  回测任务 ID
-</ParamField>
-
----
-
-## 获取收益序列
-
-获取回测的每日收益数据。
-
-```bash
-GET /v2/quant/backtest/{backtest_id}/returns
-```
-
-### 响应示例
-
-```json
-{
-  "status": 200,
-  "code": 0,
-  "data": [
+  "success": true,
+  "initial_cash": 100000,
+  "final_cash": 115600,
+  "total_return": 15600,
+  "total_return_pct": 0.156,
+  "max_drawdown": -0.082,
+  "profit_factor": 2.35,
+  "win_rate": 0.65,
+  "total_trades": 12,
+  "trades": [
     {
-      "date": "2024-01-02",
-      "portfolio_value": 1005230,
-      "daily_return": 0.00523,
-      "cumulative_return": 0.00523,
-      "benchmark_return": 0.00312
-    },
-    {
-      "date": "2024-01-03",
-      "portfolio_value": 1012450,
-      "daily_return": 0.00718,
-      "cumulative_return": 0.01245,
-      "benchmark_return": 0.00856
-    }
-  ]
-}
-```
-
----
-
-## 获取交易记录
-
-获取回测的所有交易记录。
-
-```bash
-GET /v2/quant/backtest/{backtest_id}/trades
-```
-
-### 响应示例
-
-```json
-{
-  "status": 200,
-  "code": 0,
-  "data": [
-    {
-      "date": "2020-01-02",
-      "symbol": "US:AAPL",
+      "date": "2024-01-15",
       "action": "buy",
-      "quantity": 100,
-      "price": 75.50,
-      "value": 7550.00,
-      "commission": 7.55
+      "price": 11.25,
+      "size": 8800,
+      "value": 99000,
+      "commission": 29.7
     },
     {
-      "date": "2020-02-03",
-      "symbol": "US:AAPL",
+      "date": "2024-02-20",
       "action": "sell",
-      "quantity": 100,
-      "price": 82.30,
-      "value": 8230.00,
-      "commission": 8.23,
-      "pnl": 672.22,
-      "return_pct": 0.089
+      "price": 12.50,
+      "size": 8800,
+      "value": 110000,
+      "commission": 33.0,
+      "pnl": 10937.3,
+      "pnl_pct": 0.111
+    },
+    {
+      "date": "2024-03-10",
+      "action": "buy",
+      "price": 12.00,
+      "size": 9100,
+      "value": 109200,
+      "commission": 32.76
+    },
+    {
+      "date": "2024-04-05",
+      "action": "sell",
+      "price": 11.50,
+      "size": 9100,
+      "value": 104650,
+      "commission": 31.4,
+      "pnl": -4614.16,
+      "pnl_pct": -0.042
     }
   ]
 }
@@ -239,57 +231,110 @@ GET /v2/quant/backtest/{backtest_id}/trades
 
 ---
 
-## 策略类型说明
+## 策略公式示例
 
-### 动量策略 (momentum)
+### 均线金叉策略
 
-选择过去 N 天涨幅最大的股票。
+5 日均线上穿 10 日均线时买入：
 
-```json
+```python
 {
-  "type": "momentum",
-  "universe": ["US:AAPL", "US:MSFT", ...],
-  "rebalance": "monthly",
-  "top_n": 5,
-  "lookback": 60
+    "formula": "CROSS(MA(5), MA(10))",
+    "symbol": "000001",
+    "start_date": "2024-01-01",
+    "end_date": "2025-01-01"
 }
 ```
 
-### 价值策略 (value)
+### RSI 超卖策略
 
-选择估值最低（如 PE、PB）的股票。
+RSI 低于 30 时买入：
 
-```json
+```python
 {
-  "type": "value",
-  "universe": ["US:AAPL", "US:MSFT", ...],
-  "rebalance": "quarterly",
-  "top_n": 10,
-  "metric": "pe"
+    "formula": "RSI(14) < 30",
+    "symbol": "600519",
+    "start_date": "2024-01-01",
+    "end_date": "2025-01-01",
+    "stop_loss": 0.1
 }
 ```
 
-### 等权策略 (equal_weight)
+### MACD 金叉策略
 
-等权重买入所有股票。
+MACD DIF 上穿 DEA 时买入：
 
-```json
+```python
 {
-  "type": "equal_weight",
-  "universe": ["US:AAPL", "US:MSFT", "US:GOOGL"],
-  "rebalance": "monthly"
+    "formula": "CROSS(MACD().dif, MACD().dea)",
+    "symbol": "000002",
+    "start_date": "2024-01-01",
+    "end_date": "2025-01-01"
 }
 ```
 
-### 自定义权重 (custom)
+### 布林带突破策略
 
-指定每只股票的权重。
+价格突破布林带上轨时买入：
 
-```json
+```python
 {
-  "type": "custom",
-  "universe": ["US:AAPL", "US:MSFT", "US:GOOGL"],
-  "weights": {"US:AAPL": 0.5, "US:MSFT": 0.3, "US:GOOGL": 0.2},
-  "rebalance": "quarterly"
+    "formula": "CLOSE > BOLL(20, 2).upper",
+    "symbol": "000001",
+    "start_date": "2024-01-01",
+    "end_date": "2025-01-01"
 }
 ```
+
+### 组合条件策略
+
+RSI 超卖且价格在 20 日均线上方：
+
+```python
+{
+    "formula": "(RSI(14) < 30) & (CLOSE > MA(20))",
+    "symbol": "600036",
+    "start_date": "2024-01-01",
+    "end_date": "2025-01-01",
+    "commission": 0.0003,
+    "sizer_percent": 80
+}
+```
+
+---
+
+## 参数说明
+
+### 佣金设置
+
+| 值 | 描述 |
+|----|------|
+| `0` | 不计算佣金 |
+| `0.0003` | 万三（0.03%） |
+| `0.001` | 千一（0.1%） |
+
+### 止损设置
+
+| 值 | 描述 |
+|----|------|
+| `0` | 不设止损 |
+| `0.05` | 5% 止损 |
+| `0.1` | 10% 止损 |
+
+### 仓位设置
+
+| 值 | 描述 |
+|----|------|
+| `99` | 使用 99% 资金（预留部分应对价格波动） |
+| `50` | 使用 50% 资金（半仓操作） |
+| `30` | 使用 30% 资金（轻仓试探） |
+
+---
+
+## 注意事项
+
+<Note>
+- 回测结果仅供参考，历史收益不代表未来表现
+- 回测未考虑滑点、冲击成本等实际交易因素
+- 建议使用合理的佣金和止损参数以更接近真实交易
+</Note>

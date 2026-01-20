@@ -1,0 +1,224 @@
+---
+title: '因子选股'
+description: '基于因子公式筛选股票'
+api: 'POST /v1/quant/factors/screen'
+---
+
+基于因子公式筛选股票，返回满足条件的股票列表。
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://api.reportify.cn/v1/quant/factors/screen \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "market": "cn",
+    "formula": "RSI(14) < 30",
+    "check_date": "2026-01-08"
+  }'
+```
+
+```python Python
+import requests
+
+# 全市场筛选 RSI 超卖股票
+response = requests.post(
+    "https://api.reportify.cn/v1/quant/factors/screen",
+    headers={"Authorization": "Bearer <token>"},
+    json={
+        "market": "cn",
+        "formula": "RSI(14) < 30",
+        "check_date": "2026-01-08"
+    }
+)
+print(response.json())
+```
+
+```typescript TypeScript
+const response = await fetch('https://api.reportify.cn/v1/quant/factors/screen', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer <token>',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    market: 'cn',
+    formula: 'RSI(14) < 30',
+    check_date: '2026-01-08'
+  })
+});
+```
+
+</CodeGroup>
+
+## 请求参数
+
+<ParamField body="market" type="string" default="cn">
+  股票市场：`cn`（A股）, `hk`（港股）, `us`（美股）
+</ParamField>
+
+<ParamField body="formula" type="string" required>
+  筛选公式，返回布尔值或数值
+</ParamField>
+
+<ParamField body="check_date" type="string">
+  检查日期，格式：`YYYY-MM-DD`（默认：最新交易日）
+</ParamField>
+
+<ParamField body="symbols" type="string[]">
+  股票代码列表（可选，不传则为全市场筛选）
+</ParamField>
+
+### 公式示例
+
+| 公式 | 描述 |
+|------|------|
+| `RSI(14) < 30` | RSI 超卖 |
+| `CROSS(MA(5), MA(10))` | 均线金叉 |
+| `(CLOSE > MA(20)) & (MA(20) > MA(60))` | 多头排列 |
+| `CLOSE > BOLL(20, 2).upper` | 突破布林带上轨 |
+| `CROSS(MACD().dif, MACD().dea)` | MACD 金叉 |
+| `EVERY(CLOSE > OPEN, 3)` | 连续 3 天收阳 |
+| `CLOSE >= HHV(HIGH, 60)` | 创 60 日新高 |
+
+## 响应参数
+
+<ResponseField name="datas" type="ScreenedStock[]">
+  通过筛选的股票列表
+  <Expandable title="ScreenedStock 字段">
+    <ResponseField name="symbol" type="string">
+      股票代码
+    </ResponseField>
+    <ResponseField name="close" type="number">
+      检查日收盘价
+    </ResponseField>
+    <ResponseField name="factor_value" type="number | boolean">
+      因子值（如适用）
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="metadata" type="object">
+  筛选元数据
+</ResponseField>
+
+## 响应示例
+
+### 全市场筛选
+
+```json
+{
+  "datas": [
+    {
+      "symbol": "000001",
+      "close": 12.35,
+      "factor_value": 28.5
+    },
+    {
+      "symbol": "002142",
+      "close": 8.92,
+      "factor_value": 25.3
+    },
+    {
+      "symbol": "600036",
+      "close": 35.68,
+      "factor_value": 29.8
+    }
+  ],
+  "metadata": {
+    "formula": "RSI(14) < 30",
+    "market": "cn",
+    "check_date": "2026-01-08",
+    "total_screened": 3,
+    "total_universe": 5000
+  }
+}
+```
+
+### 指定股票池筛选
+
+请求：
+
+```python
+response = requests.post(
+    "https://api.reportify.cn/v1/quant/factors/screen",
+    headers={"Authorization": "Bearer <token>"},
+    json={
+        "market": "cn",
+        "formula": "(RSI(14) < 30) & (CLOSE > MA(20))",
+        "symbols": ["000001", "000002", "000003", "600519"]
+    }
+)
+```
+
+响应：
+
+```json
+{
+  "datas": [
+    {
+      "symbol": "000001",
+      "close": 12.35,
+      "factor_value": true
+    }
+  ],
+  "metadata": {
+    "formula": "(RSI(14) < 30) & (CLOSE > MA(20))",
+    "market": "cn",
+    "check_date": "2026-01-10",
+    "total_screened": 1,
+    "total_universe": 4
+  }
+}
+```
+
+## 常用选股公式
+
+### RSI 超卖
+
+```
+RSI(14) < 30
+```
+
+### 金叉信号
+
+```
+CROSS(MA(5), MA(10))
+```
+
+### 多头排列
+
+```
+(MA(5) > MA(10)) & (MA(10) > MA(20))
+```
+
+### RSI 超卖 + 价格在均线上方
+
+```
+(RSI(14) < 30) & (CLOSE > MA(20))
+```
+
+### 突破布林带上轨
+
+```
+CLOSE > BOLL(20, 2).upper
+```
+
+### MACD 金叉
+
+```
+CROSS(MACD().dif, MACD().dea)
+```
+
+### 连续 N 天收阳
+
+```
+EVERY(CLOSE > OPEN, 3)
+```
+
+### 创 60 日新高
+
+```
+CLOSE >= HHV(HIGH, 60)
+```

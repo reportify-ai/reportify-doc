@@ -1,0 +1,173 @@
+---
+title: '计算指标数据'
+description: '计算指定股票的技术指标数据'
+api: 'POST /v1/quant/indicators/compute'
+---
+
+计算指定股票的技术指标数据。
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://api.reportify.cn/v1/quant/indicators/compute \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "market": "cn",
+    "symbols": ["000001", "000002"],
+    "formula": "RSI(14)",
+    "start_date": "2026-01-01",
+    "end_date": "2026-01-10"
+  }'
+```
+
+```python Python
+import requests
+
+response = requests.post(
+    "https://api.reportify.cn/v1/quant/indicators/compute",
+    headers={"Authorization": "Bearer <token>"},
+    json={
+        "market": "cn",
+        "symbols": ["000001", "000002"],
+        "formula": "RSI(14)",
+        "start_date": "2026-01-01",
+        "end_date": "2026-01-10"
+    }
+)
+print(response.json())
+```
+
+```typescript TypeScript
+const response = await fetch('https://api.reportify.cn/v1/quant/indicators/compute', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer <token>',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    market: 'cn',
+    symbols: ['000001', '000002'],
+    formula: 'RSI(14)',
+    start_date: '2026-01-01',
+    end_date: '2026-01-10'
+  })
+});
+```
+
+</CodeGroup>
+
+## 请求参数
+
+<ParamField body="market" type="string" default="cn">
+  股票市场：`cn`（A股）, `hk`（港股）, `us`（美股）
+</ParamField>
+
+<ParamField body="symbols" type="string[]" required>
+  股票代码列表
+</ParamField>
+
+<ParamField body="formula" type="string" required>
+  指标公式
+</ParamField>
+
+<ParamField body="start_date" type="string">
+  开始日期，格式：`YYYY-MM-DD`（默认：3 个月前）
+</ParamField>
+
+<ParamField body="end_date" type="string">
+  结束日期，格式：`YYYY-MM-DD`（默认：今天）
+</ParamField>
+
+### 公式示例
+
+| 公式 | 描述 |
+|------|------|
+| `RSI(14)` | RSI 指标，周期 14 |
+| `MACD()` | MACD 指标，默认参数 (12, 26, 9) |
+| `MACD(12, 26, 9)` | MACD 指标，自定义参数 |
+| `KDJ(9, 3, 3)` | KDJ 指标 |
+| `BOLL(20, 2)` | 布林带，周期 20，标准差 2 倍 |
+
+## 响应参数
+
+<ResponseField name="datas" type="array">
+  指标数据列表，包含 symbol、date 和指标字段
+</ResponseField>
+
+<ResponseField name="metadata" type="object">
+  计算元数据
+</ResponseField>
+
+## 响应示例
+
+### RSI 指标
+
+```json
+{
+  "datas": [
+    {
+      "symbol": "000001",
+      "date": "2026-01-10",
+      "rsi": 58.32
+    },
+    {
+      "symbol": "000001",
+      "date": "2026-01-09",
+      "rsi": 56.78
+    },
+    {
+      "symbol": "000002",
+      "date": "2026-01-10",
+      "rsi": 45.21
+    }
+  ],
+  "metadata": {
+    "formula": "RSI(14)",
+    "market": "cn",
+    "count": 3
+  }
+}
+```
+
+### MACD 指标
+
+```json
+{
+  "datas": [
+    {
+      "symbol": "000001",
+      "date": "2026-01-10",
+      "dif": 0.125,
+      "dea": 0.098,
+      "macd": 0.054
+    }
+  ],
+  "metadata": {
+    "formula": "MACD(12, 26, 9)",
+    "market": "cn",
+    "count": 1
+  }
+}
+```
+
+### 布林带指标
+
+```json
+{
+  "datas": [
+    {
+      "symbol": "000001",
+      "date": "2026-01-10",
+      "upper": 12.85,
+      "mid": 12.20,
+      "lower": 11.55
+    }
+  ],
+  "metadata": {
+    "formula": "BOLL(20, 2)",
+    "market": "cn",
+    "count": 1
+  }
+}
+```

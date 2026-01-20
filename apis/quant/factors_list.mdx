@@ -1,0 +1,175 @@
+---
+title: '获取因子列表'
+description: '获取所有可用的因子（变量和函数）定义'
+api: 'GET /v1/quant/factors'
+---
+
+获取所有可用的因子（变量和函数）定义，用于公式计算。
+
+<CodeGroup>
+
+```bash cURL
+curl https://api.reportify.cn/v1/quant/factors \
+  -H "Authorization: Bearer <token>"
+```
+
+```python Python
+import requests
+
+response = requests.get(
+    "https://api.reportify.cn/v1/quant/factors",
+    headers={"Authorization": "Bearer <token>"}
+)
+print(response.json())
+```
+
+```typescript TypeScript
+const response = await fetch('https://api.reportify.cn/v1/quant/factors', {
+  headers: {
+    'Authorization': 'Bearer <token>'
+  }
+});
+const data = await response.json();
+```
+
+</CodeGroup>
+
+## 响应参数
+
+返回 `FactorMeta[]` 数组，因子列表按 level 分类。
+
+<Expandable title="FactorMeta 字段">
+  <ResponseField name="name" type="string">
+    因子名称，用于公式中
+  </ResponseField>
+  <ResponseField name="type" type="string">
+    类型：`variable`（变量）或 `function`（函数）
+  </ResponseField>
+  <ResponseField name="level" type="integer">
+    级别：0, 1 或 2
+  </ResponseField>
+  <ResponseField name="description" type="string">
+    因子描述
+  </ResponseField>
+</Expandable>
+
+## 响应示例
+
+```json
+[
+  {
+    "name": "CLOSE",
+    "type": "variable",
+    "level": 0,
+    "description": "收盘价"
+  },
+  {
+    "name": "OPEN",
+    "type": "variable",
+    "level": 0,
+    "description": "开盘价"
+  },
+  {
+    "name": "HIGH",
+    "type": "variable",
+    "level": 0,
+    "description": "最高价"
+  },
+  {
+    "name": "LOW",
+    "type": "variable",
+    "level": 0,
+    "description": "最低价"
+  },
+  {
+    "name": "VOLUME",
+    "type": "variable",
+    "level": 0,
+    "description": "成交量"
+  },
+  {
+    "name": "MA",
+    "type": "function",
+    "level": 0,
+    "description": "简单移动平均"
+  },
+  {
+    "name": "EMA",
+    "type": "function",
+    "level": 0,
+    "description": "指数移动平均"
+  },
+  {
+    "name": "CROSS",
+    "type": "function",
+    "level": 1,
+    "description": "上穿信号"
+  },
+  {
+    "name": "RSI",
+    "type": "function",
+    "level": 2,
+    "description": "相对强弱指数"
+  },
+  {
+    "name": "MACD",
+    "type": "function",
+    "level": 2,
+    "description": "指数平滑异同移动平均"
+  }
+]
+```
+
+## 因子分类
+
+### Level 0 - 变量
+
+| 名称 | 别名 | 描述 |
+|------|------|------|
+| `CLOSE` | `C` | 收盘价 |
+| `OPEN` | `O` | 开盘价 |
+| `HIGH` | `H` | 最高价 |
+| `LOW` | `L` | 最低价 |
+| `VOLUME` | `V`, `VOL` | 成交量 |
+
+### Level 0 - 基础函数
+
+| 函数 | 描述 | 示例 |
+|------|------|------|
+| `MA(N)` | N 日简单移动平均 | `MA(20)` |
+| `EMA(N)` | N 日指数移动平均 | `EMA(12)` |
+| `SMA(N, M)` | 平滑移动平均 | `SMA(9, 1)` |
+| `REF(X, N)` | 引用 N 天前的值 | `REF(CLOSE, 1)` |
+| `HHV(X, N)` | N 周期最高值 | `HHV(HIGH, 20)` |
+| `LLV(X, N)` | N 周期最低值 | `LLV(LOW, 20)` |
+| `STD(X, N)` | N 周期标准差 | `STD(CLOSE, 20)` |
+| `SUM(X, N)` | N 周期求和 | `SUM(VOLUME, 5)` |
+| `ABS(X)` | 绝对值 | `ABS(CLOSE - OPEN)` |
+| `MAX(X, Y)` | 取最大值 | `MAX(CLOSE, OPEN)` |
+| `MIN(X, Y)` | 取最小值 | `MIN(CLOSE, OPEN)` |
+| `IF(C, A, B)` | 条件选择 | `IF(CLOSE > OPEN, 1, 0)` |
+
+### Level 1 - 应用函数
+
+| 函数 | 描述 | 示例 |
+|------|------|------|
+| `CROSS(A, B)` | A 上穿 B | `CROSS(MA(5), MA(10))` |
+| `CROSSDOWN(A, B)` | A 下穿 B | `CROSSDOWN(MA(5), MA(10))` |
+| `COUNT(X, N)` | N 周期内满足条件的天数 | `COUNT(CLOSE > OPEN, 10)` |
+| `EVERY(X, N)` | N 周期内全部满足条件 | `EVERY(CLOSE > MA(20), 5)` |
+| `EXIST(X, N)` | N 周期内存在满足条件 | `EXIST(CLOSE > HHV(HIGH, 60), 5)` |
+| `BARSLAST(X)` | 上次满足条件到现在的周期数 | `BARSLAST(CROSS(MA(5), MA(10)))` |
+
+### Level 2 - 技术指标
+
+| 函数 | 描述 | 返回字段 |
+|------|------|----------|
+| `RSI(N)` | 相对强弱指数 | `rsi` |
+| `MACD(S, L, M)` | MACD 指标 | `dif`, `dea`, `macd` |
+| `KDJ(N, M1, M2)` | KDJ 随机指标 | `k`, `d`, `j` |
+| `BOLL(N, P)` | 布林带 | `upper`, `mid`, `lower` |
+| `WR(N)` | 威廉指标 | `wr` |
+| `ATR(N)` | 平均真实波幅 | `atr` |
+| `CCI(N)` | 商品通道指数 | `cci` |
+| `BIAS(N)` | 乖离率 | `bias` |
+| `PSY(N)` | 心理线 | `psy` |

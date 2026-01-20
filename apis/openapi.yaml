@@ -3,6 +3,11 @@ info:
   title: Reportify API
   version: 1.0.0
   description: API documentation for Reportify's document management and search services.
+servers:
+  - url: https://api.reportify.cn
+    description: Production server
+security:
+  - BearerAuth: []
 paths:
   /v1/oauth/token:
     post:
@@ -1643,233 +1648,380 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
       - BearerAuth: []
-  /quant/indicators:
+  /v1/quant/indicators:
     get:
       tags:
-        - Indicators
-      summary: 获取指标列表
-      description: 获取所有可用的技术指标定义
-      operationId: getIndicatorList
+      - openapi-quant
+      summary: List available indicators
+      description: |
+        List all available technical indicators.
+
+        Returns indicators with:
+        - `name`: Indicator name for use in formulas (e.g., MACD, RSI, KDJ)
+        - `description`: Brief description
+        - `fields`: Output field names (e.g., ["dif", "dea", "macd"] for MACD)
+      operationId: list_indicators
       responses:
         '200':
-          description: 成功
+          description: Successful Response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/IndicatorListResponse'
-    post:
-      tags:
-        - Indicators
-      summary: 获取技术指标数据
-      description: 获取指定股票的技术指标数据
-      operationId: getIndicators
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/IndicatorRequest'
-      responses:
-        '200':
-          description: 成功
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/IndicatorResponse'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
+                type: array
+                title: Response List Indicators
+                items:
+                  $ref: '#/components/schemas/IndicatorMeta'
         '422':
-          $ref: '#/components/responses/ValidationError'
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v1/quant/indicators/compute:
+    post:
+      tags:
+      - openapi-quant
+      summary: Compute indicator values
+      description: |
+        Compute indicator values for given symbols and date range.
 
-  /quant/factors:
+        **Formula Examples:**
+        - `RSI(14)` - RSI with period 14
+        - `MACD()` - MACD with default parameters (12, 26, 9)
+        - `MACD(12, 26, 9)` - MACD with custom parameters
+        - `KDJ(9, 3, 3)` - KDJ with custom parameters
+        - `BOLL(20, 2)` - Bollinger Bands with period 20 and 2 std dev
+
+        **Response Fields:**
+        Each indicator returns its specific fields:
+        - RSI: `rsi`
+        - MACD: `dif`, `dea`, `macd`
+        - KDJ: `k`, `d`, `j`
+        - BOLL: `upper`, `mid`, `lower`
+      operationId: indicator_compute
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IndicatorComputeInput'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IndicatorComputeOutput'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v1/quant/factors:
     get:
       tags:
-        - Factors
-      summary: 获取因子列表
-      description: 获取所有可用因子的定义
-      operationId: getFactorList
+      - openapi-quant
+      summary: List available factors
+      description: |
+        List all available factors (variables and functions) for formula computation.
+
+        Returns factors organized by level:
+        - **Level 0 Variables**: CLOSE, OPEN, HIGH, LOW, VOLUME and aliases
+        - **Level 0 Functions**: Core functions (MA, EMA, REF, HHV, LLV, STD, etc.)
+        - **Level 1 Functions**: Application functions (CROSS, COUNT, EVERY, etc.)
+        - **Level 2 Functions**: Technical indicators (MACD, KDJ, RSI, BOLL, etc.)
+
+        Each factor includes:
+        - `name`: Factor name for use in formulas
+        - `type`: "variable" or "function"
+        - `level`: 0, 1, or 2
+        - `description`: Brief description
+      operationId: list_factors
       responses:
         '200':
-          description: 成功
+          description: Successful Response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FactorListResponse'
+                type: array
+                title: Response List Factors
+                items:
+                  $ref: '#/components/schemas/FactorMeta'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v1/quant/factors/compute:
     post:
       tags:
-        - Factors
-      summary: 获取因子数据
-      description: 获取指定股票的因子数据
-      operationId: getFactors
+      - openapi-quant
+      summary: Compute factor values
+      description: |
+        Compute factor values for given symbols and date range.
+
+        The formula uses Mai-language syntax compatible with TongDaXin/TongHuaShun.
+
+        **Formula Examples:**
+        - `RSI(14)` - RSI indicator with period 14
+        - `MACD().dif` - MACD DIF line
+        - `CLOSE > MA(20)` - Close above 20-day MA (boolean)
+        - `(CLOSE - MA(20)) / MA(20) * 100` - Deviation from MA20 in percent
+
+        **Supported Operators:**
+        - Comparison: `>`, `<`, `>=`, `<=`, `==`, `!=`
+        - Logical AND: `&` (NOT `AND`)
+        - Logical OR: `|` (NOT `OR`)
+        - Arithmetic: `+`, `-`, `*`, `/`
+
+        **Supported Variables:**
+        - `CLOSE`, `C` - Close price
+        - `OPEN`, `O` - Open price
+        - `HIGH`, `H` - High price
+        - `LOW`, `L` - Low price
+        - `VOLUME`, `V`, `VOL` - Volume
+
+        **Supported Functions:**
+        - Level 0: MA, EMA, SMA, REF, HHV, LLV, STD, SUM, ABS, MAX, MIN, IF...
+        - Level 1: CROSS, CROSSDOWN, COUNT, EVERY, EXIST, BARSLAST...
+        - Level 2: RSI, MACD, BOLL, KDJ, WR, ATR, CCI, BIAS, PSY...
+      operationId: factor_compute
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/FactorRequest'
+              $ref: '#/components/schemas/FactorComputeInput'
+        required: true
       responses:
         '200':
-          description: 成功
+          description: Successful Response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/FactorResponse'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-
-  /quant/factors/exposure:
+                $ref: '#/components/schemas/FactorComputeOutput'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v1/quant/factors/screen:
     post:
       tags:
-        - Factors
-      summary: 获取因子暴露
-      description: 获取股票组合的因子暴露度
-      operationId: getFactorExposure
+      - openapi-quant
+      summary: Screen stocks by factor
+      description: |
+        Screen stocks based on factor formula.
+
+        Returns stocks where the formula evaluates to True (for boolean formulas)
+        or non-null (for numeric formulas).
+
+        **Formula Examples:**
+        - `RSI(14) < 30` - RSI oversold
+        - `CROSS(MA(5), MA(10))` - Golden cross
+        - `(CLOSE > MA(20)) & (MA(20) > MA(60))` - Uptrend
+        - `CLOSE > BOLL(20, 2).upper` - Above upper Bollinger Band
+
+        **Supported Operators:**
+        - Comparison: `>`, `<`, `>=`, `<=`, `==`, `!=`
+        - Logical AND: `&` (NOT `AND`)
+        - Logical OR: `|` (NOT `OR`)
+        - Arithmetic: `+`, `-`, `*`, `/`
+
+        **Supported Variables:**
+        - `CLOSE`, `C` - Close price
+        - `OPEN`, `O` - Open price
+        - `HIGH`, `H` - High price
+        - `LOW`, `L` - Low price
+        - `VOLUME`, `V`, `VOL` - Volume
+
+        **Supported Functions:**
+        - Level 0: MA, EMA, SMA, REF, HHV, LLV, STD, SUM, ABS, MAX, MIN, IF...
+        - Level 1: CROSS, CROSSDOWN, COUNT, EVERY, EXIST, BARSLAST...
+        - Level 2: RSI, MACD, BOLL, KDJ, WR, ATR, CCI, BIAS, PSY...
+      operationId: factor_screen
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/FactorExposureRequest'
-      responses:
-        '200':
-          description: 成功
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/FactorExposureResponse'
-
-  /quant/quotes:
-    post:
-      tags:
-        - Quotes
-      summary: 获取实时行情
-      description: 获取股票的实时行情数据
-      operationId: getQuotes
-      requestBody:
+              $ref: '#/components/schemas/FactorScreenInput'
         required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/QuoteRequest'
       responses:
         '200':
-          description: 成功
+          description: Successful Response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/QuoteResponse'
-
-  /quant/quotes/history:
-    post:
-      tags:
-        - Quotes
-      summary: 获取历史行情
-      description: 获取股票的历史 OHLCV 数据
-      operationId: getQuotesHistory
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/QuoteHistoryRequest'
-      responses:
-        '200':
-          description: 成功
+                $ref: '#/components/schemas/FactorScreenOutput'
+        '422':
+          description: Validation Error
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/QuoteHistoryResponse'
-
-  /quant/backtest:
-    post:
-      tags:
-        - Backtest
-      summary: 运行策略回测
-      description: 提交策略进行回测，返回绩效指标
-      operationId: runBacktest
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/BacktestRequest'
-      responses:
-        '200':
-          description: 成功
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BacktestResponse'
-
-  /quant/backtest/{backtest_id}:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v1/quant/quotes/ohlcv:
     get:
       tags:
-        - Backtest
-      summary: 获取回测结果
-      description: 根据回测 ID 获取详细结果
-      operationId: getBacktestResult
+      - openapi-quant
+      summary: Get OHLCV data
+      description: |
+        Get OHLCV (Open, High, Low, Close, Volume) daily data for a single symbol.
+
+        - **symbol**: Stock code (required)
+        - **market**: Stock market (cn, hk, us), default: cn
+        - **start_date**: Start date (optional, default: 1 months ago)
+        - **end_date**: End date (optional, default: today)
+      operationId: quote_ohlcv
       parameters:
-        - name: backtest_id
-          in: path
-          required: true
-          schema:
-            type: string
-          description: 回测任务 ID
+      - name: symbol
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Symbol
+      - name: market
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/StockMarket'
+          default: cn
+      - name: start_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Start Date
+      - name: end_date
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: End Date
       responses:
         '200':
-          description: 成功
+          description: Successful Response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BacktestResponse'
-        '404':
-          $ref: '#/components/responses/NotFound'
-
-  /quant/backtest/{backtest_id}/returns:
-    get:
+                $ref: '#/components/schemas/OHLCVOutput'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v1/quant/quotes/ohlcv/batch:
+    post:
       tags:
-        - Backtest
-      summary: 获取收益序列
-      description: 获取回测的每日收益数据
-      operationId: getBacktestReturns
-      parameters:
-        - name: backtest_id
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: 成功
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BacktestReturnsResponse'
+      - openapi-quant
+      summary: Get batch OHLCV data for multiple symbols
+      description: |
+        Get OHLCV (Open, High, Low, Close, Volume) daily data for multiple symbols.
 
-  /quant/backtest/{backtest_id}/trades:
-    get:
-      tags:
-        - Backtest
-      summary: 获取交易记录
-      description: 获取回测的所有交易记录
-      operationId: getBacktestTrades
-      parameters:
-        - name: backtest_id
-          in: path
-          required: true
-          schema:
-            type: string
+        - **symbols**: List of stock code (required)
+        - **market**: Stock market (cn, hk, us), default: cn
+        - **start_date**: Start date (optional, default: 1 month ago)
+        - **end_date**: End date (optional, default: today)
+
+        Returns data sorted by date (descending), then by symbol.
+      operationId: quote_ohlcv_batch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchOHLCVInput'
+        required: true
       responses:
         '200':
-          description: 成功
+          description: Successful Response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BacktestTradesResponse'
+                $ref: '#/components/schemas/BatchOHLCVOutput'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v1/quant/backtest:
+    post:
+      tags:
+      - openapi-quant
+      summary: Backtest
+      description: |
+        执行策略回测接口
+
+        该接口接收回测参数，调用回测引擎执行策略回测，并返回回测结果。
+
+        Args:
+            request: 回测输入参数，包含以下字段：
+                start_date: 回测开始日期
+                end_date: 回测结束日期
+                market: 股票市场（默认：StockMarket.CN）
+                symbol: 股票代码
+                formula: 回测公式
+                initial_cash: 初始资金（默认：100000.0）
+                commission: 佣金（默认：0.0）
+                stop_loss: 止损设置（默认：0.0）
+                sizer_percent: 仓位百分比（默认：99）
+                auto_close: 是否自动平仓（默认：True）
+
+        Returns:
+            BacktestOutput: 回测结果，包含以下主要字段：
+                success: 回测是否成功
+                initial_cash: 初始资金
+                final_cash: 最终资金
+                total_return: 总收益
+                total_return_pct: 总收益率
+                max_drawdown: 最大回撤
+                profit_factor: 盈利因子
+                win_rate: 胜率
+                total_trades: 总交易次数
+                trades: 交易详情列表
+      operationId: backtest
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BacktestInput'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
 
 components:
   schemas:
@@ -4568,524 +4720,368 @@ components:
           description: 响应消息
           example: ""
 
-    # Indicators
-    IndicatorRequest:
+    IndicatorMeta:
       type: object
       required:
-        - symbols
-        - indicators
-      properties:
-        symbols:
-          type: array
-          items:
-            type: string
-          description: 股票代码列表
-          example: ["US:AAPL", "US:MSFT"]
-        indicators:
-          type: array
-          items:
-            type: string
-            enum: [ma, ema, rsi, macd, bollinger, atr, obv, kdj]
-          description: 指标名称列表
-          example: ["ma", "rsi", "macd"]
-        start_date:
-          type: string
-          format: date
-          description: 开始日期
-          example: "2024-01-01"
-        end_date:
-          type: string
-          format: date
-          description: 结束日期
-          example: "2024-06-30"
-        interval:
-          type: string
-          enum: ["1d", "1w", "1m"]
-          default: "1d"
-          description: 数据周期
-        params:
-          type: object
-          additionalProperties: true
-          description: 指标参数
-          example:
-            ma_period: 20
-            rsi_period: 14
-
-    IndicatorResponse:
-      allOf:
-        - $ref: '#/components/schemas/BaseResponse'
-        - type: object
-          properties:
-            data:
-              type: array
-              items:
-                $ref: '#/components/schemas/IndicatorData'
-
-    IndicatorData:
-      type: object
-      properties:
-        date:
-          type: string
-          format: date
-        symbol:
-          type: string
-        open:
-          type: number
-        high:
-          type: number
-        low:
-          type: number
-        close:
-          type: number
-        volume:
-          type: integer
-        ma_20:
-          type: number
-        rsi_14:
-          type: number
-        macd:
-          type: number
-        macd_signal:
-          type: number
-        macd_histogram:
-          type: number
-
-    IndicatorListResponse:
-      allOf:
-        - $ref: '#/components/schemas/BaseResponse'
-        - type: object
-          properties:
-            indicators:
-              type: array
-              items:
-                $ref: '#/components/schemas/IndicatorDefinition'
-
-    IndicatorDefinition:
-      type: object
+      - name
+      - description
+      - fields
       properties:
         name:
           type: string
-          example: "ma"
+          title: Name
         description:
           type: string
-          example: "Simple Moving Average"
-        category:
-          type: string
-          example: "trend"
-        parameters:
-          type: array
-          items:
-            type: object
-            properties:
-              name:
-                type: string
-              type:
-                type: string
-              default:
-                type: integer
-              description:
-                type: string
-
-    # Factors
-    FactorRequest:
-      type: object
-      required:
-        - symbols
-        - factors
-      properties:
-        symbols:
-          type: array
-          items:
-            type: string
-          example: ["US:AAPL", "US:MSFT"]
-        factors:
-          type: array
-          items:
-            type: string
-            enum: [momentum, value, quality, size, volatility, growth]
-          example: ["momentum", "value", "quality"]
-        start_date:
-          type: string
-          format: date
-        end_date:
-          type: string
-          format: date
-        frequency:
-          type: string
-          enum: [daily, weekly, monthly]
-          default: daily
-
-    FactorResponse:
-      allOf:
-        - $ref: '#/components/schemas/BaseResponse'
-        - type: object
-          properties:
-            data:
-              type: array
-              items:
-                $ref: '#/components/schemas/FactorData'
-
-    FactorData:
-      type: object
-      properties:
-        date:
-          type: string
-          format: date
-        symbol:
-          type: string
-        momentum:
-          type: number
-        value:
-          type: number
-        quality:
-          type: number
-        size:
-          type: number
-        volatility:
-          type: number
-        growth:
-          type: number
-
-    FactorListResponse:
-      allOf:
-        - $ref: '#/components/schemas/BaseResponse'
-        - type: object
-          properties:
-            factors:
-              type: array
-              items:
-                $ref: '#/components/schemas/FactorDefinition'
-
-    FactorDefinition:
-      type: object
-      properties:
-        name:
-          type: string
-        category:
-          type: string
-        description:
-          type: string
-
-    FactorExposureRequest:
-      type: object
-      required:
-        - symbols
-      properties:
-        symbols:
-          type: array
-          items:
-            type: string
-        date:
-          type: string
-          format: date
-
-    FactorExposureResponse:
-      allOf:
-        - $ref: '#/components/schemas/BaseResponse'
-        - type: object
-          properties:
-            data:
-              type: array
-              items:
-                $ref: '#/components/schemas/FactorData'
-
-    # Quotes
-    QuoteRequest:
-      type: object
-      required:
-        - symbols
-      properties:
-        symbols:
-          type: array
-          items:
-            type: string
-          example: ["US:AAPL", "US:MSFT"]
+          title: Description
         fields:
           type: array
+          title: Fields
           items:
             type: string
-
-    QuoteResponse:
-      allOf:
-        - $ref: '#/components/schemas/BaseResponse'
-        - type: object
-          properties:
-            data:
-              type: array
-              items:
-                $ref: '#/components/schemas/QuoteData'
-
-    QuoteData:
-      type: object
-      properties:
-        symbol:
-          type: string
-        price:
-          type: number
-        change:
-          type: number
-        change_percent:
-          type: number
-        open:
-          type: number
-        high:
-          type: number
-        low:
-          type: number
-        previous_close:
-          type: number
-        volume:
-          type: integer
-        market_cap:
-          type: number
-        pe:
-          type: number
-        timestamp:
-          type: integer
-
-    QuoteHistoryRequest:
+      title: IndicatorMeta
+      description: Metadata for a technical indicator.
+    IndicatorComputeInput:
       type: object
       required:
-        - symbols
+      - symbols
+      - formula
       properties:
+        market:
+          $ref: '#/components/schemas/StockMarket'
+          description: Stock market
+          default: cn
         symbols:
           type: array
+          title: Symbols
+          description: Stock code list (required)
           items:
             type: string
+        formula:
+          type: string
+          title: Formula
+          description: Indicator formula (required)
         start_date:
-          type: string
-          format: date
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Start Date
+          description: "Start date (optional, default: 3 months ago)"
         end_date:
-          type: string
-          format: date
-        interval:
-          type: string
-          enum: ["1d", "1w", "1m"]
-          default: "1d"
-        adjust:
-          type: string
-          enum: [forward, backward, none]
-          default: forward
-        limit:
-          type: integer
-          default: 100
-
-    QuoteHistoryResponse:
-      allOf:
-        - $ref: '#/components/schemas/BaseResponse'
-        - type: object
-          properties:
-            data:
-              type: array
-              items:
-                $ref: '#/components/schemas/OHLCVData'
-
-    OHLCVData:
-      type: object
-      properties:
-        date:
-          type: string
-          format: date
-        symbol:
-          type: string
-        open:
-          type: number
-        high:
-          type: number
-        low:
-          type: number
-        close:
-          type: number
-        volume:
-          type: integer
-        turnover:
-          type: number
-
-    # Backtest
-    BacktestRequest:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: End Date
+          description: "End date (optional, default: today)"
+      title: IndicatorComputeInput
+      description: Input for indicator computation.
+    IndicatorComputeOutput:
       type: object
       required:
-        - strategy
-        - start_date
-        - end_date
+      - datas
+      - metadata
       properties:
-        strategy:
-          $ref: '#/components/schemas/Strategy'
-        start_date:
-          type: string
-          format: date
-          example: "2020-01-01"
-        end_date:
-          type: string
-          format: date
-          example: "2024-01-01"
-        initial_capital:
-          type: number
-          default: 1000000
-        benchmark:
-          type: string
-          example: "US:SPY"
-
-    Strategy:
+        datas:
+          type: array
+          title: Datas
+          description: Indicator data list with symbol, date, and indicator fields
+          items:
+            type: object
+            additionalProperties: true
+        metadata:
+          type: object
+          title: Metadata
+          description: Computation metadata
+          additionalProperties: true
+      title: IndicatorComputeOutput
+      description: Output for indicator computation.
+    FactorMeta:
       type: object
       required:
-        - type
-        - universe
+      - name
+      - type
+      - level
+      - description
       properties:
+        name:
+          type: string
+          title: Name
         type:
           type: string
-          enum: [momentum, value, equal_weight, custom]
-          example: "momentum"
-        universe:
+          title: Type
+        level:
+          type: integer
+          title: Level
+        description:
+          type: string
+          title: Description
+      title: FactorMeta
+      description: Metadata for a factor (variable or function).
+    FactorComputeInput:
+      type: object
+      required:
+      - symbols
+      - formula
+      properties:
+        market:
+          $ref: '#/components/schemas/StockMarket'
+          description: Stock market
+          default: cn
+        symbols:
           type: array
+          title: Symbols
+          description: Stock code list (required)
           items:
             type: string
-          example: ["US:AAPL", "US:MSFT", "US:GOOGL"]
-        rebalance:
+        formula:
           type: string
-          enum: [daily, weekly, monthly, quarterly]
-          default: monthly
-        top_n:
-          type: integer
-          example: 3
-        lookback:
-          type: integer
-          example: 60
-        weights:
-          type: object
-          additionalProperties:
-            type: number
-
-    BacktestResponse:
-      allOf:
-        - $ref: '#/components/schemas/BaseResponse'
-        - type: object
-          properties:
-            backtest_id:
-              type: string
-              example: "bt_abc123def456"
-            status:
-              type: string
-              enum: [pending, running, completed, failed]
-            metrics:
-              $ref: '#/components/schemas/BacktestMetrics'
-            summary:
-              $ref: '#/components/schemas/BacktestSummary'
-
-    BacktestMetrics:
+          title: Formula
+          description: Factor formula (required)
+        start_date:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Start Date
+          description: "Start date (optional, default: 3 months ago)"
+        end_date:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: End Date
+          description: "End date (optional, default: today)"
+      title: FactorComputeInput
+      description: Input for factor computation.
+    FactorComputeOutput:
       type: object
+      required:
+      - datas
+      - metadata
       properties:
-        total_return:
-          type: number
-          description: 总收益率
-          example: 0.856
-        annualized_return:
-          type: number
-          description: 年化收益率
-          example: 0.168
-        sharpe_ratio:
-          type: number
-          description: 夏普比率
-          example: 1.25
-        max_drawdown:
-          type: number
-          description: 最大回撤
-          example: -0.182
-        win_rate:
-          type: number
-          description: 胜率
-          example: 0.58
-        volatility:
-          type: number
-          description: 波动率
-          example: 0.185
-        calmar_ratio:
-          type: number
-        sortino_ratio:
-          type: number
-        alpha:
-          type: number
-        beta:
-          type: number
-        information_ratio:
-          type: number
-
-    BacktestSummary:
+        datas:
+          type: array
+          title: Datas
+          description: Factor data list with symbol, date, and factor value
+          items:
+            type: object
+            additionalProperties: true
+        metadata:
+          type: object
+          title: Metadata
+          description: Computation metadata
+          additionalProperties: true
+      title: FactorComputeOutput
+      description: Output for factor computation.
+    FactorScreenInput:
       type: object
+      required:
+      - formula
+      properties:
+        market:
+          $ref: '#/components/schemas/StockMarket'
+          description: Stock market
+          default: cn
+        formula:
+          type: string
+          title: Formula
+          description: Screening formula (required)
+        check_date:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Check Date
+          description: "Check date (optional, default: latest trading day)"
+        symbols:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+          title: Symbols
+          description: Stock code list (optional, None = full market)
+      title: FactorScreenInput
+      description: Input for factor-based stock screening.
+    FactorScreenOutput:
+      type: object
+      required:
+      - datas
+      - metadata
+      properties:
+        datas:
+          type: array
+          title: Datas
+          description: List of stocks that passed the filter
+          items:
+            $ref: '#/components/schemas/ScreenedStock'
+        metadata:
+          type: object
+          title: Metadata
+          description: Screening metadata
+          additionalProperties: true
+      title: FactorScreenOutput
+      description: Output for factor-based stock screening.
+    ScreenedStock:
+      type: object
+      required:
+      - symbol
+      - close
+      properties:
+        symbol:
+          type: string
+          title: Symbol
+          description: Stock code
+        close:
+          type: number
+          title: Close
+          description: Close price on check date
+        factor_value:
+          anyOf:
+          - type: number
+          - type: boolean
+          - type: 'null'
+          title: Factor Value
+          description: Factor value (if applicable)
+      title: ScreenedStock
+      description: A stock that passed the screening filter.
+    OHLCVOutput:
+      type: object
+      required:
+      - datas
+      - metadata
+      properties:
+        datas:
+          type: array
+          title: Datas
+          description: OHLCV data list sorted by date
+          items:
+            type: object
+            additionalProperties: true
+        metadata:
+          type: object
+          title: Metadata
+          description: Query metadata
+          additionalProperties: true
+      title: OHLCVOutput
+      description: OHLCV data response.
+    BatchOHLCVInput:
+      type: object
+      required:
+      - symbols
+      properties:
+        market:
+          $ref: '#/components/schemas/StockMarket'
+          description: Stock market
+          default: cn
+        symbols:
+          type: array
+          title: Symbols
+          description: List of stock code
+          minItems: 1
+          items:
+            type: string
+        start_date:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: Start Date
+          description: "Start date (default: 1 month ago)"
+        end_date:
+          anyOf:
+          - type: string
+            format: date
+          - type: 'null'
+          title: End Date
+          description: "End date (default: today)"
+      title: BatchOHLCVInput
+      description: Batch OHLCV request input.
+    BatchOHLCVOutput:
+      type: object
+      required:
+      - datas
+      - metadata
+      properties:
+        datas:
+          type: array
+          title: Datas
+          description: OHLCV data list sorted by date desc, then symbol
+          items:
+            type: object
+            additionalProperties: true
+        metadata:
+          type: object
+          title: Metadata
+          description: Query metadata
+          additionalProperties: true
+      title: BatchOHLCVOutput
+      description: Batch OHLCV data response.
+    BacktestInput:
+      type: object
+      required:
+      - start_date
+      - end_date
+      - symbol
+      - formula
       properties:
         start_date:
           type: string
           format: date
+          title: Start Date
+          description: 回测开始日期
         end_date:
           type: string
           format: date
-        initial_capital:
-          type: number
-        final_value:
-          type: number
-        total_trades:
-          type: integer
-        benchmark_return:
-          type: number
-
-    BacktestReturnsResponse:
-      allOf:
-        - $ref: '#/components/schemas/BaseResponse'
-        - type: object
-          properties:
-            data:
-              type: array
-              items:
-                $ref: '#/components/schemas/ReturnData'
-
-    ReturnData:
-      type: object
-      properties:
-        date:
-          type: string
-          format: date
-        portfolio_value:
-          type: number
-        daily_return:
-          type: number
-        cumulative_return:
-          type: number
-        benchmark_return:
-          type: number
-
-    BacktestTradesResponse:
-      allOf:
-        - $ref: '#/components/schemas/BaseResponse'
-        - type: object
-          properties:
-            data:
-              type: array
-              items:
-                $ref: '#/components/schemas/TradeData'
-
-    TradeData:
-      type: object
-      properties:
-        date:
-          type: string
-          format: date
+          title: End Date
+          description: 回测结束日期
+        market:
+          $ref: '#/components/schemas/StockMarket'
+          description: 股票市场，默认为中国市场
+          default: cn
         symbol:
           type: string
-        action:
+          title: Symbol
+          description: 股票代码
+        formula:
           type: string
-          enum: [buy, sell]
-        quantity:
-          type: integer
-        price:
+          title: Formula
+          description: 回测公式，用于定义交易策略
+        initial_cash:
           type: number
-        value:
-          type: number
+          title: Initial Cash
+          description: 初始资金，默认100000.0元
+          default: 100000.0
         commission:
           type: number
-        pnl:
+          title: Commission
+          description: 佣金费率，默认0.0
+          default: 0.0
+        stop_loss:
           type: number
-        return_pct:
-          type: number
+          title: Stop Loss
+          description: 止损设置，默认0.0（不设置止损）
+          default: 0.0
+        sizer_percent:
+          type: integer
+          title: Sizer Percent
+          description: 仓位百分比，默认99%
+          default: 99
+        auto_close:
+          type: boolean
+          title: Auto Close
+          description: 是否自动平仓，默认True
+          default: true
+      title: BacktestInput
+      description: 回测输入参数模型，定义了回测引擎执行策略回测所需的所有参数。
+    StockMarket:
+      type: string
+      enum:
+      - cn
+      - hk
+      - us
+      title: StockMarket
 
   responses:
     BadRequest:
@@ -5117,5 +5113,5 @@ components:
     BearerAuth:
       type: http
       scheme: bearer
-servers:
-- url: https://api.reportify.cn
+      bearerFormat: JWT
+      description: Enter your Bearer token

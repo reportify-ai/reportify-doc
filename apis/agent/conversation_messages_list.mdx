@@ -52,14 +52,14 @@ mode: 'show'
 #### cURL 示例
 
 ```bash
-curl -X GET "https://api.example.com/v1/agent/conversations/683242877840089/messages?limit=20" \
+curl -X GET "https://api.reportify.cn/v1/agent/conversations/683242877840089/messages?limit=20" \
   -H "Authorization: Bearer YOUR_API_KEY"
 ```
 
 #### cURL 示例（分页查询）
 
 ```bash
-curl -X GET "https://api.example.com/v1/agent/conversations/683242877840089/messages?limit=20&before_message_id=12345" \
+curl -X GET "https://api.reportify.cn/v1/agent/conversations/683242877840089/messages?limit=20&before_message_id=12345" \
   -H "Authorization: Bearer YOUR_API_KEY"
 ```
 
@@ -68,7 +68,7 @@ curl -X GET "https://api.example.com/v1/agent/conversations/683242877840089/mess
 ```python
 import requests
 
-url = "https://api.example.com/v1/agent/conversations/683242877840089/messages"
+url = "https://api.reportify.cn/v1/agent/conversations/683242877840089/messages"
 headers = {
     "Authorization": "Bearer YOUR_API_KEY"
 }
@@ -88,7 +88,7 @@ for message in data['messages']:
 ```python
 import requests
 
-url = "https://api.example.com/v1/agent/conversations/683242877840089/messages"
+url = "https://api.reportify.cn/v1/agent/conversations/683242877840089/messages"
 headers = {
     "Authorization": "Bearer YOUR_API_KEY"
 }
