@@ -111,7 +111,7 @@
         ]
       },
       {
-        "group": "股票行情",
+        "group": "股票数据",
         "pages": [
           {
             "group": "公司信息",
@@ -213,10 +213,11 @@
             "pages": [
               "sdks/python/overview",
               "sdks/python/search",
+              "sdks/python/docs",
               "sdks/python/stock",
-              "sdks/python/timeline",
               "sdks/python/kb",
-              "sdks/python/docs"
+              "sdks/python/timeline",
+              "sdks/python/quant"
             ]
           },
           {
@@ -225,10 +226,11 @@
             "pages": [
               "sdks/typescript/overview",
               "sdks/typescript/search",
+              "sdks/typescript/docs",
               "sdks/typescript/stock",
-              "sdks/typescript/timeline",
               "sdks/typescript/kb",
-              "sdks/typescript/docs"
+              "sdks/typescript/timeline",
+              "sdks/typescript/quant"
             ]
           }
         ]
