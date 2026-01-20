@@ -1,0 +1,147 @@
+---
+title: '文档内容'
+description: 'TypeScript SDK 文档模块 - 获取文档详情和总结'
+icon: 'file-lines'
+---
+
+## 概述
+
+文档模块用于获取单个文档的详细内容和总结。
+
+## get()
+
+获取文档详情。
+
+```typescript
+const doc = await client.docs.get('doc_abc123');
+console.log(doc.title);
+console.log(doc.content);
+```
+
+<ParamField path="docId" type="string" required>
+  文档 ID
+</ParamField>
+
+<ResponseField name="返回值" type="Promise<DocumentDetail>">
+  文档详情
+</ResponseField>
+
+---
+
+## summary()
+
+获取文档总结。
+
+```typescript
+const summary = await client.docs.summary('doc_abc123');
+console.log(summary.summary);
+console.log(summary.keyPoints);
+```
+
+<ParamField path="docId" type="string" required>
+  文档 ID
+</ParamField>
+
+<ResponseField name="返回值" type="Promise<DocumentSummary>">
+  文档总结
+</ResponseField>
+
+---
+
+## listBySymbol()
+
+获取指定股票的相关文档列表。
+
+```typescript
+const docs = await client.docs.listBySymbol('US:AAPL', {
+  categories: ['news', 'filings'],
+  num: 20
+});
+```
+
+<ParamField path="symbol" type="string" required>
+  股票代码，格式：`市场:代码`
+</ParamField>
+
+<ParamField path="options.categories" type="string[]">
+  文档类别筛选
+</ParamField>
+
+<ParamField path="options.num" type="number" default="10">
+  返回数量
+</ParamField>
+
+<ParamField path="options.startDate" type="string">
+  开始日期
+</ParamField>
+
+<ParamField path="options.endDate" type="string">
+  结束日期
+</ParamField>
+
+---
+
+## listByLabel()
+
+获取指定标签的文档列表。
+
+```typescript
+const docs = await client.docs.listByLabel('财报', { num: 20 });
+```
+
+<ParamField path="label" type="string" required>
+  文档标签
+</ParamField>
+
+<ParamField path="options.num" type="number" default="10">
+  返回数量
+</ParamField>
+
+---
+
+## 类型定义
+
+```typescript
+interface DocumentDetail {
+  docId: string;
+  title: string;
+  content: string;
+  category: string;
+  publishedAt: number;
+  channelName: string;
+  companies: Array<{
+    name: string;
+    stocks: Array<{ symbol: string }>;
+  }>;
+  url?: string;
+  wordCount?: number;
+}
+
+interface DocumentSummary {
+  docId: string;
+  summary: string;
+  keyPoints: string[];
+  sentiment?: 'positive' | 'negative' | 'neutral';
+}
+```
+
+## 使用场景
+
+```typescript
+// 搜索文档后获取详情
+const results = await client.search('Tesla earnings', { num: 5 });
+
+for (const result of results) {
+  const docId = result.docId;
+  
+  // 获取完整内容
+  const detail = await client.docs.get(docId);
+  console.log(`标题: ${detail.title}`);
+  console.log(`字数: ${detail.wordCount ?? 'N/A'}`);
+  
+  // 获取 AI 总结
+  const summary = await client.docs.summary(docId);
+  console.log(`摘要: ${summary.summary.slice(0, 200)}...`);
+  console.log();
+}
+```

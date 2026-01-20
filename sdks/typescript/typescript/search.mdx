@@ -1,0 +1,144 @@
+---
+title: '搜索方法'
+description: 'TypeScript SDK 文档搜索功能'
+icon: 'magnifying-glass'
+---
+
+## search()
+
+搜索所有类型的文档。
+
+```typescript
+const docs = await client.search('Tesla earnings', {
+  num: 10,
+  categories: ['news', 'reports'],
+  symbols: ['US:TSLA'],
+  startDate: '2024-01-01',
+  endDate: '2024-12-31'
+});
+```
+
+<ParamField path="query" type="string" required>
+  搜索关键词
+</ParamField>
+
+<ParamField path="options.num" type="number" default="10">
+  返回结果数量，最大 100
+</ParamField>
+
+<ParamField path="options.categories" type="string[]">
+  文档类别过滤，可选值：`news`, `reports`, `filings`, `transcripts`, `socials`
+</ParamField>
+
+<ParamField path="options.symbols" type="string[]">
+  股票代码过滤，格式：`市场:代码`，如 `US:AAPL`, `HK:0700`, `CN:600519`
+</ParamField>
+
+<ParamField path="options.startDate" type="string">
+  开始日期，格式：`YYYY-MM-DD`
+</ParamField>
+
+<ParamField path="options.endDate" type="string">
+  结束日期，格式：`YYYY-MM-DD`
+</ParamField>
+
+<ResponseField name="返回值" type="Promise<Document[]>">
+  文档列表
+</ResponseField>
+
+---
+
+## searchNews()
+
+搜索新闻文章。
+
+```typescript
+const news = await client.searchNews('Apple iPhone', {
+  num: 10,
+  symbols: ['US:AAPL']
+});
+```
+
+<ParamField path="query" type="string" required>
+  搜索关键词
+</ParamField>
+
+<ParamField path="options.num" type="number" default="10">
+  返回结果数量
+</ParamField>
+
+<ParamField path="options.symbols" type="string[]">
+  股票代码过滤
+</ParamField>
+
+<ParamField path="options.startDate" type="string">
+  开始日期
+</ParamField>
+
+<ParamField path="options.endDate" type="string">
+  结束日期
+</ParamField>
+
+---
+
+## searchReports()
+
+搜索研究报告。
+
+```typescript
+const reports = await client.searchReports('semiconductor analysis', {
+  num: 10
+});
+```
+
+---
+
+## searchFilings()
+
+搜索公司公告和财报。
+
+```typescript
+const filings = await client.searchFilings('10-K annual report', {
+  symbols: ['US:AAPL']
+});
+```
+
+---
+
+## searchTranscripts()
+
+搜索财报电话会议纪要。
+
+```typescript
+const transcripts = await client.searchTranscripts('guidance revenue', {
+  symbols: ['US:TSLA']
+});
+```
+
+---
+
+## 类型定义
+
+```typescript
+interface Document {
+  docId: string;
+  title: string;
+  summary: string;
+  category: 'news' | 'reports' | 'filings' | 'transcripts' | 'socials';
+  publishedAt: number;  // 毫秒时间戳
+  channelName: string;
+  companies: Array<{
+    name: string;
+    stocks: Array<{ symbol: string; market: string; ticker: string }>;
+  }>;
+  url?: string;
+}
+
+interface SearchOptions {
+  num?: number;
+  categories?: string[];
+  symbols?: string[];
+  startDate?: string;
+  endDate?: string;
+}
+```

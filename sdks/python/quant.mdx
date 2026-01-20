@@ -1,0 +1,339 @@
+---
+title: '量化分析'
+description: 'Python SDK 量化分析模块 - 技术指标、因子、行情和回测'
+icon: 'chart-mixed'
+---
+
+<Note>
+量化分析模块的方法返回 **pandas DataFrame**，方便进行数据分析和可视化。
+</Note>
+
+## 概述
+
+量化分析模块提供以下功能：
+- **技术指标** - MA, RSI, MACD, 布林带等
+- **因子数据** - 动量、价值、质量、规模等因子
+- **行情数据** - 实时行情和历史 OHLCV
+- **回测引擎** - 策略回测和绩效分析
+
+---
+
+## 技术指标
+
+### indicators()
+
+获取技术指标数据。
+
+```python
+df = client.quant.indicators(
+    symbols=["US:AAPL", "US:MSFT"],
+    indicators=["ma", "rsi", "macd"],
+    start_date="2024-01-01",
+    params={"ma_period": 20, "rsi_period": 14}
+)
+print(df[["close", "ma_20", "rsi_14", "macd"]])
+```
+
+<ParamField path="symbols" type="list[str]" required>
+  股票代码列表，格式：`市场:代码`
+</ParamField>
+
+<ParamField path="indicators" type="list[str]" required>
+  指标名称列表，如 `ma`, `rsi`, `macd`, `bollinger`, `atr`, `obv`
+</ParamField>
+
+<ParamField path="start_date" type="str">
+  开始日期 (YYYY-MM-DD)
+</ParamField>
+
+<ParamField path="end_date" type="str">
+  结束日期 (YYYY-MM-DD)
+</ParamField>
+
+<ParamField path="interval" type="str" default="1d">
+  数据周期：`1d`（日线）, `1w`（周线）, `1m`（月线）
+</ParamField>
+
+<ParamField path="params" type="dict">
+  指标参数，如 `{"ma_period": 20, "rsi_period": 14}`
+</ParamField>
+
+---
+
+### indicator_list()
+
+获取可用指标列表。
+
+```python
+indicators = client.quant.indicator_list()
+for ind in indicators:
+    print(f"{ind['name']}: {ind['description']}")
+```
+
+---
+
+## 因子数据
+
+### factors()
+
+获取因子数据。
+
+```python
+df = client.quant.factors(
+    symbols=["US:AAPL", "US:MSFT", "US:GOOGL"],
+    factors=["momentum", "value", "quality"],
+    frequency="monthly"
+)
+```
+
+<ParamField path="symbols" type="list[str]" required>
+  股票代码列表
+</ParamField>
+
+<ParamField path="factors" type="list[str]" required>
+  因子名称列表，如 `momentum`, `value`, `quality`, `size`, `volatility`
+</ParamField>
+
+<ParamField path="start_date" type="str">
+  开始日期
+</ParamField>
+
+<ParamField path="end_date" type="str">
+  结束日期
+</ParamField>
+
+<ParamField path="frequency" type="str" default="daily">
+  数据频率：`daily`, `weekly`, `monthly`
+</ParamField>
+
+---
+
+### factor_exposure()
+
+获取因子暴露度。
+
+```python
+exposure = client.quant.factor_exposure(
+    symbols=["US:AAPL", "US:GOOGL", "US:TSLA"]
+)
+print(exposure[["symbol", "momentum", "value", "quality"]])
+```
+
+<ParamField path="symbols" type="list[str]" required>
+  股票代码列表
+</ParamField>
+
+<ParamField path="date" type="str">
+  指定日期，默认最新
+</ParamField>
+
+---
+
+### factor_list()
+
+获取可用因子列表。
+
+```python
+factors = client.quant.factor_list()
+for f in factors:
+    print(f"{f['name']}: {f['category']}")
+```
+
+---
+
+## 行情数据
+
+### quotes()
+
+获取实时行情。
+
+```python
+quotes = client.quant.quotes(
+    symbols=["US:AAPL", "US:MSFT", "US:GOOGL"]
+)
+print(quotes[["symbol", "price", "change", "volume"]])
+```
+
+<ParamField path="symbols" type="list[str]" required>
+  股票代码列表
+</ParamField>
+
+<ParamField path="fields" type="list[str]">
+  指定返回字段
+</ParamField>
+
+---
+
+### quotes_history()
+
+获取历史行情数据。
+
+```python
+history = client.quant.quotes_history(
+    symbols=["US:AAPL"],
+    start_date="2024-01-01",
+    end_date="2024-06-30",
+    interval="1d",
+    adjust="forward"
+)
+print(history[["open", "high", "low", "close", "volume"]])
+```
+
+<ParamField path="symbols" type="list[str]" required>
+  股票代码列表
+</ParamField>
+
+<ParamField path="start_date" type="str">
+  开始日期
+</ParamField>
+
+<ParamField path="end_date" type="str">
+  结束日期
+</ParamField>
+
+<ParamField path="interval" type="str" default="1d">
+  数据周期：`1d`, `1w`, `1m`
+</ParamField>
+
+<ParamField path="adjust" type="str" default="forward">
+  复权类型：`forward`（前复权）, `backward`（后复权）, `none`（不复权）
+</ParamField>
+
+<ParamField path="limit" type="int" default="100">
+  每个股票返回的最大记录数
+</ParamField>
+
+---
+
+## 回测
+
+### backtest()
+
+运行策略回测。
+
+```python
+result = client.quant.backtest(
+    strategy={
+        "type": "momentum",
+        "universe": ["US:AAPL", "US:MSFT", "US:GOOGL", "US:AMZN", "US:META"],
+        "rebalance": "monthly",
+        "top_n": 3,
+        "lookback": 60  # 60天动量
+    },
+    start_date="2020-01-01",
+    end_date="2024-01-01",
+    initial_capital=1000000,
+    benchmark="US:SPY"
+)
+
+print(f"Total Return: {result['metrics']['total_return']:.2%}")
+print(f"Sharpe Ratio: {result['metrics']['sharpe_ratio']:.2f}")
+print(f"Max Drawdown: {result['metrics']['max_drawdown']:.2%}")
+```
+
+<ParamField path="strategy" type="dict" required>
+  策略配置，包含 `type`, `universe`, `rebalance` 等参数
+</ParamField>
+
+<ParamField path="start_date" type="str" required>
+  回测开始日期 (YYYY-MM-DD)
+</ParamField>
+
+<ParamField path="end_date" type="str" required>
+  回测结束日期 (YYYY-MM-DD)
+</ParamField>
+
+<ParamField path="initial_capital" type="float" default="1000000">
+  初始资金
+</ParamField>
+
+<ParamField path="benchmark" type="str">
+  基准标的，如 `US:SPY`
+</ParamField>
+
+---
+
+### backtest_result()
+
+获取回测结果。
+
+```python
+result = client.quant.backtest_result("bt_abc123")
+print(result["metrics"])
+```
+
+---
+
+### backtest_returns()
+
+获取回测收益序列。
+
+```python
+returns = client.quant.backtest_returns("bt_abc123")
+print(returns[["portfolio_value", "daily_return", "cumulative_return"]])
+
+# 绘制收益曲线
+returns["cumulative_return"].plot(title="Portfolio Returns")
+```
+
+---
+
+### backtest_trades()
+
+获取回测交易记录。
+
+```python
+trades = client.quant.backtest_trades("bt_abc123")
+print(trades[["date", "symbol", "action", "quantity", "price", "value"]])
+```
+
+---
+
+## 完整示例
+
+```python
+from reportify_sdk import Reportify
+import matplotlib.pyplot as plt
+
+client = Reportify(api_key="your-api-key")
+
+# 1. 获取技术指标
+indicators = client.quant.indicators(
+    symbols=["US:AAPL"],
+    indicators=["ma", "rsi"],
+    start_date="2024-01-01",
+    params={"ma_period": 20}
+)
+
+# 2. 绘制价格和MA
+fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 8), sharex=True)
+ax1.plot(indicators.index, indicators["close"], label="Price")
+ax1.plot(indicators.index, indicators["ma_20"], label="MA(20)")
+ax1.legend()
+ax1.set_title("AAPL Price with MA(20)")
+
+# 3. 绘制RSI
+ax2.plot(indicators.index, indicators["rsi_14"])
+ax2.axhline(y=70, color='r', linestyle='--')
+ax2.axhline(y=30, color='g', linestyle='--')
+ax2.set_title("RSI(14)")
+
+plt.tight_layout()
+plt.show()
+
+# 4. 运行回测
+result = client.quant.backtest(
+    strategy={
+        "type": "momentum",
+        "universe": ["US:AAPL", "US:MSFT", "US:GOOGL"],
+        "rebalance": "monthly",
+        "top_n": 2
+    },
+    start_date="2022-01-01",
+    end_date="2024-01-01",
+    benchmark="US:SPY"
+)
+
+print(f"总收益: {result['metrics']['total_return']:.2%}")
+print(f"夏普比率: {result['metrics']['sharpe_ratio']:.2f}")
+```

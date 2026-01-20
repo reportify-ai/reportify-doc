@@ -1,0 +1,295 @@
+---
+title: '策略回测'
+description: '运行量化策略回测并获取绩效分析'
+api: 'POST /v2/quant/backtest'
+---
+
+## 运行策略回测
+
+提交策略进行回测，返回绩效指标和交易记录。
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://api.reportify.cn/v2/quant/backtest \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "strategy": {
+      "type": "momentum",
+      "universe": ["US:AAPL", "US:MSFT", "US:GOOGL", "US:AMZN", "US:META"],
+      "rebalance": "monthly",
+      "top_n": 3,
+      "lookback": 60
+    },
+    "start_date": "2020-01-01",
+    "end_date": "2024-01-01",
+    "initial_capital": 1000000,
+    "benchmark": "US:SPY"
+  }'
+```
+
+```python Python
+import requests
+
+response = requests.post(
+    "https://api.reportify.cn/v2/quant/backtest",
+    headers={"Authorization": "Bearer <token>"},
+    json={
+        "strategy": {
+            "type": "momentum",
+            "universe": ["US:AAPL", "US:MSFT", "US:GOOGL", "US:AMZN", "US:META"],
+            "rebalance": "monthly",
+            "top_n": 3,
+            "lookback": 60
+        },
+        "start_date": "2020-01-01",
+        "end_date": "2024-01-01",
+        "initial_capital": 1000000,
+        "benchmark": "US:SPY"
+    }
+)
+print(response.json())
+```
+
+</CodeGroup>
+
+### 请求参数
+
+<ParamField body="strategy" type="object" required>
+  策略配置
+  
+  <Expandable title="策略参数">
+    - `type`: 策略类型（`momentum`, `value`, `equal_weight`, `custom`）
+    - `universe`: 股票池列表
+    - `rebalance`: 调仓频率（`daily`, `weekly`, `monthly`, `quarterly`）
+    - `top_n`: 选股数量
+    - `lookback`: 回看期（天）
+    - `weights`: 自定义权重（可选）
+  </Expandable>
+</ParamField>
+
+<ParamField body="start_date" type="string" required>
+  回测开始日期，格式：`YYYY-MM-DD`
+</ParamField>
+
+<ParamField body="end_date" type="string" required>
+  回测结束日期，格式：`YYYY-MM-DD`
+</ParamField>
+
+<ParamField body="initial_capital" type="number" default="1000000">
+  初始资金
+</ParamField>
+
+<ParamField body="benchmark" type="string">
+  基准标的，如 `US:SPY`
+</ParamField>
+
+### 响应参数
+
+<ResponseField name="backtest_id" type="string">
+  回测任务 ID，用于查询详细结果
+</ResponseField>
+
+<ResponseField name="status" type="string">
+  任务状态：`pending`, `running`, `completed`, `failed`
+</ResponseField>
+
+<ResponseField name="metrics" type="object">
+  绩效指标（任务完成后返回）
+  
+  <Expandable title="指标字段">
+    - `total_return`: 总收益率
+    - `annualized_return`: 年化收益率
+    - `sharpe_ratio`: 夏普比率
+    - `max_drawdown`: 最大回撤
+    - `win_rate`: 胜率
+    - `volatility`: 波动率
+    - `calmar_ratio`: 卡玛比率
+    - `sortino_ratio`: 索提诺比率
+    - `alpha`: Alpha
+    - `beta`: Beta
+    - `information_ratio`: 信息比率
+  </Expandable>
+</ResponseField>
+
+### 响应示例
+
+```json
+{
+  "status": 200,
+  "code": 0,
+  "backtest_id": "bt_abc123def456",
+  "status": "completed",
+  "metrics": {
+    "total_return": 0.856,
+    "annualized_return": 0.168,
+    "sharpe_ratio": 1.25,
+    "max_drawdown": -0.182,
+    "win_rate": 0.58,
+    "volatility": 0.185,
+    "calmar_ratio": 0.92,
+    "sortino_ratio": 1.45,
+    "alpha": 0.052,
+    "beta": 1.12,
+    "information_ratio": 0.68
+  },
+  "summary": {
+    "start_date": "2020-01-01",
+    "end_date": "2024-01-01",
+    "initial_capital": 1000000,
+    "final_value": 1856000,
+    "total_trades": 156,
+    "benchmark_return": 0.625
+  }
+}
+```
+
+---
+
+## 获取回测结果
+
+根据回测 ID 获取详细结果。
+
+```bash
+GET /v2/quant/backtest/{backtest_id}
+```
+
+### 路径参数
+
+<ParamField path="backtest_id" type="string" required>
+  回测任务 ID
+</ParamField>
+
+---
+
+## 获取收益序列
+
+获取回测的每日收益数据。
+
+```bash
+GET /v2/quant/backtest/{backtest_id}/returns
+```
+
+### 响应示例
+
+```json
+{
+  "status": 200,
+  "code": 0,
+  "data": [
+    {
+      "date": "2024-01-02",
+      "portfolio_value": 1005230,
+      "daily_return": 0.00523,
+      "cumulative_return": 0.00523,
+      "benchmark_return": 0.00312
+    },
+    {
+      "date": "2024-01-03",
+      "portfolio_value": 1012450,
+      "daily_return": 0.00718,
+      "cumulative_return": 0.01245,
+      "benchmark_return": 0.00856
+    }
+  ]
+}
+```
+
+---
+
+## 获取交易记录
+
+获取回测的所有交易记录。
+
+```bash
+GET /v2/quant/backtest/{backtest_id}/trades
+```
+
+### 响应示例
+
+```json
+{
+  "status": 200,
+  "code": 0,
+  "data": [
+    {
+      "date": "2020-01-02",
+      "symbol": "US:AAPL",
+      "action": "buy",
+      "quantity": 100,
+      "price": 75.50,
+      "value": 7550.00,
+      "commission": 7.55
+    },
+    {
+      "date": "2020-02-03",
+      "symbol": "US:AAPL",
+      "action": "sell",
+      "quantity": 100,
+      "price": 82.30,
+      "value": 8230.00,
+      "commission": 8.23,
+      "pnl": 672.22,
+      "return_pct": 0.089
+    }
+  ]
+}
+```
+
+---
+
+## 策略类型说明
+
+### 动量策略 (momentum)
+
+选择过去 N 天涨幅最大的股票。
+
+```json
+{
+  "type": "momentum",
+  "universe": ["US:AAPL", "US:MSFT", ...],
+  "rebalance": "monthly",
+  "top_n": 5,
+  "lookback": 60
+}
+```
+
+### 价值策略 (value)
+
+选择估值最低（如 PE、PB）的股票。
+
+```json
+{
+  "type": "value",
+  "universe": ["US:AAPL", "US:MSFT", ...],
+  "rebalance": "quarterly",
+  "top_n": 10,
+  "metric": "pe"
+}
+```
+
+### 等权策略 (equal_weight)
+
+等权重买入所有股票。
+
+```json
+{
+  "type": "equal_weight",
+  "universe": ["US:AAPL", "US:MSFT", "US:GOOGL"],
+  "rebalance": "monthly"
+}
+```
+
+### 自定义权重 (custom)
+
+指定每只股票的权重。
+
+```json
+{
+  "type": "custom",
+  "universe": ["US:AAPL", "US:MSFT", "US:GOOGL"],
+  "weights": {"US:AAPL": 0.5, "US:MSFT": 0.3, "US:GOOGL": 0.2},
+  "rebalance": "quarterly"
+}
+```

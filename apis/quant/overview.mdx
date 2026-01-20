@@ -1,0 +1,69 @@
+---
+title: '量化分析介绍'
+description: '量化分析 API - 技术指标、因子数据、行情和回测'
+icon: 'book-open'
+---
+
+## 概述
+
+量化分析 API 提供专业的量化投资工具，包括：
+
+<CardGroup cols={2}>
+  <Card title="技术指标" icon="chart-line" href="/apis/quant/indicators">
+    获取 MA、RSI、MACD、布林带等技术指标数据
+  </Card>
+  <Card title="因子数据" icon="database" href="/apis/quant/factors">
+    获取动量、价值、质量、规模等因子数据
+  </Card>
+  <Card title="行情数据" icon="chart-candlestick" href="/apis/quant/quotes">
+    实时行情和历史 OHLCV 数据
+  </Card>
+  <Card title="策略回测" icon="flask" href="/apis/quant/backtest">
+    运行策略回测并获取绩效分析
+  </Card>
+</CardGroup>
+
+## 支持的技术指标
+
+| 指标 | 代码 | 描述 |
+|------|------|------|
+| 移动平均线 | `ma` | Simple Moving Average |
+| 指数移动平均 | `ema` | Exponential Moving Average |
+| 相对强弱指数 | `rsi` | Relative Strength Index |
+| MACD | `macd` | Moving Average Convergence Divergence |
+| 布林带 | `bollinger` | Bollinger Bands |
+| 平均真实波幅 | `atr` | Average True Range |
+| 成交量加权 | `obv` | On-Balance Volume |
+| 随机指标 | `kdj` | Stochastic Oscillator |
+
+## 支持的因子
+
+| 因子 | 代码 | 描述 |
+|------|------|------|
+| 动量因子 | `momentum` | 价格动量 |
+| 价值因子 | `value` | 估值指标 |
+| 质量因子 | `quality` | 盈利质量 |
+| 规模因子 | `size` | 市值规模 |
+| 波动因子 | `volatility` | 价格波动 |
+| 成长因子 | `growth` | 成长性指标 |
+
+## 股票代码格式
+
+所有 API 使用统一的股票代码格式：`市场:代码`
+
+| 市场 | 格式 | 示例 |
+|------|------|------|
+| 美股 | `US:代码` | `US:AAPL`, `US:TSLA` |
+| 港股 | `HK:代码` | `HK:00700`, `HK:09988` |
+| A股 | `CN:代码` | `CN:600519`, `CN:000001` |
+
+## 错误码
+
+| 状态码 | 描述 |
+|--------|------|
+| 200 | 成功 |
+| 400 | 请求参数错误 |
+| 401 | 认证失败 |
+| 422 | 参数验证失败 |
+| 429 | 请求频率超限 |
+| 500 | 服务器内部错误 |

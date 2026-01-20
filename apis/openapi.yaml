@@ -1643,6 +1643,234 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
       - BearerAuth: []
+  /quant/indicators:
+    get:
+      tags:
+        - Indicators
+      summary: 获取指标列表
+      description: 获取所有可用的技术指标定义
+      operationId: getIndicatorList
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IndicatorListResponse'
+    post:
+      tags:
+        - Indicators
+      summary: 获取技术指标数据
+      description: 获取指定股票的技术指标数据
+      operationId: getIndicators
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IndicatorRequest'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IndicatorResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+
+  /quant/factors:
+    get:
+      tags:
+        - Factors
+      summary: 获取因子列表
+      description: 获取所有可用因子的定义
+      operationId: getFactorList
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FactorListResponse'
+    post:
+      tags:
+        - Factors
+      summary: 获取因子数据
+      description: 获取指定股票的因子数据
+      operationId: getFactors
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FactorRequest'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FactorResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /quant/factors/exposure:
+    post:
+      tags:
+        - Factors
+      summary: 获取因子暴露
+      description: 获取股票组合的因子暴露度
+      operationId: getFactorExposure
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FactorExposureRequest'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FactorExposureResponse'
+
+  /quant/quotes:
+    post:
+      tags:
+        - Quotes
+      summary: 获取实时行情
+      description: 获取股票的实时行情数据
+      operationId: getQuotes
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuoteRequest'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuoteResponse'
+
+  /quant/quotes/history:
+    post:
+      tags:
+        - Quotes
+      summary: 获取历史行情
+      description: 获取股票的历史 OHLCV 数据
+      operationId: getQuotesHistory
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuoteHistoryRequest'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuoteHistoryResponse'
+
+  /quant/backtest:
+    post:
+      tags:
+        - Backtest
+      summary: 运行策略回测
+      description: 提交策略进行回测，返回绩效指标
+      operationId: runBacktest
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BacktestRequest'
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BacktestResponse'
+
+  /quant/backtest/{backtest_id}:
+    get:
+      tags:
+        - Backtest
+      summary: 获取回测结果
+      description: 根据回测 ID 获取详细结果
+      operationId: getBacktestResult
+      parameters:
+        - name: backtest_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: 回测任务 ID
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BacktestResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /quant/backtest/{backtest_id}/returns:
+    get:
+      tags:
+        - Backtest
+      summary: 获取收益序列
+      description: 获取回测的每日收益数据
+      operationId: getBacktestReturns
+      parameters:
+        - name: backtest_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BacktestReturnsResponse'
+
+  /quant/backtest/{backtest_id}/trades:
+    get:
+      tags:
+        - Backtest
+      summary: 获取交易记录
+      description: 获取回测的所有交易记录
+      operationId: getBacktestTrades
+      parameters:
+        - name: backtest_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BacktestTradesResponse'
+
 components:
   schemas:
     Body_create_token_reportify_api_v1_oauth_token_post:
@@ -4323,6 +4551,542 @@ components:
                 filename: "AI行业每日深度报告 - 2025年12月16日.md"
                 filepath: "/AI行业每日深度报告 - 2025年12月16日.md"
             offset: 9864
+    # Common
+    BaseResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+          description: HTTP 状态码
+          example: 200
+        code:
+          type: integer
+          description: 响应代码（0 表示成功）
+          example: 0
+        message:
+          type: string
+          description: 响应消息
+          example: ""
+
+    # Indicators
+    IndicatorRequest:
+      type: object
+      required:
+        - symbols
+        - indicators
+      properties:
+        symbols:
+          type: array
+          items:
+            type: string
+          description: 股票代码列表
+          example: ["US:AAPL", "US:MSFT"]
+        indicators:
+          type: array
+          items:
+            type: string
+            enum: [ma, ema, rsi, macd, bollinger, atr, obv, kdj]
+          description: 指标名称列表
+          example: ["ma", "rsi", "macd"]
+        start_date:
+          type: string
+          format: date
+          description: 开始日期
+          example: "2024-01-01"
+        end_date:
+          type: string
+          format: date
+          description: 结束日期
+          example: "2024-06-30"
+        interval:
+          type: string
+          enum: ["1d", "1w", "1m"]
+          default: "1d"
+          description: 数据周期
+        params:
+          type: object
+          additionalProperties: true
+          description: 指标参数
+          example:
+            ma_period: 20
+            rsi_period: 14
+
+    IndicatorResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/IndicatorData'
+
+    IndicatorData:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        symbol:
+          type: string
+        open:
+          type: number
+        high:
+          type: number
+        low:
+          type: number
+        close:
+          type: number
+        volume:
+          type: integer
+        ma_20:
+          type: number
+        rsi_14:
+          type: number
+        macd:
+          type: number
+        macd_signal:
+          type: number
+        macd_histogram:
+          type: number
+
+    IndicatorListResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            indicators:
+              type: array
+              items:
+                $ref: '#/components/schemas/IndicatorDefinition'
+
+    IndicatorDefinition:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "ma"
+        description:
+          type: string
+          example: "Simple Moving Average"
+        category:
+          type: string
+          example: "trend"
+        parameters:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              type:
+                type: string
+              default:
+                type: integer
+              description:
+                type: string
+
+    # Factors
+    FactorRequest:
+      type: object
+      required:
+        - symbols
+        - factors
+      properties:
+        symbols:
+          type: array
+          items:
+            type: string
+          example: ["US:AAPL", "US:MSFT"]
+        factors:
+          type: array
+          items:
+            type: string
+            enum: [momentum, value, quality, size, volatility, growth]
+          example: ["momentum", "value", "quality"]
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        frequency:
+          type: string
+          enum: [daily, weekly, monthly]
+          default: daily
+
+    FactorResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/FactorData'
+
+    FactorData:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        symbol:
+          type: string
+        momentum:
+          type: number
+        value:
+          type: number
+        quality:
+          type: number
+        size:
+          type: number
+        volatility:
+          type: number
+        growth:
+          type: number
+
+    FactorListResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            factors:
+              type: array
+              items:
+                $ref: '#/components/schemas/FactorDefinition'
+
+    FactorDefinition:
+      type: object
+      properties:
+        name:
+          type: string
+        category:
+          type: string
+        description:
+          type: string
+
+    FactorExposureRequest:
+      type: object
+      required:
+        - symbols
+      properties:
+        symbols:
+          type: array
+          items:
+            type: string
+        date:
+          type: string
+          format: date
+
+    FactorExposureResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/FactorData'
+
+    # Quotes
+    QuoteRequest:
+      type: object
+      required:
+        - symbols
+      properties:
+        symbols:
+          type: array
+          items:
+            type: string
+          example: ["US:AAPL", "US:MSFT"]
+        fields:
+          type: array
+          items:
+            type: string
+
+    QuoteResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/QuoteData'
+
+    QuoteData:
+      type: object
+      properties:
+        symbol:
+          type: string
+        price:
+          type: number
+        change:
+          type: number
+        change_percent:
+          type: number
+        open:
+          type: number
+        high:
+          type: number
+        low:
+          type: number
+        previous_close:
+          type: number
+        volume:
+          type: integer
+        market_cap:
+          type: number
+        pe:
+          type: number
+        timestamp:
+          type: integer
+
+    QuoteHistoryRequest:
+      type: object
+      required:
+        - symbols
+      properties:
+        symbols:
+          type: array
+          items:
+            type: string
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        interval:
+          type: string
+          enum: ["1d", "1w", "1m"]
+          default: "1d"
+        adjust:
+          type: string
+          enum: [forward, backward, none]
+          default: forward
+        limit:
+          type: integer
+          default: 100
+
+    QuoteHistoryResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/OHLCVData'
+
+    OHLCVData:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        symbol:
+          type: string
+        open:
+          type: number
+        high:
+          type: number
+        low:
+          type: number
+        close:
+          type: number
+        volume:
+          type: integer
+        turnover:
+          type: number
+
+    # Backtest
+    BacktestRequest:
+      type: object
+      required:
+        - strategy
+        - start_date
+        - end_date
+      properties:
+        strategy:
+          $ref: '#/components/schemas/Strategy'
+        start_date:
+          type: string
+          format: date
+          example: "2020-01-01"
+        end_date:
+          type: string
+          format: date
+          example: "2024-01-01"
+        initial_capital:
+          type: number
+          default: 1000000
+        benchmark:
+          type: string
+          example: "US:SPY"
+
+    Strategy:
+      type: object
+      required:
+        - type
+        - universe
+      properties:
+        type:
+          type: string
+          enum: [momentum, value, equal_weight, custom]
+          example: "momentum"
+        universe:
+          type: array
+          items:
+            type: string
+          example: ["US:AAPL", "US:MSFT", "US:GOOGL"]
+        rebalance:
+          type: string
+          enum: [daily, weekly, monthly, quarterly]
+          default: monthly
+        top_n:
+          type: integer
+          example: 3
+        lookback:
+          type: integer
+          example: 60
+        weights:
+          type: object
+          additionalProperties:
+            type: number
+
+    BacktestResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            backtest_id:
+              type: string
+              example: "bt_abc123def456"
+            status:
+              type: string
+              enum: [pending, running, completed, failed]
+            metrics:
+              $ref: '#/components/schemas/BacktestMetrics'
+            summary:
+              $ref: '#/components/schemas/BacktestSummary'
+
+    BacktestMetrics:
+      type: object
+      properties:
+        total_return:
+          type: number
+          description: 总收益率
+          example: 0.856
+        annualized_return:
+          type: number
+          description: 年化收益率
+          example: 0.168
+        sharpe_ratio:
+          type: number
+          description: 夏普比率
+          example: 1.25
+        max_drawdown:
+          type: number
+          description: 最大回撤
+          example: -0.182
+        win_rate:
+          type: number
+          description: 胜率
+          example: 0.58
+        volatility:
+          type: number
+          description: 波动率
+          example: 0.185
+        calmar_ratio:
+          type: number
+        sortino_ratio:
+          type: number
+        alpha:
+          type: number
+        beta:
+          type: number
+        information_ratio:
+          type: number
+
+    BacktestSummary:
+      type: object
+      properties:
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        initial_capital:
+          type: number
+        final_value:
+          type: number
+        total_trades:
+          type: integer
+        benchmark_return:
+          type: number
+
+    BacktestReturnsResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/ReturnData'
+
+    ReturnData:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        portfolio_value:
+          type: number
+        daily_return:
+          type: number
+        cumulative_return:
+          type: number
+        benchmark_return:
+          type: number
+
+    BacktestTradesResponse:
+      allOf:
+        - $ref: '#/components/schemas/BaseResponse'
+        - type: object
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/TradeData'
+
+    TradeData:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+        symbol:
+          type: string
+        action:
+          type: string
+          enum: [buy, sell]
+        quantity:
+          type: integer
+        price:
+          type: number
+        value:
+          type: number
+        commission:
+          type: number
+        pnl:
+          type: number
+        return_pct:
+          type: number
+
   securitySchemes:
     BearerAuth:
       type: http

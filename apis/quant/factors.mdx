@@ -1,0 +1,213 @@
+---
+title: '因子数据'
+description: '获取股票因子数据和因子暴露'
+api: 'POST /v2/quant/factors'
+---
+
+## 获取因子数据
+
+获取指定股票的因子数据。
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://api.reportify.cn/v2/quant/factors \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "symbols": ["US:AAPL", "US:MSFT", "US:GOOGL"],
+    "factors": ["momentum", "value", "quality"],
+    "start_date": "2024-01-01",
+    "frequency": "monthly"
+  }'
+```
+
+```python Python
+import requests
+
+response = requests.post(
+    "https://api.reportify.cn/v2/quant/factors",
+    headers={"Authorization": "Bearer <token>"},
+    json={
+        "symbols": ["US:AAPL", "US:MSFT", "US:GOOGL"],
+        "factors": ["momentum", "value", "quality"],
+        "frequency": "monthly"
+    }
+)
+print(response.json())
+```
+
+</CodeGroup>
+
+### 请求参数
+
+<ParamField body="symbols" type="array" required>
+  股票代码列表
+</ParamField>
+
+<ParamField body="factors" type="array" required>
+  因子名称列表，可选值：`momentum`, `value`, `quality`, `size`, `volatility`, `growth`
+</ParamField>
+
+<ParamField body="start_date" type="string">
+  开始日期，格式：`YYYY-MM-DD`
+</ParamField>
+
+<ParamField body="end_date" type="string">
+  结束日期，格式：`YYYY-MM-DD`
+</ParamField>
+
+<ParamField body="frequency" type="string" default="daily">
+  数据频率：`daily`, `weekly`, `monthly`
+</ParamField>
+
+### 响应参数
+
+<ResponseField name="data" type="array">
+  因子数据列表
+  
+  <Expandable title="数据字段">
+    - `date`: 日期
+    - `symbol`: 股票代码
+    - `momentum`: 动量因子值
+    - `value`: 价值因子值
+    - `quality`: 质量因子值
+    - `size`: 规模因子值
+    - `volatility`: 波动因子值
+    - `growth`: 成长因子值
+  </Expandable>
+</ResponseField>
+
+### 响应示例
+
+```json
+{
+  "status": 200,
+  "code": 0,
+  "data": [
+    {
+      "date": "2024-06-30",
+      "symbol": "US:AAPL",
+      "momentum": 0.85,
+      "value": -0.32,
+      "quality": 1.25
+    },
+    {
+      "date": "2024-06-30",
+      "symbol": "US:MSFT",
+      "momentum": 0.72,
+      "value": -0.45,
+      "quality": 1.18
+    }
+  ]
+}
+```
+
+---
+
+## 获取因子暴露
+
+获取股票组合的因子暴露度。
+
+```bash
+POST /v2/quant/factors/exposure
+```
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://api.reportify.cn/v2/quant/factors/exposure \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "symbols": ["US:AAPL", "US:GOOGL", "US:TSLA"],
+    "date": "2024-06-30"
+  }'
+```
+
+```python Python
+response = requests.post(
+    "https://api.reportify.cn/v2/quant/factors/exposure",
+    headers={"Authorization": "Bearer <token>"},
+    json={
+        "symbols": ["US:AAPL", "US:GOOGL", "US:TSLA"]
+    }
+)
+```
+
+</CodeGroup>
+
+### 请求参数
+
+<ParamField body="symbols" type="array" required>
+  股票代码列表
+</ParamField>
+
+<ParamField body="date" type="string">
+  指定日期，默认最新
+</ParamField>
+
+### 响应示例
+
+```json
+{
+  "status": 200,
+  "code": 0,
+  "data": [
+    {
+      "symbol": "US:AAPL",
+      "momentum": 0.85,
+      "value": -0.32,
+      "quality": 1.25,
+      "size": 1.82,
+      "volatility": -0.15,
+      "growth": 0.45
+    },
+    {
+      "symbol": "US:GOOGL",
+      "momentum": 0.62,
+      "value": -0.18,
+      "quality": 1.08,
+      "size": 1.95,
+      "volatility": -0.28,
+      "growth": 0.38
+    }
+  ]
+}
+```
+
+---
+
+## 获取因子列表
+
+获取所有可用因子的定义。
+
+```bash
+GET /v2/quant/factors
+```
+
+### 响应示例
+
+```json
+{
+  "status": 200,
+  "code": 0,
+  "factors": [
+    {
+      "name": "momentum",
+      "category": "price",
+      "description": "基于过去12个月收益率的动量因子"
+    },
+    {
+      "name": "value",
+      "category": "fundamental",
+      "description": "基于市盈率、市净率等估值指标的价值因子"
+    },
+    {
+      "name": "quality",
+      "category": "fundamental",
+      "description": "基于ROE、资产周转率等的质量因子"
+    }
+  ]
+}
+```

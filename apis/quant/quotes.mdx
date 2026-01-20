@@ -1,0 +1,223 @@
+---
+title: '行情数据'
+description: '获取实时行情和历史 OHLCV 数据'
+api: 'POST /v2/quant/quotes'
+---
+
+## 获取实时行情
+
+获取股票的实时行情数据。
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://api.reportify.cn/v2/quant/quotes \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "symbols": ["US:AAPL", "US:MSFT", "US:GOOGL"]
+  }'
+```
+
+```python Python
+import requests
+
+response = requests.post(
+    "https://api.reportify.cn/v2/quant/quotes",
+    headers={"Authorization": "Bearer <token>"},
+    json={
+        "symbols": ["US:AAPL", "US:MSFT", "US:GOOGL"]
+    }
+)
+print(response.json())
+```
+
+```typescript TypeScript
+const response = await fetch('https://api.reportify.cn/v2/quant/quotes', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer <token>',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    symbols: ['US:AAPL', 'US:MSFT', 'US:GOOGL']
+  })
+});
+```
+
+</CodeGroup>
+
+### 请求参数
+
+<ParamField body="symbols" type="array" required>
+  股票代码列表
+</ParamField>
+
+<ParamField body="fields" type="array">
+  指定返回字段（可选）
+</ParamField>
+
+### 响应参数
+
+<ResponseField name="data" type="array">
+  行情数据列表
+  
+  <Expandable title="数据字段">
+    - `symbol`: 股票代码
+    - `price`: 当前价格
+    - `change`: 涨跌额
+    - `change_percent`: 涨跌幅（%）
+    - `open`: 开盘价
+    - `high`: 最高价
+    - `low`: 最低价
+    - `previous_close`: 昨收价
+    - `volume`: 成交量
+    - `market_cap`: 市值
+    - `pe`: 市盈率
+    - `timestamp`: 更新时间戳
+  </Expandable>
+</ResponseField>
+
+### 响应示例
+
+```json
+{
+  "status": 200,
+  "code": 0,
+  "data": [
+    {
+      "symbol": "US:AAPL",
+      "price": 214.29,
+      "change": 1.79,
+      "change_percent": 0.84,
+      "open": 213.50,
+      "high": 215.75,
+      "low": 212.35,
+      "previous_close": 212.50,
+      "volume": 45678900,
+      "market_cap": 3280000000000,
+      "pe": 33.5,
+      "timestamp": 1719590400000
+    },
+    {
+      "symbol": "US:MSFT",
+      "price": 452.35,
+      "change": 3.25,
+      "change_percent": 0.72,
+      "open": 450.00,
+      "high": 454.80,
+      "low": 449.20,
+      "previous_close": 449.10,
+      "volume": 23456700,
+      "market_cap": 3360000000000,
+      "pe": 38.2,
+      "timestamp": 1719590400000
+    }
+  ]
+}
+```
+
+---
+
+## 获取历史行情
+
+获取股票的历史 OHLCV 数据。
+
+```bash
+POST /v2/quant/quotes/history
+```
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST https://api.reportify.cn/v2/quant/quotes/history \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "symbols": ["US:AAPL"],
+    "start_date": "2024-01-01",
+    "end_date": "2024-06-30",
+    "interval": "1d",
+    "adjust": "forward",
+    "limit": 100
+  }'
+```
+
+```python Python
+response = requests.post(
+    "https://api.reportify.cn/v2/quant/quotes/history",
+    headers={"Authorization": "Bearer <token>"},
+    json={
+        "symbols": ["US:AAPL"],
+        "start_date": "2024-01-01",
+        "end_date": "2024-06-30",
+        "interval": "1d",
+        "adjust": "forward"
+    }
+)
+```
+
+</CodeGroup>
+
+### 请求参数
+
+<ParamField body="symbols" type="array" required>
+  股票代码列表
+</ParamField>
+
+<ParamField body="start_date" type="string">
+  开始日期，格式：`YYYY-MM-DD`
+</ParamField>
+
+<ParamField body="end_date" type="string">
+  结束日期，格式：`YYYY-MM-DD`
+</ParamField>
+
+<ParamField body="interval" type="string" default="1d">
+  数据周期
+  - `1d`: 日线
+  - `1w`: 周线
+  - `1m`: 月线
+</ParamField>
+
+<ParamField body="adjust" type="string" default="forward">
+  复权类型
+  - `forward`: 前复权
+  - `backward`: 后复权
+  - `none`: 不复权
+</ParamField>
+
+<ParamField body="limit" type="integer" default="100">
+  每个股票返回的最大记录数
+</ParamField>
+
+### 响应示例
+
+```json
+{
+  "status": 200,
+  "code": 0,
+  "data": [
+    {
+      "date": "2024-06-28",
+      "symbol": "US:AAPL",
+      "open": 213.50,
+      "high": 215.75,
+      "low": 212.35,
+      "close": 214.29,
+      "volume": 45678900,
+      "turnover": 9782345678
+    },
+    {
+      "date": "2024-06-27",
+      "symbol": "US:AAPL",
+      "open": 212.00,
+      "high": 214.50,
+      "low": 211.80,
+      "close": 213.50,
+      "volume": 52345600,
+      "turnover": 11123456789
+    }
+  ]
+}
+```

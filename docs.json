@@ -111,7 +111,7 @@
         ]
       },
       {
-        "group": "股票接口",
+        "group": "股票行情",
         "pages": [
           {
             "group": "公司信息",
@@ -160,6 +160,22 @@
             "icon": "fire",
             "pages": [
               "apis/concepts/concepts_latest"
+            ]
+          }
+        ]
+      },
+      {
+        "group": "量化分析",
+        "pages": [
+          "apis/quant/overview",
+          {
+            "group": "量化分析接口",
+            "icon": "chart-mixed",
+            "pages": [
+              "apis/quant/indicators",
+              "apis/quant/factors",
+              "apis/quant/quotes",
+              "apis/quant/backtest"
             ]
           }
         ]
