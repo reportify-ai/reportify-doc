@@ -1652,15 +1652,9 @@ paths:
     get:
       tags:
       - openapi-quant
-      summary: List available indicators
-      description: |
-        List all available technical indicators.
-
-        Returns indicators with:
-        - `name`: Indicator name for use in formulas (e.g., MACD, RSI, KDJ)
-        - `description`: Brief description
-        - `fields`: Output field names (e.g., ["dif", "dea", "macd"] for MACD)
-      operationId: list_indicators
+      summary: List Indicators
+      description: List all available indicators
+      operationId: list_indicators_reportify_api_v1_quant_indicators_get
       responses:
         '200':
           description: Successful Response
@@ -1669,6 +1663,7 @@ paths:
               schema:
                 type: array
                 title: Response List Indicators
+                description: Indicator metadata
                 items:
                   $ref: '#/components/schemas/IndicatorMeta'
         '422':
