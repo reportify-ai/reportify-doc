@@ -1,7 +1,7 @@
 ---
 title: "量化分析"
 description: "技术指标、因子计算、行情数据和回测功能"
-icon: "chart-mixed"
+icon: "chart-line"
 ---
 
 # Quant Module
@@ -283,16 +283,18 @@ print(df[["symbol", "date", "close", "volume"]])
 
 ```python
 result = client.quant.backtest(
-    symbol="000001",
-    formula="CROSS(MA(5), MA(20))",  # 金叉买入信号
     start_date="2023-01-01",
     end_date="2024-01-01",
+    symbol="000001",
     market="cn",
+    entry_formula="CROSS(MA(5), MA(20))",  # 买入信号：MA5 上穿 MA20
+    exit_formula="CROSSDOWN(MA(5), MA(20))",  # 卖出信号（可选）
     initial_cash=100000,  # 初始资金
     commission=0.0003,    # 佣金费率
     stop_loss=0.05,       # 止损 5%
     sizer_percent=99,     # 仓位 99%
-    auto_close=True       # 自动平仓
+    auto_close=True,      # 自动平仓
+    labels={"rsi": "RSI(14)", "ma20": "MA(20)"}  # 额外指标（可选）
 )
 ```
 
@@ -300,16 +302,18 @@ result = client.quant.backtest(
 
 | 参数 | 类型 | 必填 | 默认值 | 说明 |
 |------|------|------|--------|------|
+| `start_date` | `str` | 是 | - | 回测开始日期（YYYY-MM-DD） |
+| `end_date` | `str` | 是 | - | 回测结束日期（YYYY-MM-DD） |
 | `symbol` | `str` | 是 | - | 股票代码 |
-| `formula` | `str` | 是 | - | 策略公式 |
-| `start_date` | `str` | 是 | - | 回测开始日期 |
-| `end_date` | `str` | 是 | - | 回测结束日期 |
-| `market` | `str` | 否 | cn | 市场 |
+| `market` | `str` | 否 | cn | 市场（cn/hk/us） |
+| `entry_formula` | `str` | 是 | - | 买入/开仓公式（结果 > 0 触发买入） |
+| `exit_formula` | `str` | 否 | None | 卖出/平仓公式（结果 > 0 触发卖出） |
 | `initial_cash` | `float` | 否 | 100000 | 初始资金 |
 | `commission` | `float` | 否 | 0 | 佣金费率 |
 | `stop_loss` | `float` | 否 | 0 | 止损比例（0 表示不设置） |
 | `sizer_percent` | `int` | 否 | 99 | 仓位百分比 |
 | `auto_close` | `bool` | 否 | True | 是否自动平仓 |
+| `labels` | `dict[str, str]` | 否 | None | 标签字典，返回额外指标值 |
 
 **返回结果：**
 
@@ -331,12 +335,12 @@ result = client.quant.backtest(
 **使用示例：**
 
 ```python
-# 金叉策略回测
+# 1. 简单金叉策略（只有买入信号）
 result = client.quant.backtest(
-    symbol="000001",
-    formula="CROSS(MA(5), MA(20))",
     start_date="2023-01-01",
-    end_date="2024-01-01"
+    end_date="2024-01-01",
+    symbol="000001",
+    entry_formula="CROSS(MA(5), MA(20))"
 )
 
 print(f"总收益: {result['total_return']:.2f}")
@@ -345,6 +349,38 @@ print(f"最大回撤: {result['max_drawdown']:.2%}")
 print(f"胜率: {result['win_rate']:.2%}")
 print(f"盈亏比: {result['profit_factor']:.2f}")
 print(f"交易次数: {result['total_trades']}")
+
+# 2. 买入和卖出信号都指定
+result = client.quant.backtest(
+    start_date="2023-01-01",
+    end_date="2024-01-01",
+    symbol="000001",
+    entry_formula="CROSS(MA(5), MA(20))",      # 金叉买入
+    exit_formula="CROSSDOWN(MA(5), MA(20))"    # 死叉卖出
+)
+
+# 3. RSI 超卖超买策略
+result = client.quant.backtest(
+    start_date="2023-01-01",
+    end_date="2024-01-01",
+    symbol="000001",
+    entry_formula="RSI(14) < 30",   # RSI 低于 30 买入
+    exit_formula="RSI(14) > 70"     # RSI 高于 70 卖出
+)
+
+# 4. 使用 labels 记录额外指标
+result = client.quant.backtest(
+    start_date="2023-01-01",
+    end_date="2024-01-01",
+    symbol="000001",
+    entry_formula="CROSS(RSI(14), 30)",
+    labels={
+        "rsi": "RSI(14)",
+        "ma20": "MA(20)",
+        "ma60": "MA(60)"
+    }
+)
+# 每日数据中会包含 rsi、ma20、ma60 的值
 ```
 
 ---
@@ -385,10 +421,10 @@ print(f"发现 {len(oversold_stocks)} 只超卖股票")
 # 2. 对每只股票进行回测
 for stock in oversold_stocks[:5]:  # 取前 5 只
     result = client.quant.backtest(
-        symbol=stock["symbol"],
-        formula="CROSS(RSI(14), 30)",  # RSI 上穿 30 买入
         start_date="2023-01-01",
-        end_date="2024-01-01"
+        end_date="2024-01-01",
+        symbol=stock["symbol"],
+        entry_formula="CROSS(RSI(14), 30)"  # RSI 上穿 30 买入
     )
     print(f"{stock['symbol']}: 收益率 {result['total_return_pct']:.2%}")
 ```

@@ -9,19 +9,32 @@ icon: 'book-open'
 量化分析 API 提供专业的量化投资工具，支持技术指标计算、因子选股、行情数据查询和策略回测。
 
 <CardGroup cols={2}>
-  <Card title="技术指标" icon="chart-line" href="/apis/quant/indicators">
-    计算 RSI、MACD、KDJ、BOLL 等技术指标数据
+  <Card title="技术指标" icon="chart-line" href="/apis/quant/indicators_list">
+    获取可用指标列表，计算 RSI、MACD、KDJ、BOLL 等技术指标数据
   </Card>
-  <Card title="因子选股" icon="filter" href="/apis/quant/factors">
-    因子计算和基于因子公式的股票筛选
+  <Card title="因子选股" icon="filter" href="/apis/quant/factors_list">
+    获取因子定义，计算因子值，基于因子公式筛选股票
   </Card>
-  <Card title="行情数据" icon="chart-candlestick" href="/apis/quant/quotes">
+  <Card title="行情数据" icon="chart-candlestick" href="/apis/quant/quotes_ohlcv">
     获取 OHLCV 日线数据（单只或批量）
   </Card>
   <Card title="策略回测" icon="flask" href="/apis/quant/backtest">
     运行策略回测并获取绩效分析
   </Card>
 </CardGroup>
+
+## 接口列表
+
+| 接口 | 方法 | 描述 |
+|------|------|------|
+| `/v1/quant/indicators` | GET | 获取可用技术指标列表 |
+| `/v1/quant/indicators/compute` | POST | 计算技术指标数据 |
+| `/v1/quant/factors` | GET | 获取可用因子列表 |
+| `/v1/quant/factors/compute` | POST | 计算因子数据 |
+| `/v1/quant/factors/screen` | POST | 因子选股筛选 |
+| `/v1/quant/quotes/ohlcv` | GET | 获取单只股票 OHLCV 数据 |
+| `/v1/quant/quotes/ohlcv/batch` | POST | 批量获取 OHLCV 数据 |
+| `/v1/quant/backtest` | POST | 策略回测 |
 
 ## 公式语法
 
@@ -106,6 +119,8 @@ icon: 'book-open'
 
 ## 公式示例
 
+### 基础公式
+
 ```python
 # RSI 超卖
 "RSI(14) < 30"
@@ -128,6 +143,57 @@ icon: 'book-open'
 # 多头排列：5日线 > 10日线 > 20日线
 "(MA(5) > MA(10)) & (MA(10) > MA(20))"
 ```
+
+### 回测策略公式
+
+回测接口支持 `entry_formula`（买入公式）和 `exit_formula`（卖出公式）：
+
+```json
+{
+  "entry_formula": "CROSS(MA(5), MA(10))",
+  "exit_formula": "CROSS(MA(10), MA(5))",
+  "symbol": "000001",
+  "start_date": "2024-01-01",
+  "end_date": "2025-01-01"
+}
+```
+
+| 参数 | 描述 |
+|------|------|
+| `entry_formula` | 买入/开仓公式，结果 > 0 时触发买入 |
+| `exit_formula` | 卖出/平仓公式，结果 > 0 时触发卖出（可选） |
+| `labels` | 标签字典，用于返回每日额外的指标值（可选） |
+
+<Tip>
+`labels` 参数可以在回测时同时返回每日的指标计算值，方便分析：
+
+```json
+{
+  "labels": {
+    "ma5": "MA(5)",
+    "ma10": "MA(10)",
+    "rsi": "RSI(14)"
+  }
+}
+```
+</Tip>
+
+## 快速开始
+
+<Steps>
+  <Step title="获取指标列表">
+    调用 `GET /v1/quant/indicators` 获取所有可用的技术指标定义
+  </Step>
+  <Step title="计算指标数据">
+    调用 `POST /v1/quant/indicators/compute` 计算指定股票的指标数据
+  </Step>
+  <Step title="因子选股">
+    调用 `POST /v1/quant/factors/screen` 筛选符合条件的股票
+  </Step>
+  <Step title="策略回测">
+    调用 `POST /v1/quant/backtest` 验证策略历史表现
+  </Step>
+</Steps>
 
 ## 错误码
 

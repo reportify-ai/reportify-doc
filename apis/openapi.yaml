@@ -1964,9 +1964,9 @@ paths:
   /v1/quant/backtest:
     post:
       tags:
-      - openapi-quant
+      - backtest
       summary: Backtest
-      description: |
+      description: |-
         执行策略回测接口
 
         该接口接收回测参数，调用回测引擎执行策略回测，并返回回测结果。
@@ -1977,12 +1977,14 @@ paths:
                 end_date: 回测结束日期
                 market: 股票市场（默认：StockMarket.CN）
                 symbol: 股票代码
-                formula: 回测公式
+                entry_formula: 买入/开仓公式，结果>0触发买入
+                exit_formula: 卖出/平仓公式，结果>0触发卖出（可选）
                 initial_cash: 初始资金（默认：100000.0）
                 commission: 佣金（默认：0.0）
                 stop_loss: 止损设置（默认：0.0）
                 sizer_percent: 仓位百分比（默认：99）
                 auto_close: 是否自动平仓（默认：True）
+                labels: 标签字典，用于在每日数据中返回额外的指标值（可选）
 
         Returns:
             BacktestOutput: 回测结果，包含以下主要字段：
@@ -1996,7 +1998,7 @@ paths:
                 win_rate: 胜率
                 total_trades: 总交易次数
                 trades: 交易详情列表
-      operationId: backtest
+      operationId: backtest_v1_backtest_post
       requestBody:
         content:
           application/json:
@@ -5014,12 +5016,6 @@ components:
       title: BatchOHLCVOutput
       description: Batch OHLCV data response.
     BacktestInput:
-      type: object
-      required:
-      - start_date
-      - end_date
-      - symbol
-      - formula
       properties:
         start_date:
           type: string
@@ -5039,10 +5035,16 @@ components:
           type: string
           title: Symbol
           description: 股票代码
-        formula:
+        entry_formula:
           type: string
-          title: Formula
-          description: 回测公式，用于定义交易策略
+          title: Entry Formula
+          description: 买入/开仓公式，结果>0触发买入
+        exit_formula:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Exit Formula
+          description: 卖出/平仓公式，结果>0触发卖出
         initial_cash:
           type: number
           title: Initial Cash
@@ -5068,8 +5070,24 @@ components:
           title: Auto Close
           description: 是否自动平仓，默认True
           default: true
+        labels:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Labels
+          description: '标签列表，如 {"up": "CROSS(MA(20), MA(60))"}'
+      type: object
+      required:
+      - start_date
+      - end_date
+      - symbol
+      - entry_formula
       title: BacktestInput
-      description: 回测输入参数模型，定义了回测引擎执行策略回测所需的所有参数。
+      description: |-
+        回测输入参数模型
+
+        定义了回测引擎执行策略回测所需的所有参数。
     StockMarket:
       type: string
       enum:

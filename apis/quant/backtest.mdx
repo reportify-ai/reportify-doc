@@ -23,7 +23,8 @@ curl -X POST https://api.reportify.cn/v1/quant/backtest \
     "end_date": "2025-01-01",
     "market": "cn",
     "symbol": "000001",
-    "formula": "CROSS(MA(5), MA(10))",
+    "entry_formula": "CROSS(MA(5), MA(10))",
+    "exit_formula": "CROSS(MA(10), MA(5))",
     "initial_cash": 100000,
     "commission": 0.0003,
     "sizer_percent": 99
@@ -41,7 +42,8 @@ response = requests.post(
         "end_date": "2025-01-01",
         "market": "cn",
         "symbol": "000001",
-        "formula": "CROSS(MA(5), MA(10))",
+        "entry_formula": "CROSS(MA(5), MA(10))",
+        "exit_formula": "CROSS(MA(10), MA(5))",
         "initial_cash": 100000,
         "commission": 0.0003,
         "sizer_percent": 99
@@ -62,7 +64,8 @@ const response = await fetch('https://api.reportify.cn/v1/quant/backtest', {
     end_date: '2025-01-01',
     market: 'cn',
     symbol: '000001',
-    formula: 'CROSS(MA(5), MA(10))',
+    entry_formula: 'CROSS(MA(5), MA(10))',
+    exit_formula: 'CROSS(MA(10), MA(5))',
     initial_cash: 100000,
     commission: 0.0003,
     sizer_percent: 99
@@ -91,14 +94,24 @@ const data = await response.json();
   股票代码
 </ParamField>
 
-<ParamField body="formula" type="string" required>
-  交易策略公式，当公式为真时买入
+<ParamField body="entry_formula" type="string" required>
+  买入/开仓公式，结果大于 0 时触发买入
   
   <Expandable title="公式示例">
     - `CROSS(MA(5), MA(10))` - 均线金叉买入
     - `RSI(14) < 30` - RSI 超卖买入
     - `CLOSE > BOLL(20, 2).upper` - 突破布林带上轨买入
     - `(RSI(14) < 30) & (CLOSE > MA(20))` - 组合条件
+  </Expandable>
+</ParamField>
+
+<ParamField body="exit_formula" type="string">
+  卖出/平仓公式，结果大于 0 时触发卖出（可选）
+  
+  <Expandable title="公式示例">
+    - `CROSS(MA(10), MA(5))` - 均线死叉卖出
+    - `RSI(14) > 70` - RSI 超买卖出
+    - `CLOSE < BOLL(20, 2).lower` - 跌破布林带下轨卖出
   </Expandable>
 </ParamField>
 
@@ -120,6 +133,21 @@ const data = await response.json();
 
 <ParamField body="auto_close" type="boolean" default="true">
   是否在回测结束时自动平仓
+</ParamField>
+
+<ParamField body="labels" type="object">
+  标签字典，用于在每日数据中返回额外的指标值（可选）
+  
+  <Expandable title="labels 示例">
+    ```json
+    {
+      "ma5": "MA(5)",
+      "ma10": "MA(10)",
+      "rsi": "RSI(14)"
+    }
+    ```
+    配置后，每日数据中会包含对应指标的计算值
+  </Expandable>
 </ParamField>
 
 ### 响应参数
@@ -233,26 +261,28 @@ const data = await response.json();
 
 ## 策略公式示例
 
-### 均线金叉策略
+### 均线金叉死叉策略
 
-5 日均线上穿 10 日均线时买入：
+5 日均线上穿 10 日均线时买入，下穿时卖出：
 
-```python
+```json
 {
-    "formula": "CROSS(MA(5), MA(10))",
+    "entry_formula": "CROSS(MA(5), MA(10))",
+    "exit_formula": "CROSS(MA(10), MA(5))",
     "symbol": "000001",
     "start_date": "2024-01-01",
     "end_date": "2025-01-01"
 }
 ```
 
-### RSI 超卖策略
+### RSI 超买超卖策略
 
-RSI 低于 30 时买入：
+RSI 低于 30 时买入，高于 70 时卖出：
 
-```python
+```json
 {
-    "formula": "RSI(14) < 30",
+    "entry_formula": "RSI(14) < 30",
+    "exit_formula": "RSI(14) > 70",
     "symbol": "600519",
     "start_date": "2024-01-01",
     "end_date": "2025-01-01",
@@ -260,13 +290,14 @@ RSI 低于 30 时买入：
 }
 ```
 
-### MACD 金叉策略
+### MACD 金叉死叉策略
 
-MACD DIF 上穿 DEA 时买入：
+MACD DIF 上穿 DEA 时买入，下穿时卖出：
 
-```python
+```json
 {
-    "formula": "CROSS(MACD().dif, MACD().dea)",
+    "entry_formula": "CROSS(MACD().dif, MACD().dea)",
+    "exit_formula": "CROSS(MACD().dea, MACD().dif)",
     "symbol": "000002",
     "start_date": "2024-01-01",
     "end_date": "2025-01-01"
@@ -275,11 +306,12 @@ MACD DIF 上穿 DEA 时买入：
 
 ### 布林带突破策略
 
-价格突破布林带上轨时买入：
+价格突破布林带上轨时买入，跌破下轨时卖出：
 
-```python
+```json
 {
-    "formula": "CLOSE > BOLL(20, 2).upper",
+    "entry_formula": "CLOSE > BOLL(20, 2).upper",
+    "exit_formula": "CLOSE < BOLL(20, 2).lower",
     "symbol": "000001",
     "start_date": "2024-01-01",
     "end_date": "2025-01-01"
@@ -288,16 +320,37 @@ MACD DIF 上穿 DEA 时买入：
 
 ### 组合条件策略
 
-RSI 超卖且价格在 20 日均线上方：
+RSI 超卖且价格在 20 日均线上方买入，RSI 超买或价格跌破均线卖出：
 
-```python
+```json
 {
-    "formula": "(RSI(14) < 30) & (CLOSE > MA(20))",
+    "entry_formula": "(RSI(14) < 30) & (CLOSE > MA(20))",
+    "exit_formula": "(RSI(14) > 70) | (CLOSE < MA(20))",
     "symbol": "600036",
     "start_date": "2024-01-01",
     "end_date": "2025-01-01",
     "commission": 0.0003,
     "sizer_percent": 80
+}
+```
+
+### 带 labels 的回测
+
+回测时同时返回每日的技术指标值：
+
+```json
+{
+    "entry_formula": "CROSS(MA(5), MA(10))",
+    "exit_formula": "CROSS(MA(10), MA(5))",
+    "symbol": "000001",
+    "start_date": "2024-01-01",
+    "end_date": "2025-01-01",
+    "labels": {
+        "ma5": "MA(5)",
+        "ma10": "MA(10)",
+        "rsi": "RSI(14)",
+        "macd_dif": "MACD().dif"
+    }
 }
 ```
 
@@ -337,4 +390,5 @@ RSI 超卖且价格在 20 日均线上方：
 - 回测结果仅供参考，历史收益不代表未来表现
 - 回测未考虑滑点、冲击成本等实际交易因素
 - 建议使用合理的佣金和止损参数以更接近真实交易
+- 如果不设置 `exit_formula`，则只有买入信号，卖出依赖止损或 `auto_close`
 </Note>
