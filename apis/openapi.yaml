@@ -4053,14 +4053,14 @@ components:
       description: Input schema for StockIPOCalendarHKTool
     StockEarningsCalendarInput:
       properties:
-        area:
+        market:
           type: string
           enum:
           - cn
           - hk
           - us
-          title: Area
-          description: 'Market area: cn, hk, or us'
+          title: Market
+          description: 'Stock market: cn, hk, or us'
           example: cn
         symbol:
           type: string
@@ -4079,7 +4079,7 @@ components:
           example: '2025-12-31'
       type: object
       required:
-      - area
+      - market
       - start_date
       - end_date
       title: StockEarningsCalendarInput
