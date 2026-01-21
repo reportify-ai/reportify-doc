@@ -1033,18 +1033,98 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
       security:
       - BearerAuth: []
-  /v1/stock/industry-constituent:
+  /v1/stock/index-tracking-funds:
     post:
       tags:
       - openapi-stock-tools
-      summary: Industry Constituent Stocks
-      description: Query constituent stocks of an industry by area and industry name
-      operationId: industry_constituent_reportify_api_v1_stock_industry_constituent_post
+      summary: Index Tracking Funds
+      description: Query tracking funds of an index by symbol
+      operationId: index_tracking_funds_reportify_api_v1_stock_index_tracking_funds_post
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/IndustryConstituentInput'
+              $ref: '#/components/schemas/IndexFundsInput'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StockAPIResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - BearerAuth: []
+  /v1/stock/index-constituents:
+    post:
+      tags:
+      - openapi-stock-tools
+      summary: Index Constituents
+      description: Query constituent stocks of an index by symbol
+      operationId: index_constituents_reportify_api_v1_stock_index_constituents_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IndexConstituentsInput'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StockAPIResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - BearerAuth: []
+  /v1/stock/industry-constituents:
+    post:
+      tags:
+      - openapi-stock-tools
+      summary: Industry Constituents
+      description: Query constituent stocks of an industry by market and industry name
+      operationId: industry_constituents_reportify_api_v1_stock_industry_constituents_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IndustryConstituentsInput'
         required: true
       responses:
         '200':
@@ -4008,7 +4088,31 @@ components:
       type: object
       title: StockScreenerInput
       description: Input schema for stock screener
-    IndustryConstituentInput:
+    IndexFundsInput:
+      properties:
+        symbol:
+          type: string
+          title: Symbol
+          description: Index symbol
+          example: '000300'
+      type: object
+      required:
+      - symbol
+      title: IndexFundsInput
+      description: Input schema for index tracking funds query
+    IndexConstituentsInput:
+      properties:
+        symbol:
+          type: string
+          title: Symbol
+          description: Index symbol
+          example: '000300'
+      type: object
+      required:
+      - symbol
+      title: IndexConstituentsInput
+      description: Input schema for index constituents query
+    IndustryConstituentsInput:
       properties:
         market:
           type: string
@@ -4033,8 +4137,8 @@ components:
       required:
       - market
       - name
-      title: IndustryConstituentInput
-      description: Input schema for industry constituent stocks query
+      title: IndustryConstituentsInput
+      description: Input schema for industry constituents query
     StockIPOCalendarHKInput:
       properties:
         status:

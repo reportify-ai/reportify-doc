@@ -141,10 +141,12 @@
             ]
           },
           {
-            "group": "行业数据",
-            "icon": "industry",
+            "group": "指数和行业",
+            "icon": "chart-pie",
             "pages": [
-              "apis/stock/industry_constituent"
+              "apis/stock/index_constituents",
+              "apis/stock/index_tracking_funds",
+              "apis/stock/industry_constituents"
             ]
           },
           {

@@ -252,19 +252,65 @@ print(quotes[["symbol", "price", "change_percent"]])
 
 ---
 
-## 行业数据
+## 指数和行业
 
-### industry_constituent()
+### index_constituents()
+
+获取指数成分股列表。
+
+```python
+# 获取沪深300指数成分股
+csi300 = client.stock.index_constituents("000300")
+print(csi300[["market", "symbol"]])
+
+# 获取创业板指数成分股
+chinext = client.stock.index_constituents("399006")
+```
+
+<ParamField path="symbol" type="string" required>
+  指数代码，如 `000300`（沪深300）, `000016`（上证50）, `399006`（创业板指）
+</ParamField>
+
+<ResponseField name="返回值" type="DataFrame">
+  成分股列表，包含 `market`, `symbol` 等
+</ResponseField>
+
+---
+
+### index_funds()
+
+获取指数跟踪基金列表。
+
+```python
+# 获取沪深300指数跟踪基金
+funds = client.stock.index_funds("000300")
+print(funds[["symbol", "short_name", "name"]])
+
+# 获取中证500指数跟踪基金
+funds = client.stock.index_funds("000905")
+```
+
+<ParamField path="symbol" type="string" required>
+  指数代码，如 `000300`（沪深300）, `000016`（上证50）, `000905`（中证500）
+</ParamField>
+
+<ResponseField name="返回值" type="DataFrame">
+  跟踪基金列表，包含 `symbol`, `short_name`, `name` 等
+</ResponseField>
+
+---
+
+### industry_constituents()
 
 获取行业成分股列表。
 
 ```python
 # 获取中国军工行业成分股
-stocks = client.stock.industry_constituent("cn", "军工")
+stocks = client.stock.industry_constituents("cn", "军工")
 print(stocks[["symbol", "name", "industry_one_level_name"]])
 
 # 使用特定分类标准
-stocks = client.stock.industry_constituent("cn", "军工", type="sw")
+stocks = client.stock.industry_constituents("cn", "军工", type="sw")
 ```
 
 <ParamField path="market" type="string" required>

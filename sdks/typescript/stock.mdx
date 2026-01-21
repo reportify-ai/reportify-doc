@@ -202,19 +202,65 @@ quotes.forEach(q => console.log(q.symbol, q.price, q.changePercent));
 
 ---
 
-## 行业数据
+## 指数和行业
 
-### industryConstituent()
+### indexConstituents()
+
+获取指数成分股列表。
+
+```typescript
+// 获取沪深300指数成分股
+const csi300 = await client.stock.indexConstituents('000300');
+console.log(csi300);
+
+// 获取创业板指数成分股
+const chinext = await client.stock.indexConstituents('399006');
+```
+
+<ParamField path="symbol" type="string" required>
+  指数代码，如 `000300`（沪深300）, `000016`（上证50）, `399006`（创业板指）
+</ParamField>
+
+<ResponseField name="返回值" type="Promise<IndexConstituent[]>">
+  成分股列表数组
+</ResponseField>
+
+---
+
+### indexFunds()
+
+获取指数跟踪基金列表。
+
+```typescript
+// 获取沪深300指数跟踪基金
+const funds = await client.stock.indexFunds('000300');
+console.log(funds);
+
+// 获取中证500指数跟踪基金
+const funds500 = await client.stock.indexFunds('000905');
+```
+
+<ParamField path="symbol" type="string" required>
+  指数代码，如 `000300`（沪深300）, `000016`（上证50）, `000905`（中证500）
+</ParamField>
+
+<ResponseField name="返回值" type="Promise<IndexFund[]>">
+  跟踪基金列表数组
+</ResponseField>
+
+---
+
+### industryConstituents()
 
 获取行业成分股列表。
 
 ```typescript
 // 获取中国军工行业成分股
-const stocks = await client.stock.industryConstituent('cn', '军工');
+const stocks = await client.stock.industryConstituents('cn', '军工');
 console.log(stocks);
 
 // 使用特定分类标准
-const stocksSW = await client.stock.industryConstituent('cn', '军工', 'sw');
+const stocksSW = await client.stock.industryConstituents('cn', '军工', 'sw');
 ```
 
 <ParamField path="market" type="string" required>
@@ -232,7 +278,7 @@ const stocksSW = await client.stock.industryConstituent('cn', '军工', 'sw');
   - US: `GICS`（默认）
 </ParamField>
 
-<ResponseField name="返回值" type="Promise<IndustryConstituent[]>">
+<ResponseField name="返回值" type="Promise<IndustryConstituents[]>">
   成分股列表数组
 </ResponseField>
 
@@ -320,7 +366,18 @@ interface Quote {
   marketCap: number;
 }
 
-interface IndustryConstituent {
+interface IndexConstituent {
+  market: string;
+  symbol: string;
+}
+
+interface IndexFund {
+  symbol: string;
+  shortName: string;
+  name: string;
+}
+
+interface IndustryConstituents {
   symbol: string;
   market: string;
   name: string;
