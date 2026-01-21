@@ -1033,6 +1033,46 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
       security:
       - BearerAuth: []
+  /v1/stock/industry-constituent:
+    post:
+      tags:
+      - openapi-stock-tools
+      summary: Industry Constituent Stocks
+      description: Query constituent stocks of an industry by area and industry name
+      operationId: industry_constituent_reportify_api_v1_stock_industry_constituent_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IndustryConstituentInput'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StockAPIResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - BearerAuth: []
   /v1/stock/earnings-calendar:
     post:
       tags:
@@ -3968,6 +4008,33 @@ components:
       type: object
       title: StockScreenerInput
       description: Input schema for stock screener
+    IndustryConstituentInput:
+      properties:
+        market:
+          type: string
+          enum:
+          - cn
+          - hk
+          - us
+          title: Market
+          description: 'Stock market: cn (China), hk (Hong Kong), or us (United States)'
+          example: cn
+        name:
+          type: string
+          title: Name
+          description: Industry name
+          example: 军工
+        type:
+          type: string
+          title: Type
+          description: 'Industry classification type: sw (申万), wind, hs (恒生), GICS. Default: sw for CN, hs for HK, GICS for US'
+          example: sw
+      type: object
+      required:
+      - market
+      - name
+      title: IndustryConstituentInput
+      description: Input schema for industry constituent stocks query
     StockIPOCalendarHKInput:
       properties:
         status:

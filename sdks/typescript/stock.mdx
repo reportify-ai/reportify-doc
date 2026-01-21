@@ -202,6 +202,42 @@ quotes.forEach(q => console.log(q.symbol, q.price, q.changePercent));
 
 ---
 
+## 行业数据
+
+### industryConstituent()
+
+获取行业成分股列表。
+
+```typescript
+// 获取中国军工行业成分股
+const stocks = await client.stock.industryConstituent('cn', '军工');
+console.log(stocks);
+
+// 使用特定分类标准
+const stocksSW = await client.stock.industryConstituent('cn', '军工', 'sw');
+```
+
+<ParamField path="market" type="string" required>
+  股票市场：`cn`（中国）, `hk`（香港）, `us`（美国）
+</ParamField>
+
+<ParamField path="name" type="string" required>
+  行业名称，如 `军工`, `Technology`
+</ParamField>
+
+<ParamField path="type" type="string">
+  行业分类类型：
+  - CN: `sw`（申万，默认）, `wind`
+  - HK: `hs`（恒生，默认）
+  - US: `GICS`（默认）
+</ParamField>
+
+<ResponseField name="返回值" type="Promise<IndustryConstituent[]>">
+  成分股列表数组
+</ResponseField>
+
+---
+
 ## 选股和日历
 
 ### screener()
@@ -282,5 +318,15 @@ interface Quote {
   changePercent: number;
   volume: number;
   marketCap: number;
+}
+
+interface IndustryConstituent {
+  symbol: string;
+  market: string;
+  name: string;
+  typeName?: string;
+  industryOneLevelName?: string;
+  industrySecondLevelName?: string;
+  industryThirdLevelName?: string;
 }
 ```

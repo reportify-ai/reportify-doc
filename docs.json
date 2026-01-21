@@ -141,6 +141,13 @@
             ]
           },
           {
+            "group": "行业数据",
+            "icon": "industry",
+            "pages": [
+              "apis/stock/industry_constituent"
+            ]
+          },
+          {
             "group": "选股器",
             "icon": "filter",
             "pages": [

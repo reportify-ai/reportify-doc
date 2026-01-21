@@ -252,6 +252,42 @@ print(quotes[["symbol", "price", "change_percent"]])
 
 ---
 
+## 行业数据
+
+### industry_constituent()
+
+获取行业成分股列表。
+
+```python
+# 获取中国军工行业成分股
+stocks = client.stock.industry_constituent("cn", "军工")
+print(stocks[["symbol", "name", "industry_one_level_name"]])
+
+# 使用特定分类标准
+stocks = client.stock.industry_constituent("cn", "军工", type="sw")
+```
+
+<ParamField path="market" type="string" required>
+  股票市场：`cn`（中国）, `hk`（香港）, `us`（美国）
+</ParamField>
+
+<ParamField path="name" type="string" required>
+  行业名称，如 `军工`, `Technology`
+</ParamField>
+
+<ParamField path="type" type="string">
+  行业分类类型：
+  - CN: `sw`（申万，默认）, `wind`
+  - HK: `hs`（恒生，默认）
+  - US: `GICS`（默认）
+</ParamField>
+
+<ResponseField name="返回值" type="DataFrame">
+  成分股列表，包含 `symbol`, `name`, `industry_one_level_name`, `industry_second_level_name`, `industry_third_level_name` 等
+</ResponseField>
+
+---
+
 ## 选股和日历
 
 ### screener()
