@@ -11,12 +11,21 @@ icon: 'chart-line'
 获取公司概览信息。
 
 ```typescript
-const info = await client.stock.overview('US:AAPL');
-console.log(info.name, info.sector, info.industry);
+// 通过股票代码查询（支持多个，逗号分隔）
+const info = await client.stock.overview({ symbols: 'US:AAPL,HK:00700' });
+console.log(info);
+
+// 通过股票名称查询（支持多个，逗号分隔）
+const info2 = await client.stock.overview({ names: '腾讯,苹果' });
+console.log(info2);
 ```
 
-<ParamField path="symbol" type="string" required>
-  股票代码，格式：`市场:代码`，如 `US:AAPL`, `HK:0700`, `CN:600519`
+<ParamField path="options.symbols" type="string">
+  股票代码，支持多个，用逗号分隔，如 `US:AAPL,HK:00700`
+</ParamField>
+
+<ParamField path="options.names" type="string">
+  股票名称，支持多个，用逗号分隔，如 `腾讯,苹果`
 </ParamField>
 
 <ResponseField name="返回值" type="Promise<CompanyOverview>">

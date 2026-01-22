@@ -3815,17 +3815,17 @@ components:
       description: Individual search result document
     CompanyOverviewInput:
       properties:
-        symbol:
+        symbols:
           type: string
-          title: Symbol
-          description: Stock symbol (e.g., HK:00700, US:AAPL)
-        name:
+          title: Symbols
+          description: The symbol of the stock. You can enter multiple items, separated by commas(,)
+          example: HK:00700,US:AAPL
+        names:
           type: string
-          title: Name
-          description: Stock name (optional)
+          title: Names
+          description: The name of the stock. You can enter multiple items, separated by commas(,)
+          example: 腾讯,苹果
       type: object
-      required:
-      - symbol
       title: CompanyOverviewInput
       description: Input schema for company overview
     CompanyShareholdersInput:

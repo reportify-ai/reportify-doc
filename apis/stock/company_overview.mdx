@@ -12,8 +12,12 @@ openapi: 'POST /v1/stock/company-overview'
 ### 请求参数
 | 参数名  | 类型   | 必填 | 描述                                      |
 |---------|--------|------|-------------------------------------------|
-| symbol  | str    | 是   | 股票代码，如 `HK:00700`、`US:AAPL`。      |
-| name    | str    | 否   | 股票名称（可选）。                        |
+| symbols | str    | 否   | 股票代码，支持多个，用逗号分隔，如 `HK:00700,US:AAPL` |
+| names   | str    | 否   | 股票名称，支持多个，用逗号分隔，如 `腾讯,苹果`       |
+
+<Note>
+`symbols` 和 `names` 至少需要提供一个参数。
+</Note>
 
 ### 响应参数
 | 参数名              | 类型    | 描述                                       |
@@ -59,10 +63,10 @@ openapi: 'POST /v1/stock/company-overview'
 **cURL**
 ```bash
 curl -X POST https://api.reportify.cn/v1/stock/company-overview \
--H "Authorization: Bearer 447460****09c9" \
+-H "Authorization: Bearer YOUR_API_KEY" \
 -H "Content-Type: application/json" \
 -d '{
-    "symbol": "HK:00700"
+    "symbols": "HK:00700,US:AAPL"
 }'
 ```
 
@@ -72,12 +76,15 @@ import requests
 
 url = "https://api.reportify.cn/v1/stock/company-overview"
 headers = {
-    "Authorization": "Bearer 447460****09c9",
+    "Authorization": "Bearer YOUR_API_KEY",
     "Content-Type": "application/json"
 }
-data = {
-    "symbol": "HK:00700"
-}
+
+# 通过股票代码查询
+data = {"symbols": "HK:00700,US:AAPL"}
+
+# 或者通过股票名称查询
+# data = {"names": "腾讯,苹果"}
 
 response = requests.post(url, headers=headers, json=data)
 print(response.json())
