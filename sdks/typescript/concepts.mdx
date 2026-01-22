@@ -1,0 +1,92 @@
+---
+title: '概念动态'
+description: 'TypeScript SDK 概念动态模块'
+icon: 'fire'
+---
+
+## 概念动态
+
+### latest()
+
+获取最新概念列表。
+
+```typescript
+// 获取最新概念（包含相关文档）
+const concepts = await client.concepts.latest();
+for (const concept of concepts) {
+  console.log(`${concept.concept_name}: 热度 ${concept.trending_score}`);
+}
+
+// 获取最新概念（不包含文档）
+const conceptsNoDocs = await client.concepts.latest({ includeDocs: false });
+```
+
+<ParamField path="options.includeDocs" type="boolean" default="true">
+  是否包含相关文档
+</ParamField>
+
+<ResponseField name="返回值" type="Promise<Concept[]>">
+  概念列表数组
+</ResponseField>
+
+---
+
+### today()
+
+获取今日概念动态。
+
+```typescript
+// 获取今日概念动态
+const feeds = await client.concepts.today();
+for (const feed of feeds) {
+  console.log(`${feed.concept_name}: ${feed.gen_count} 次`);
+}
+```
+
+<ResponseField name="返回值" type="Promise<ConceptFeed[]>">
+  今日概念动态列表数组
+</ResponseField>
+
+---
+
+## 类型定义
+
+```typescript
+interface Concept {
+  concept_id: string;
+  concept_code?: string;
+  concept_name: string;
+  concept_desc?: string;
+  concept_keywords?: string[];
+  concept_score?: number;
+  trending_score?: number;
+  scored_at?: number;
+  published_at?: number;
+  first_detected?: boolean;
+  stocks?: ConceptStock[];
+  docs?: ConceptDoc[];
+}
+
+interface ConceptFeed {
+  concept_id: string;
+  concept_code?: string;
+  concept_name: string;
+  gen_count: number;
+  stocks?: ConceptStock[];
+}
+
+interface ConceptStock {
+  market: string;
+  code: string;
+  name: string;
+  description?: string;
+  relevance?: number;
+}
+
+interface ConceptDoc {
+  doc_id: string;
+  title: string;
+  url: string;
+  relevance?: number;
+}
+```

@@ -1,0 +1,121 @@
+---
+title: "Today Concepts"
+openapi: "GET /v1/concepts/today"
+---
+
+## 获取今日概念动态
+
+**URL**: `/v1/concepts/today`  
+**方法**: `GET`  
+**描述**: 获取今日概念动态列表，包含概念的生成次数和相关股票。
+
+### 请求参数
+
+无需请求参数。
+
+### 响应参数
+
+| 参数名 | 类型 | 描述 |
+|--------|------|------|
+| concept_id | string | 概念唯一标识 |
+| concept_code | string | 概念代码 |
+| concept_name | string | 概念名称 |
+| gen_count | integer | 今日生成次数 |
+| stocks | array | 相关股票列表 |
+| &nbsp;&nbsp;market | string | 股票市场 |
+| &nbsp;&nbsp;code | string | 股票代码 |
+| &nbsp;&nbsp;name | string | 股票名称 |
+
+### 请求示例
+
+**cURL**
+
+```bash
+curl -X GET "https://api.reportify.cn/v1/concepts/today" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json"
+```
+
+**Python 示例**
+
+```python
+import requests
+
+url = "https://api.reportify.cn/v1/concepts/today"
+headers = {
+    "Authorization": "Bearer YOUR_API_KEY",
+    "Content-Type": "application/json"
+}
+
+response = requests.get(url, headers=headers)
+result = response.json()
+
+for concept in result:
+    print(f"{concept['concept_name']}: {concept['gen_count']} 次")
+```
+
+**TypeScript 示例**
+
+```typescript
+const response = await fetch('https://api.reportify.cn/v1/concepts/today', {
+  method: 'GET',
+  headers: {
+    'Authorization': 'Bearer YOUR_API_KEY',
+    'Content-Type': 'application/json'
+  }
+});
+
+const result = await response.json();
+for (const concept of result) {
+  console.log(`${concept.concept_name}: ${concept.gen_count} 次`);
+}
+```
+
+### 响应示例
+
+```json
+[
+  {
+    "concept_id": "10529065630577670",
+    "concept_code": "10512389099234310",
+    "concept_name": "东数西算(算力)",
+    "gen_count": 5,
+    "stocks": [
+      {
+        "market": "SH",
+        "code": "688256",
+        "name": "寒武纪"
+      },
+      {
+        "market": "SH",
+        "code": "688041",
+        "name": "海光信息"
+      }
+    ]
+  },
+  {
+    "concept_id": "10529065644733446",
+    "concept_code": "10512389541143558",
+    "concept_name": "人工智能",
+    "gen_count": 8,
+    "stocks": [
+      {
+        "market": "SZ",
+        "code": "002230",
+        "name": "科大讯飞"
+      },
+      {
+        "market": "SH",
+        "code": "688111",
+        "name": "金山办公"
+      }
+    ]
+  }
+]
+```
+
+### 注意事项
+
+- **gen_count**：表示该概念今日被生成/提及的次数，数值越高说明该概念今日热度越高
+- **stocks**：返回与该概念最相关的股票列表
+- **排序**：结果按 gen_count 降序排列，热度最高的概念排在前面

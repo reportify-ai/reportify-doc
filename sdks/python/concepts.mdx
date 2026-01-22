@@ -1,0 +1,72 @@
+---
+title: '概念动态'
+description: 'Python SDK 概念动态模块'
+icon: 'fire'
+---
+
+## 概念动态
+
+### latest()
+
+获取最新概念列表。
+
+```python
+# 获取最新概念（包含相关文档）
+concepts = client.concepts.latest()
+for concept in concepts:
+    print(f"{concept['concept_name']}: 热度 {concept['trending_score']}")
+
+# 获取最新概念（不包含文档）
+concepts = client.concepts.latest(include_docs=False)
+```
+
+<ParamField path="include_docs" type="bool" default="True">
+  是否包含相关文档
+</ParamField>
+
+<ResponseField name="返回值" type="list[dict]">
+  概念列表，包含 `concept_id`, `concept_name`, `concept_desc`, `trending_score`, `stocks`, `docs` 等
+</ResponseField>
+
+---
+
+### today()
+
+获取今日概念动态。
+
+```python
+# 获取今日概念动态
+feeds = client.concepts.today()
+for feed in feeds:
+    print(f"{feed['concept_name']}: {feed['gen_count']} 次")
+```
+
+<ResponseField name="返回值" type="list[dict]">
+  今日概念动态列表，包含 `concept_id`, `concept_name`, `gen_count`, `stocks` 等
+</ResponseField>
+
+---
+
+## 返回字段说明
+
+### 概念对象 (latest)
+
+| 字段 | 类型 | 描述 |
+|------|------|------|
+| concept_id | string | 概念唯一标识 |
+| concept_name | string | 概念名称 |
+| concept_desc | string | 概念描述 |
+| concept_keywords | list | 概念关键词列表 |
+| concept_score | float | 概念标准分 |
+| trending_score | float | 概念热度分 |
+| stocks | list | 相关股票列表 |
+| docs | list | 相关文档列表 |
+
+### 概念动态对象 (today)
+
+| 字段 | 类型 | 描述 |
+|------|------|------|
+| concept_id | string | 概念唯一标识 |
+| concept_name | string | 概念名称 |
+| gen_count | integer | 今日生成次数 |
+| stocks | list | 相关股票列表 |

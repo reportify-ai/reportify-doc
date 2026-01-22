@@ -1221,6 +1221,27 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
       - BearerAuth: []
+  /v1/concepts/today:
+    get:
+      tags:
+      - openapi-concepts
+      summary: Get Today Concepts
+      description: Get today's concept feeds with generation counts and related stocks
+      operationId: get_today_concept_feeds_reportify_api_v1_concepts_today_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
   /v1/concepts/latest:
     get:
       tags:
@@ -5259,6 +5280,47 @@ components:
         回测输入参数模型
 
         定义了回测引擎执行策略回测所需的所有参数。
+    ConceptFeed:
+      type: object
+      properties:
+        concept_id:
+          type: string
+          title: Concept Id
+          description: 概念唯一标识
+        concept_code:
+          type: string
+          title: Concept Code
+          description: 概念代码
+        concept_name:
+          type: string
+          title: Concept Name
+          description: 概念名称
+        gen_count:
+          type: integer
+          title: Gen Count
+          description: 今日生成次数
+        stocks:
+          type: array
+          title: Stocks
+          description: 相关股票列表
+          items:
+            type: object
+            properties:
+              market:
+                type: string
+                description: 股票市场
+              code:
+                type: string
+                description: 股票代码
+              name:
+                type: string
+                description: 股票名称
+      required:
+      - concept_id
+      - concept_name
+      - gen_count
+      title: ConceptFeed
+      description: 今日概念动态
     StockMarket:
       type: string
       enum:

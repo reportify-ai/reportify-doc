@@ -146,7 +146,9 @@
             "pages": [
               "apis/stock/index_constituents",
               "apis/stock/index_tracking_funds",
-              "apis/stock/industry_constituents"
+              "apis/stock/industry_constituents",
+              "apis/concepts/concepts_latest",
+              "apis/concepts/concepts_today"
             ]
           },
           {
@@ -162,13 +164,6 @@
             "pages": [
               "apis/stock/ipo_calendar_hk",
               "apis/stock/earnings_calendar"
-            ]
-          },
-          {
-            "group": "热门概念",
-            "icon": "fire",
-            "pages": [
-              "apis/concepts/concepts_latest"
             ]
           }
         ]
@@ -228,6 +223,7 @@
               "sdks/python/search",
               "sdks/python/docs",
               "sdks/python/stock",
+              "sdks/python/concepts",
               "sdks/python/kb",
               "sdks/python/timeline",
               "sdks/python/quant"
@@ -241,6 +237,7 @@
               "sdks/typescript/search",
               "sdks/typescript/docs",
               "sdks/typescript/stock",
+              "sdks/typescript/concepts",
               "sdks/typescript/kb",
               "sdks/typescript/timeline",
               "sdks/typescript/quant"
