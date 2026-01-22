@@ -1,0 +1,3 @@
+[submodule "code/sdks"]
+	path = code/sdks
+	url = /Users/pawa/Data/reportify-sdk
