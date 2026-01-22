@@ -20,7 +20,8 @@ results = client.kb.search(
 )
 
 for result in results:
-    print(result["title"], result["score"])
+    print(result["content"][:100])
+    print(f"来源: {result['doc']['title']}")
 ```
 
 <ParamField path="query" type="string" required>
@@ -31,12 +32,24 @@ for result in results:
   文件夹 ID 列表，不传则搜索全部文件夹
 </ParamField>
 
+<ParamField path="doc_ids" type="list[str]">
+  文档 ID 列表，限定搜索范围
+</ParamField>
+
+<ParamField path="start_date" type="str">
+  开始日期过滤（YYYY-MM-DD）
+</ParamField>
+
+<ParamField path="end_date" type="str">
+  结束日期过滤（YYYY-MM-DD）
+</ParamField>
+
 <ParamField path="num" type="int" default="10">
   返回结果数量
 </ParamField>
 
 <ResponseField name="返回值" type="list[dict]">
-  搜索结果列表
+  搜索结果列表（内容块）
 </ResponseField>
 
 ---

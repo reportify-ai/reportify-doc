@@ -57,35 +57,35 @@ openapi: 'POST /v1/docs'
 ### 请求示例
 **cURL**
 ```bash
-curl -X POST "https://api.reportify.cn/v1/docs/tags" \
--H "Authorization: Bearer 447460****09c9" \
+curl -X POST "https://api.reportify.cn/v1/docs" \
+-H "Authorization: Bearer YOUR_API_KEY" \
 -H "Content-Type: application/json" \
--d '{"tags": ["AI", "Chips"], 
-"language": "english", 
-"categories": ["financials", "transcripts"], 
-"start_date": "2024-01-01", 
-"end_date": "2024-12-31", 
-"page": 1, 
-"page_num": 10}'
+-d '{
+    "symbols": ["AAPL", "TSLA"],
+    "categories": ["financials", "transcripts"], 
+    "start_date": "2024-01-01", 
+    "end_date": "2024-12-31", 
+    "page_num": 1, 
+    "page_size": 10
+}'
 ```
 
 **Python 示例**
 ```python
 import requests
 
-url = "https://api.reportify.cn/v1/docs/tags"
+url = "https://api.reportify.cn/v1/docs"
 headers = {
-    "Authorization": "Bearer 447460****09c9",
+    "Authorization": "Bearer YOUR_API_KEY",
     "Content-Type": "application/json"
 }
 data = {  
-    "tags": ["AI", "Chips"],
-    "language": "english",
+    "symbols": ["AAPL", "TSLA"],
     "categories": ["financials", "transcripts"],
     "start_date": "2024-01-01",
     "end_date": "2024-12-31",
-    "page": 1,
-    "page_num": 10
+    "page_num": 1,
+    "page_size": 10
 }
 response = requests.post(url, headers=headers, json=data)
 print(response.json())
@@ -94,8 +94,8 @@ print(response.json())
 ### 响应示例
 ```json
 {
-  "page": 1,
-  "page_num": 10,
+  "page_num": 1,
+  "page_size": 10,
   "total_page": 5,
   "total_count": 50,
   "docs": [

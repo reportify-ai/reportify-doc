@@ -18,33 +18,18 @@ const docs = await client.search('Tesla earnings', {
 });
 ```
 
-<ParamField path="query" type="string" required>
-  搜索关键词
-</ParamField>
+**参数：**
 
-<ParamField path="options.num" type="number" default="10">
-  返回结果数量，最大 100
-</ParamField>
+| 参数 | 类型 | 必填 | 默认值 | 说明 |
+|------|------|------|--------|------|
+| `query` | `string` | 是 | - | 搜索关键词 |
+| `options.num` | `number` | 否 | `10` | 返回结果数量，最大 100 |
+| `options.categories` | `string[]` | 否 | - | 文档类别过滤，可选值：`news`, `reports`, `filings`, `transcripts`, `socials` |
+| `options.symbols` | `string[]` | 否 | - | 股票代码过滤，格式：`市场:代码`，如 `US:AAPL`, `HK:0700`, `CN:600519` |
+| `options.startDate` | `string` | 否 | - | 开始日期，格式：`YYYY-MM-DD` |
+| `options.endDate` | `string` | 否 | - | 结束日期，格式：`YYYY-MM-DD` |
 
-<ParamField path="options.categories" type="string[]">
-  文档类别过滤，可选值：`news`, `reports`, `filings`, `transcripts`, `socials`
-</ParamField>
-
-<ParamField path="options.symbols" type="string[]">
-  股票代码过滤，格式：`市场:代码`，如 `US:AAPL`, `HK:0700`, `CN:600519`
-</ParamField>
-
-<ParamField path="options.startDate" type="string">
-  开始日期，格式：`YYYY-MM-DD`
-</ParamField>
-
-<ParamField path="options.endDate" type="string">
-  结束日期，格式：`YYYY-MM-DD`
-</ParamField>
-
-<ResponseField name="返回值" type="Promise<Document[]>">
-  文档列表
-</ResponseField>
+**返回值：** `Promise<Document[]>` - 文档列表
 
 ---
 
@@ -59,25 +44,17 @@ const news = await client.searchNews('Apple iPhone', {
 });
 ```
 
-<ParamField path="query" type="string" required>
-  搜索关键词
-</ParamField>
+**参数：**
 
-<ParamField path="options.num" type="number" default="10">
-  返回结果数量
-</ParamField>
+| 参数 | 类型 | 必填 | 默认值 | 说明 |
+|------|------|------|--------|------|
+| `query` | `string` | 是 | - | 搜索关键词 |
+| `options.num` | `number` | 否 | `10` | 返回结果数量 |
+| `options.symbols` | `string[]` | 否 | - | 股票代码过滤 |
+| `options.startDate` | `string` | 否 | - | 开始日期 |
+| `options.endDate` | `string` | 否 | - | 结束日期 |
 
-<ParamField path="options.symbols" type="string[]">
-  股票代码过滤
-</ParamField>
-
-<ParamField path="options.startDate" type="string">
-  开始日期
-</ParamField>
-
-<ParamField path="options.endDate" type="string">
-  结束日期
-</ParamField>
+**返回值：** `Promise<Document[]>` - 新闻文档列表
 
 ---
 
@@ -87,9 +64,23 @@ const news = await client.searchNews('Apple iPhone', {
 
 ```typescript
 const reports = await client.searchReports('semiconductor analysis', {
-  num: 10
+  num: 10,
+  symbols: ['US:NVDA'],
+  startDate: '2024-01-01'
 });
 ```
+
+**参数：**
+
+| 参数 | 类型 | 必填 | 默认值 | 说明 |
+|------|------|------|--------|------|
+| `query` | `string` | 是 | - | 搜索关键词 |
+| `options.num` | `number` | 否 | `10` | 返回结果数量 |
+| `options.symbols` | `string[]` | 否 | - | 股票代码过滤 |
+| `options.startDate` | `string` | 否 | - | 开始日期 |
+| `options.endDate` | `string` | 否 | - | 结束日期 |
+
+**返回值：** `Promise<Document[]>` - 研究报告列表
 
 ---
 
@@ -99,9 +90,23 @@ const reports = await client.searchReports('semiconductor analysis', {
 
 ```typescript
 const filings = await client.searchFilings('10-K annual report', {
-  symbols: ['US:AAPL']
+  symbols: ['US:AAPL'],
+  num: 20,
+  startDate: '2024-01-01'
 });
 ```
+
+**参数：**
+
+| 参数 | 类型 | 必填 | 默认值 | 说明 |
+|------|------|------|--------|------|
+| `query` | `string` | 是 | - | 搜索关键词 |
+| `options.num` | `number` | 否 | `10` | 返回结果数量 |
+| `options.symbols` | `string[]` | 否 | - | 股票代码过滤 |
+| `options.startDate` | `string` | 否 | - | 开始日期 |
+| `options.endDate` | `string` | 否 | - | 结束日期 |
+
+**返回值：** `Promise<Document[]>` - 公告/财报列表
 
 ---
 
@@ -111,9 +116,23 @@ const filings = await client.searchFilings('10-K annual report', {
 
 ```typescript
 const transcripts = await client.searchTranscripts('guidance revenue', {
-  symbols: ['US:TSLA']
+  symbols: ['US:TSLA'],
+  num: 10,
+  startDate: '2024-01-01'
 });
 ```
+
+**参数：**
+
+| 参数 | 类型 | 必填 | 默认值 | 说明 |
+|------|------|------|--------|------|
+| `query` | `string` | 是 | - | 搜索关键词 |
+| `options.num` | `number` | 否 | `10` | 返回结果数量 |
+| `options.symbols` | `string[]` | 否 | - | 股票代码过滤 |
+| `options.startDate` | `string` | 否 | - | 开始日期 |
+| `options.endDate` | `string` | 否 | - | 结束日期 |
+
+**返回值：** `Promise<Document[]>` - 电话会议纪要列表
 
 ---
 

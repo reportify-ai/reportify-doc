@@ -1789,6 +1789,233 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
       - BearerAuth: []
+  /v1/agent/files/{file_id}:
+    get:
+      tags:
+      - openapi-agent
+      summary: Get Agent File
+      description: Get agent generated file by file ID
+      operationId: get_agent_file_reportify_api_v1_agent_files__file_id__get
+      parameters:
+      - required: true
+        schema:
+          type: string
+          title: File Id
+          description: Agent generated file ID
+        name: file_id
+        in: path
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        '404':
+          description: File not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v1/tools/user/followed-companies:
+    get:
+      tags:
+      - openapi-tools-user
+      summary: Get Followed Companies
+      description: Get all companies followed by a user
+      operationId: get_followed_companies_reportify_api_v1_tools_user_followed_companies_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FollowedCompaniesResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v1/tools/kb/search:
+    post:
+      tags:
+      - openapi-tools-kb
+      summary: Search Knowledge Base
+      description: Search user's personal knowledge base including uploaded documents and folders
+      operationId: search_kb_reportify_api_v1_tools_kb_search_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OAIKBSearchRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KBSearchOutput'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v1/tools/timeline/companies:
+    post:
+      tags:
+      - openapi-tools-timeline
+      summary: Companies Timeline
+      description: Get timeline content for user's followed companies
+      operationId: companies_timeline_reportify_api_v1_tools_timeline_companies_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OAITimelineToolsRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimelineToolsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v1/tools/timeline/topics:
+    post:
+      tags:
+      - openapi-tools-timeline
+      summary: Topics Timeline
+      description: Get timeline content for user's followed topics
+      operationId: topics_timeline_reportify_api_v1_tools_timeline_topics_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OAITimelineToolsRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimelineToolsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v1/tools/timeline/institutes:
+    post:
+      tags:
+      - openapi-tools-timeline
+      summary: Institutes Timeline
+      description: Get timeline content for user's followed professional institutes
+      operationId: institutes_timeline_reportify_api_v1_tools_timeline_institutes_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OAITimelineToolsRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimelineToolsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v1/tools/timeline/public-media:
+    post:
+      tags:
+      - openapi-tools-timeline
+      summary: Public Media Timeline
+      description: Get timeline content for user's followed public media
+      operationId: public_media_timeline_reportify_api_v1_tools_timeline_public_media_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OAITimelineToolsRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimelineToolsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v1/tools/timeline/social-media:
+    post:
+      tags:
+      - openapi-tools-timeline
+      summary: Social Media Timeline
+      description: Get timeline content for user's followed social media
+      operationId: social_media_timeline_reportify_api_v1_tools_timeline_social_media_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OAITimelineToolsRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimelineToolsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
   /v1/quant/indicators:
     get:
       tags:
@@ -5328,6 +5555,183 @@ components:
       - hk
       - us
       title: StockMarket
+    FollowedCompanyItem:
+      properties:
+        symbol:
+          type: string
+          title: Symbol
+          description: Company symbol (e.g., US:AAPL)
+        ticker:
+          type: string
+          title: Ticker
+          description: Company ticker (e.g., AAPL)
+        market:
+          type: string
+          title: Market
+          description: Market (e.g., US, HK, CN)
+        name:
+          type: string
+          title: Name
+          description: Company name
+        chinese_name:
+          type: string
+          title: Chinese Name
+          description: Chinese name
+        english_name:
+          type: string
+          title: English Name
+          description: English name
+        logo:
+          type: string
+          title: Logo
+          description: Company logo URL
+        followed_at:
+          type: integer
+          title: Followed At
+          description: Follow timestamp in milliseconds
+      type: object
+      required:
+      - symbol
+      title: FollowedCompanyItem
+      description: Followed company information
+    FollowedCompaniesResponse:
+      properties:
+        companies:
+          type: array
+          items:
+            $ref: '#/components/schemas/FollowedCompanyItem'
+          title: Companies
+          description: List of followed companies
+          default: []
+        total:
+          type: integer
+          title: Total
+          description: Total number of followed companies
+          default: 0
+      type: object
+      title: FollowedCompaniesResponse
+      description: Response containing followed companies
+    OAIKBSearchRequest:
+      properties:
+        query:
+          type: string
+          title: Query
+          description: Search query
+        folder_ids:
+          type: array
+          items:
+            type: string
+          title: Folder Ids
+          description: Folder IDs to filter by
+        doc_ids:
+          type: array
+          items:
+            type: string
+          title: Doc Ids
+          description: Document IDs to filter by
+        start_date:
+          type: string
+          title: Start Date
+          description: Start date filter (YYYY-MM-DD)
+        end_date:
+          type: string
+          title: End Date
+          description: End date filter (YYYY-MM-DD)
+        num:
+          type: integer
+          title: Num
+          description: Number of results to return
+          default: 10
+      type: object
+      required:
+      - query
+      title: OAIKBSearchRequest
+      description: Request model for knowledge base search
+    KBSearchOutput:
+      properties:
+        chunks:
+          type: array
+          items:
+            $ref: '#/components/schemas/OAIChunkWithDoc'
+          title: Chunks
+          description: Search result chunks with document information
+          default: []
+      type: object
+      title: KBSearchOutput
+      description: Output model for knowledge base search
+    OAITimelineToolsRequest:
+      properties:
+        num:
+          type: integer
+          title: Num
+          description: Number of results to return
+          default: 10
+          minimum: 1
+          maximum: 100
+      type: object
+      title: OAITimelineToolsRequest
+      description: Request model for timeline tools
+    ToolAPIDocument:
+      properties:
+        doc_id:
+          type: string
+          title: Doc Id
+          description: Document ID
+        title:
+          type: string
+          title: Title
+          description: Document title
+        summary:
+          type: string
+          title: Summary
+          description: Document summary
+        category:
+          type: string
+          title: Category
+          description: Document category
+        published_at:
+          type: string
+          title: Published At
+          description: Publication timestamp
+        source:
+          type: string
+          title: Source
+          description: Document source
+        channel_name:
+          type: string
+          title: Channel Name
+          description: Channel name
+        symbols:
+          type: array
+          items:
+            type: string
+          title: Symbols
+          description: Related stock symbols
+      type: object
+      title: ToolAPIDocument
+      description: Document in tool API response
+    TimelineToolsResponse:
+      properties:
+        docs:
+          type: array
+          items:
+            $ref: '#/components/schemas/ToolAPIDocument'
+          title: Docs
+          description: Timeline result documents
+          default: []
+        total_count:
+          type: integer
+          title: Total Count
+          description: Total number of matching documents
+          default: 0
+        took_ms:
+          type: integer
+          title: Took Ms
+          description: Timeline execution time in milliseconds
+          default: 0
+      type: object
+      title: TimelineToolsResponse
+      description: Response model for timeline tools
 
   responses:
     BadRequest:

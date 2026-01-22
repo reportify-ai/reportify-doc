@@ -81,8 +81,28 @@ print(income[["revenue", "net_income", "eps"]].head())
   报告期间：`annual`（年报）或 `quarterly`（季报）
 </ParamField>
 
-<ParamField path="limit" type="int" default="10">
+<ParamField path="limit" type="int" default="8">
   返回期数
+</ParamField>
+
+<ParamField path="start_date" type="str">
+  开始日期，格式：`YYYY-MM-DD`
+</ParamField>
+
+<ParamField path="end_date" type="str">
+  结束日期，格式：`YYYY-MM-DD`
+</ParamField>
+
+<ParamField path="calendar" type="str" default="fiscal">
+  日历类型：`calendar`（公历）或 `fiscal`（财年）
+</ParamField>
+
+<ParamField path="fiscal_year" type="str">
+  指定财年，如 `2023`
+</ParamField>
+
+<ParamField path="fiscal_quarter" type="str">
+  指定财季（Q1, Q2, Q3, Q4, FY, H1）
 </ParamField>
 
 <ResponseField name="返回值" type="DataFrame">
@@ -108,8 +128,28 @@ print(balance[["total_assets", "total_liabilities", "total_equity"]].head())
   报告期间：`annual` 或 `quarterly`
 </ParamField>
 
-<ParamField path="limit" type="int" default="10">
+<ParamField path="limit" type="int" default="8">
   返回期数
+</ParamField>
+
+<ParamField path="start_date" type="str">
+  开始日期，格式：`YYYY-MM-DD`
+</ParamField>
+
+<ParamField path="end_date" type="str">
+  结束日期，格式：`YYYY-MM-DD`
+</ParamField>
+
+<ParamField path="calendar" type="str" default="fiscal">
+  日历类型：`calendar`（公历）或 `fiscal`（财年）
+</ParamField>
+
+<ParamField path="fiscal_year" type="str">
+  指定财年，如 `2023`
+</ParamField>
+
+<ParamField path="fiscal_quarter" type="str">
+  指定财季（Q1, Q2, Q3, Q4, FY）
 </ParamField>
 
 <ResponseField name="返回值" type="DataFrame">
@@ -132,11 +172,31 @@ print(cashflow[["operating_cashflow", "investing_cashflow", "financing_cashflow"
 </ParamField>
 
 <ParamField path="period" type="string" default="annual">
-  报告期间：`annual` 或 `quarterly`
+  报告期间：`annual`、`quarterly` 或 `cumulative quarterly`
 </ParamField>
 
-<ParamField path="limit" type="int" default="10">
+<ParamField path="limit" type="int" default="8">
   返回期数
+</ParamField>
+
+<ParamField path="start_date" type="str">
+  开始日期，格式：`YYYY-MM-DD`
+</ParamField>
+
+<ParamField path="end_date" type="str">
+  结束日期，格式：`YYYY-MM-DD`
+</ParamField>
+
+<ParamField path="calendar" type="str" default="fiscal">
+  日历类型：`calendar`（公历）或 `fiscal`（财年）
+</ParamField>
+
+<ParamField path="fiscal_year" type="str">
+  指定财年，如 `2023`
+</ParamField>
+
+<ParamField path="fiscal_quarter" type="str">
+  指定财季（Q1, Q2, Q3, Q4, FY, H1）
 </ParamField>
 
 <ResponseField name="返回值" type="DataFrame">
@@ -150,7 +210,7 @@ print(cashflow[["operating_cashflow", "investing_cashflow", "financing_cashflow"
 获取营收分解数据。
 
 ```python
-breakdown = client.stock.revenue_breakdown("US:AAPL", breakdown_type="segment")
+breakdown = client.stock.revenue_breakdown("US:AAPL", limit=6)
 print(breakdown)
 ```
 
@@ -158,9 +218,29 @@ print(breakdown)
   股票代码
 </ParamField>
 
-<ParamField path="breakdown_type" type="string" default="segment">
-  分解类型：`segment`（业务分部）, `product`（产品）, `region`（地区）
+<ParamField path="period" type="str">
+  报告周期，如 `FY`（全年）、`Q2`（二季度）
 </ParamField>
+
+<ParamField path="limit" type="int" default="6">
+  返回记录数
+</ParamField>
+
+<ParamField path="start_date" type="str">
+  开始日期，格式：`YYYY-MM-DD`
+</ParamField>
+
+<ParamField path="end_date" type="str">
+  结束日期，格式：`YYYY-MM-DD`
+</ParamField>
+
+<ParamField path="fiscal_year" type="str">
+  指定财年，如 `2023`
+</ParamField>
+
+<ResponseField name="返回值" type="DataFrame">
+  营收分解数据
+</ResponseField>
 
 ---
 
@@ -174,8 +254,7 @@ print(breakdown)
 prices = client.stock.prices(
     symbol="US:AAPL",
     start_date="2024-01-01",
-    end_date="2024-06-30",
-    limit=100
+    end_date="2024-06-30"
 )
 print(prices[["close", "volume", "market_cap"]].tail())
 ```
@@ -192,53 +271,9 @@ print(prices[["close", "volume", "market_cap"]].tail())
   结束日期，格式：`YYYY-MM-DD`
 </ParamField>
 
-<ParamField path="limit" type="int" default="100">
-  返回记录数
-</ParamField>
-
 <ResponseField name="返回值" type="DataFrame">
   股价数据，包含 `close`, `volume`, `market_cap`, `pe`, `ps` 等
 </ResponseField>
-
----
-
-### kline()
-
-获取 K 线数据。
-
-```python
-kline = client.stock.kline(
-    symbol="US:TSLA",
-    interval="1d",
-    adjust="forward",
-    limit=100
-)
-print(kline[["open", "high", "low", "close", "volume"]].tail())
-```
-
-<ParamField path="symbol" type="string" required>
-  股票代码
-</ParamField>
-
-<ParamField path="interval" type="string" default="1d">
-  时间周期：`1d`（日线）, `1w`（周线）, `1m`（月线）
-</ParamField>
-
-<ParamField path="adjust" type="string" default="forward">
-  复权类型：`forward`（前复权）, `backward`（后复权）, `none`（不复权）
-</ParamField>
-
-<ParamField path="start_date" type="str">
-  开始日期
-</ParamField>
-
-<ParamField path="end_date" type="str">
-  结束日期
-</ParamField>
-
-<ParamField path="limit" type="int" default="100">
-  返回记录数
-</ParamField>
 
 ---
 
@@ -247,12 +282,12 @@ print(kline[["open", "high", "low", "close", "volume"]].tail())
 获取实时行情。
 
 ```python
-quotes = client.stock.quote(["US:AAPL", "US:MSFT", "US:GOOGL"])
-print(quotes[["symbol", "price", "change_percent"]])
+quote = client.stock.quote("US:AAPL")
+print(quote[["symbol", "price", "change_percent"]])
 ```
 
-<ParamField path="symbols" type="str | list[str]" required>
-  单个或多个股票代码
+<ParamField path="symbol" type="str" required>
+  股票代码，如 `US:AAPL`、`688001`、`00700`
 </ParamField>
 
 <ResponseField name="返回值" type="DataFrame">
@@ -286,17 +321,17 @@ chinext = client.stock.index_constituents("399006")
 
 ---
 
-### index_funds()
+### index_tracking_funds()
 
 获取指数跟踪基金列表。
 
 ```python
 # 获取沪深300指数跟踪基金
-funds = client.stock.index_funds("000300")
+funds = client.stock.index_tracking_funds("000300")
 print(funds[["symbol", "short_name", "name"]])
 
 # 获取中证500指数跟踪基金
-funds = client.stock.index_funds("000905")
+funds = client.stock.index_tracking_funds("000905")
 ```
 
 <ParamField path="symbol" type="string" required>
@@ -351,38 +386,70 @@ stocks = client.stock.industry_constituents("cn", "军工", type="sw")
 
 ```python
 stocks = client.stock.screener(
-    market="US",
-    min_market_cap=1e10,  # 100亿美元以上
-    max_pe=30,
+    country="US",
+    market_cap_more_than=1e10,  # 100亿美元以上
+    pe_ttm_lower_than=30,
     limit=50
 )
 ```
 
-<ParamField path="market" type="str">
-  市场：`US`, `HK`, `CN`
+<ParamField path="market_cap_more_than" type="float">
+  市值大于
 </ParamField>
 
-<ParamField path="sector" type="str">
-  行业板块
+<ParamField path="market_cap_lower_than" type="float">
+  市值小于
 </ParamField>
 
-<ParamField path="min_market_cap" type="float">
-  最小市值
+<ParamField path="price_more_than" type="float">
+  股价大于
 </ParamField>
 
-<ParamField path="max_market_cap" type="float">
-  最大市值
+<ParamField path="price_lower_than" type="float">
+  股价小于
 </ParamField>
 
-<ParamField path="min_pe" type="float">
-  最小市盈率
+<ParamField path="change_percentage_more_than" type="float">
+  涨跌幅大于（如 0.02 表示 2%）
 </ParamField>
 
-<ParamField path="max_pe" type="float">
-  最大市盈率
+<ParamField path="change_percentage_lower_than" type="float">
+  涨跌幅小于
 </ParamField>
 
-<ParamField path="limit" type="int" default="50">
+<ParamField path="volume_more_than" type="int">
+  成交量大于
+</ParamField>
+
+<ParamField path="volume_lower_than" type="int">
+  成交量小于
+</ParamField>
+
+<ParamField path="country" type="str">
+  国家代码：`US`, `CN`, `HK`
+</ParamField>
+
+<ParamField path="exchange" type="str">
+  交易所代码：`NASDAQ`, `NYSE`, `HKEX`
+</ParamField>
+
+<ParamField path="dividend_yield_more_than" type="float">
+  股息率大于
+</ParamField>
+
+<ParamField path="dividend_yield_lower_than" type="float">
+  股息率小于
+</ParamField>
+
+<ParamField path="pe_ttm_more_than" type="float">
+  市盈率（TTM）大于
+</ParamField>
+
+<ParamField path="pe_ttm_lower_than" type="float">
+  市盈率（TTM）小于
+</ParamField>
+
+<ParamField path="limit" type="int" default="100">
   返回数量
 </ParamField>
 

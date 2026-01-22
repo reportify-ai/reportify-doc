@@ -1,0 +1,57 @@
+---
+title: '用户数据'
+description: 'TypeScript SDK 用户数据模块 - 获取用户关注的公司等信息'
+icon: 'user'
+---
+
+## 概述
+
+用户数据模块提供用户个人数据的访问，包括关注的公司列表等。
+
+## followedCompanies()
+
+获取用户关注的所有公司列表。
+
+```typescript
+const companies = await client.user.followedCompanies();
+companies.forEach(company => {
+  console.log(company.name, company.symbol);
+});
+```
+
+**返回值：** `Promise<FollowedCompany[]>` - 关注公司列表
+
+---
+
+## 类型定义
+
+```typescript
+interface FollowedCompany {
+  symbol: string;       // 股票代码，如 US:AAPL
+  ticker: string;       // 股票简码，如 AAPL
+  market: string;       // 市场，如 US, HK, CN
+  name: string;         // 公司名称
+  chineseName: string;  // 中文名称
+  englishName: string;  // 英文名称
+  logo: string;         // 公司 Logo URL
+  followedAt: number;   // 关注时间戳（毫秒）
+}
+```
+
+## 使用场景
+
+```typescript
+// 获取关注公司并查询其最新动态
+const companies = await client.user.followedCompanies();
+console.log(`共关注 ${companies.length} 家公司`);
+
+companies.slice(0, 5).forEach(company => {
+  console.log(`- ${company.name} (${company.symbol})`);
+});
+
+// 结合时间线使用
+const timeline = await client.timeline.companies({ num: 10 });
+timeline.forEach(item => {
+  console.log(`- ${item.title}`);
+});
+```

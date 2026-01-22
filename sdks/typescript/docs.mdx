@@ -6,9 +6,11 @@ icon: 'file-lines'
 
 ## 概述
 
-文档模块用于获取单个文档的详细内容和总结。
+文档模块用于获取单个文档的详细内容和总结，支持文档列表查询、文件夹管理和文档上传。
 
-## get()
+## 获取文档
+
+### get()
 
 获取文档详情。
 
@@ -18,17 +20,17 @@ console.log(doc.title);
 console.log(doc.content);
 ```
 
-<ParamField path="docId" type="string" required>
-  文档 ID
-</ParamField>
+**参数：**
 
-<ResponseField name="返回值" type="Promise<DocumentDetail>">
-  文档详情
-</ResponseField>
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `docId` | `string` | 是 | 文档 ID |
+
+**返回值：** `Promise<DocumentDetail>` - 文档详情
 
 ---
 
-## summary()
+### summary()
 
 获取文档总结。
 
@@ -38,78 +40,327 @@ console.log(summary.summary);
 console.log(summary.keyPoints);
 ```
 
-<ParamField path="docId" type="string" required>
-  文档 ID
-</ParamField>
+**参数：**
 
-<ResponseField name="返回值" type="Promise<DocumentSummary>">
-  文档总结
-</ResponseField>
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `docId` | `string` | 是 | 文档 ID |
+
+**返回值：** `Promise<DocumentSummary>` - 文档总结
 
 ---
 
-## listBySymbol()
+### rawContent()
 
-获取指定股票的相关文档列表。
+获取文档原始内容。
 
 ```typescript
-const docs = await client.docs.listBySymbol('US:AAPL', {
-  categories: ['news', 'filings'],
-  num: 20
+const raw = await client.docs.rawContent('doc_abc123');
+console.log(raw.content);
+```
+
+**参数：**
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `docId` | `string` | 是 | 文档 ID |
+
+**返回值：** `Promise<DocContent>` - 文档原始内容
+
+---
+
+## 文档列表
+
+### list()
+
+获取文档列表，支持多种过滤条件。
+
+```typescript
+const result = await client.docs.list({
+  categories: ['news', 'reports'],
+  symbols: ['US:AAPL'],
+  startDate: '2024-01-01',
+  pageNum: 1,
+  pageSize: 20
+});
+console.log(result.items, result.total);
+```
+
+**参数：**
+
+| 参数 | 类型 | 必填 | 默认值 | 说明 |
+|------|------|------|--------|------|
+| `options.symbols` | `string[]` | 否 | - | 股票代码过滤 |
+| `options.categories` | `string[]` | 否 | - | 文档类别：`news`, `reports`, `filings`, `transcripts`, `socials` |
+| `options.markets` | `string[]` | 否 | - | 市场过滤 |
+| `options.institutions` | `string[]` | 否 | - | 机构过滤 |
+| `options.tags` | `string[]` | 否 | - | 标签过滤 |
+| `options.folderIds` | `string[]` | 否 | - | 文件夹 ID 过滤 |
+| `options.startDate` | `string` | 否 | - | 开始日期（YYYY-MM-DD） |
+| `options.endDate` | `string` | 否 | - | 结束日期（YYYY-MM-DD） |
+| `options.minScore` | `number` | 否 | - | 最小相关性分数 |
+| `options.pageNum` | `number` | 否 | `1` | 页码 |
+| `options.pageSize` | `number` | 否 | `10` | 每页数量 |
+
+**返回值：** `Promise<PaginatedResponse<Document>>` - 分页文档列表
+
+---
+
+### queryBySymbols()
+
+按股票代码查询文档。
+
+```typescript
+const result = await client.docs.queryBySymbols(['US:AAPL', 'US:MSFT'], {
+  categories: ['news'],
+  pageSize: 20
 });
 ```
 
-<ParamField path="symbol" type="string" required>
-  股票代码，格式：`市场:代码`
-</ParamField>
+**参数：**
 
-<ParamField path="options.categories" type="string[]">
-  文档类别筛选
-</ParamField>
+| 参数 | 类型 | 必填 | 默认值 | 说明 |
+|------|------|------|--------|------|
+| `symbols` | `string[]` | 是 | - | 股票代码列表 |
+| `options.categories` | `string[]` | 否 | - | 文档类别过滤 |
+| `options.markets` | `string[]` | 否 | - | 市场过滤 |
+| `options.startDate` | `string` | 否 | - | 开始日期 |
+| `options.endDate` | `string` | 否 | - | 结束日期 |
+| `options.pageNum` | `number` | 否 | `1` | 页码 |
+| `options.pageSize` | `number` | 否 | `10` | 每页数量 |
 
-<ParamField path="options.num" type="number" default="10">
-  返回数量
-</ParamField>
-
-<ParamField path="options.startDate" type="string">
-  开始日期
-</ParamField>
-
-<ParamField path="options.endDate" type="string">
-  结束日期
-</ParamField>
+**返回值：** `Promise<PaginatedResponse<Document>>` - 分页文档列表
 
 ---
 
-## listByLabel()
+### queryByTags()
 
-获取指定标签的文档列表。
+按标签查询文档。
 
 ```typescript
-const docs = await client.docs.listByLabel('财报', { num: 20 });
+const result = await client.docs.queryByTags(
+  { industry: ['科技'], topic: ['AI'] },
+  { pageSize: 20 }
+);
 ```
 
-<ParamField path="label" type="string" required>
-  文档标签
-</ParamField>
+**参数：**
 
-<ParamField path="options.num" type="number" default="10">
-  返回数量
-</ParamField>
+| 参数 | 类型 | 必填 | 默认值 | 说明 |
+|------|------|------|--------|------|
+| `tags` | `Record<string, unknown[]>` | 是 | - | 标签字典，如 `{ industry: ['科技'], topic: ['AI'] }` |
+| `options.categories` | `string[]` | 否 | - | 文档类别过滤 |
+| `options.markets` | `string[]` | 否 | - | 市场过滤 |
+| `options.startDate` | `string` | 否 | - | 开始日期 |
+| `options.endDate` | `string` | 否 | - | 结束日期 |
+| `options.pageNum` | `number` | 否 | `1` | 页码 |
+| `options.pageSize` | `number` | 否 | `10` | 每页数量 |
+
+**返回值：** `Promise<PaginatedResponse<Document>>` - 分页文档列表
+
+---
+
+### searchChunks()
+
+语义搜索文档片段。
+
+```typescript
+const chunks = await client.docs.searchChunks('Tesla revenue growth', {
+  symbols: ['US:TSLA'],
+  num: 10
+});
+chunks.forEach(chunk => console.log(chunk.content));
+```
+
+**参数：**
+
+| 参数 | 类型 | 必填 | 默认值 | 说明 |
+|------|------|------|--------|------|
+| `query` | `string` | 是 | - | 搜索查询 |
+| `options.num` | `number` | 否 | `10` | 返回结果数量 |
+| `options.symbols` | `string[]` | 否 | - | 股票代码过滤 |
+| `options.categories` | `string[]` | 否 | - | 文档类别过滤 |
+| `options.folderIds` | `string[]` | 否 | - | 文件夹 ID 过滤 |
+| `options.docIds` | `string[]` | 否 | - | 文档 ID 过滤 |
+| `options.markets` | `string[]` | 否 | - | 市场过滤 |
+| `options.institutions` | `string[]` | 否 | - | 机构过滤 |
+| `options.tags` | `object` | 否 | - | 标签过滤 |
+| `options.startDate` | `string` | 否 | - | 开始日期 |
+| `options.endDate` | `string` | 否 | - | 结束日期 |
+| `options.minScore` | `number` | 否 | - | 最小相关性分数 |
+| `options.includeDocExtraDetails` | `boolean` | 否 | - | 是否包含文档额外详情 |
+| `options.refineQuestion` | `boolean` | 否 | - | 是否优化查询 |
+| `options.dateRange` | `string` | 否 | - | 日期范围 |
+
+**返回值：** `Promise<Chunk[]>` - 文档片段列表
+
+---
+
+## 文件夹管理
+
+### createFolder()
+
+创建文档文件夹。
+
+```typescript
+const { folderId } = await client.docs.createFolder('研究报告');
+console.log('创建文件夹:', folderId);
+```
+
+**参数：**
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `name` | `string` | 是 | 文件夹名称 |
+
+**返回值：** `Promise<{ folderId: string }>` - 新创建的文件夹 ID
+
+---
+
+### deleteFolder()
+
+删除文档文件夹及其所有文件。
+
+```typescript
+const { folderId, docIds } = await client.docs.deleteFolder('folder_123');
+console.log('删除的文档:', docIds);
+```
+
+**参数：**
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `folderId` | `string` | 是 | 文件夹 ID |
+
+**返回值：** `Promise<{ folderId: string; docIds: string[] }>` - 删除的文件夹 ID 和文档 ID 列表
+
+---
+
+## 文档上传
+
+### uploadDocs()
+
+通过 URL 上传文档（同步）。
+
+```typescript
+const result = await client.docs.uploadDocs([
+  {
+    url: 'https://example.com/report.pdf',
+    name: '研究报告',
+    publishedAt: 1704067200000
+  }
+], { folderId: 'folder_123', pdfParsingMode: 3 });
+```
+
+**参数：**
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `docs` | `UploadDocRequest[]` | 是 | 文档上传请求列表 |
+| `docs[].url` | `string` | 是 | 文档 URL |
+| `docs[].name` | `string` | 否 | 文档名称 |
+| `docs[].metadatas` | `object` | 否 | 元数据 |
+| `docs[].publishedAt` | `number` | 否 | 发布时间戳（毫秒） |
+| `docs[].tags` | `object` | 否 | 文档标签 |
+| `options.folderId` | `string` | 否 | 目标文件夹 ID |
+| `options.pdfParsingMode` | `number` | 否 | PDF 解析模式：1（按页）或 3（按逻辑） |
+
+**返回值：** `Promise<{ docs: Array<{ id: string; title: string; originalUrl: string }> }>` - 上传结果
+
+---
+
+### uploadDocsAsync()
+
+通过 URL 异步上传文档。
+
+```typescript
+const result = await client.docs.uploadDocsAsync([
+  { url: 'https://example.com/large-report.pdf' }
+], { folderId: 'folder_123' });
+
+// 检查上传状态
+const status = await client.docs.getUploadStatus(result.docs[0].id);
+console.log(status.status);  // 'pending' | 'processing' | 'completed'
+```
+
+**参数：**
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `docs` | `UploadDocRequest[]` | 是 | 文档上传请求列表（同 uploadDocs） |
+| `options.folderId` | `string` | 否 | 目标文件夹 ID |
+| `options.pdfParsingMode` | `number` | 否 | PDF 解析模式 |
+
+**返回值：** `Promise<{ docs: Array<{ id: string; title: string; originalUrl: string }> }>` - 上传结果
+
+---
+
+### getUploadStatus()
+
+获取文档上传状态。
+
+```typescript
+const status = await client.docs.getUploadStatus('doc_abc123');
+console.log(status.status);  // 'pending' | 'processing' | 'completed'
+```
+
+**参数：**
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `docId` | `string` | 是 | 文档 ID |
+
+**返回值：** `Promise<{ id: string; status: string }>` - 上传状态
+
+---
+
+### deleteDocs()
+
+删除文档。
+
+```typescript
+const { docIds } = await client.docs.deleteDocs(['doc_123', 'doc_456']);
+console.log('已删除:', docIds);
+```
+
+**参数：**
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `docIds` | `string[]` | 是 | 要删除的文档 ID 列表 |
+
+**返回值：** `Promise<{ docIds: string[] }>` - 已删除的文档 ID 列表
 
 ---
 
 ## 类型定义
 
 ```typescript
-interface DocumentDetail {
+interface Document {
   docId: string;
   title: string;
-  content: string;
+  summary?: string;
   category: string;
   publishedAt: number;
   channelName: string;
   companies: Array<{
+    name: string;
+    stocks: Array<{ symbol: string; market: string; ticker: string }>;
+  }>;
+  url?: string;
+}
+
+interface DocumentDetail {
+  docId: string;
+  title: string;
+  content?: string;
+  chunks?: Chunk[];
+  category?: string;
+  publishedAt?: number;
+  channelName?: string;
+  fileUrl?: string;
+  mediaUrl?: string;
+  companies?: Array<{
     name: string;
     stocks: Array<{ symbol: string }>;
   }>;
@@ -119,9 +370,34 @@ interface DocumentDetail {
 
 interface DocumentSummary {
   docId: string;
+  title: string;
   summary: string;
-  keyPoints: string[];
+  keyPoints?: string[];
   sentiment?: 'positive' | 'negative' | 'neutral';
+}
+
+interface Chunk {
+  chunkId: string;
+  docId: string;
+  content: string;
+  score?: number;
+  title?: string;
+  pageNum?: number;
+}
+
+interface PaginatedResponse<T> {
+  items: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+}
+
+interface UploadDocRequest {
+  url: string;
+  name?: string;
+  metadatas?: Record<string, unknown>;
+  publishedAt?: number;
+  tags?: Record<string, unknown>;
 }
 ```
 

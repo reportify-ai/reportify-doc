@@ -1,0 +1,81 @@
+---
+title: 'Get Agent File'
+openapi: 'GET /v1/agent/files/{file_id}'
+---
+
+## 获取智能体生成的文件
+
+**URL**: `/v1/agent/files/{file_id}`  
+**方法**: `GET`  
+**描述**: 获取智能体在对话过程中生成的文件，如报告、图表等。
+
+### 路径参数
+
+| 参数名   | 类型   | 必填 | 描述                     |
+|----------|--------|------|--------------------------|
+| file_id  | string | 是   | 智能体生成的文件 ID      |
+
+### 响应
+
+成功时返回文件的二进制内容（`application/octet-stream`）。
+
+### 请求示例
+
+**cURL**
+```bash
+curl -X GET "https://api.reportify.cn/v1/agent/files/file_abc123" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -o downloaded_file.pdf
+```
+
+**Python**
+```python
+import requests
+
+url = "https://api.reportify.cn/v1/agent/files/file_abc123"
+headers = {
+    "Authorization": "Bearer YOUR_API_KEY"
+}
+
+response = requests.get(url, headers=headers)
+
+# Save to file
+with open("downloaded_file.pdf", "wb") as f:
+    f.write(response.content)
+```
+
+**TypeScript**
+```typescript
+const response = await fetch(
+  'https://api.reportify.cn/v1/agent/files/file_abc123',
+  {
+    headers: {
+      'Authorization': 'Bearer YOUR_API_KEY'
+    }
+  }
+);
+
+const blob = await response.blob();
+// Save or process the blob
+```
+
+### 错误响应
+
+| 状态码 | 描述                     |
+|--------|--------------------------|
+| 404    | 文件不存在               |
+| 422    | 请求参数验证失败         |
+
+### 使用场景
+
+1. **下载智能体生成的报告**
+   - 智能体在分析过程中可能会生成 PDF 报告或 Excel 文件
+   - 使用此接口下载这些生成的文件
+
+2. **获取图表和可视化**
+   - 智能体可能会生成数据可视化图表
+   - 通过文件 ID 下载对应的图表文件
+
+<Tip>
+文件 ID 通常在智能体的事件流中返回，在 `tool_output` 或 `workflow_end` 事件中包含生成的文件信息。
+</Tip>

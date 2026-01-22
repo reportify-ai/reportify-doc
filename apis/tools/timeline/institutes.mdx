@@ -1,0 +1,102 @@
+---
+title: 'Institutes Timeline'
+openapi: 'POST /v1/tools/timeline/institutes'
+---
+
+## 关注机构时间线
+
+**URL**: `/v1/tools/timeline/institutes`  
+**方法**: `POST`  
+**描述**: 获取用户关注的专业机构（券商、基金等）的最新动态时间线。
+
+### 请求参数
+
+| 参数名 | 类型    | 必填 | 描述                               |
+|--------|---------|------|------------------------------------|
+| num    | integer | 否   | 返回结果数量，默认 10，范围 1-100  |
+
+### 响应参数
+
+| 参数名              | 类型    | 描述                           |
+|---------------------|---------|--------------------------------|
+| docs                | array   | 文档列表                       |
+| &nbsp;&nbsp;doc_id         | string  | 文档 ID                        |
+| &nbsp;&nbsp;title          | string  | 文档标题                       |
+| &nbsp;&nbsp;summary        | string  | 文档摘要                       |
+| &nbsp;&nbsp;category       | string  | 文档类别                       |
+| &nbsp;&nbsp;published_at   | string  | 发布时间                       |
+| &nbsp;&nbsp;source         | string  | 来源                           |
+| &nbsp;&nbsp;channel_name   | string  | 渠道名称                       |
+| &nbsp;&nbsp;symbols        | array   | 相关股票代码列表               |
+| total_count         | integer | 匹配文档总数                   |
+| took_ms             | integer | 查询耗时（毫秒）               |
+
+### 请求示例
+
+**cURL**
+```bash
+curl -X POST "https://api.reportify.cn/v1/tools/timeline/institutes" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"num": 20}'
+```
+
+**Python**
+```python
+import requests
+
+url = "https://api.reportify.cn/v1/tools/timeline/institutes"
+headers = {
+    "Authorization": "Bearer YOUR_API_KEY",
+    "Content-Type": "application/json"
+}
+data = {"num": 20}
+
+response = requests.post(url, headers=headers, json=data)
+timeline = response.json()
+
+for doc in timeline["docs"]:
+    print(f"[{doc['channel_name']}] {doc['title']}")
+```
+
+**TypeScript**
+```typescript
+const response = await fetch('https://api.reportify.cn/v1/tools/timeline/institutes', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer YOUR_API_KEY',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({ num: 20 })
+});
+
+const data = await response.json();
+console.log(`Found ${data.total_count} institute reports`);
+```
+
+### 响应示例
+
+```json
+{
+  "docs": [
+    {
+      "doc_id": "doc_inst123",
+      "title": "宏观经济周报：通胀预期回落",
+      "summary": "本周宏观经济数据显示通胀压力有所缓解...",
+      "category": "reports",
+      "published_at": "2024-01-15T09:00:00Z",
+      "source": "高盛",
+      "channel_name": "Goldman Sachs Research",
+      "symbols": []
+    }
+  ],
+  "total_count": 200,
+  "took_ms": 28
+}
+```
+
+### 错误响应
+
+| 状态码 | 描述                     |
+|--------|--------------------------|
+| 422    | 请求参数验证失败         |

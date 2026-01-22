@@ -64,22 +64,20 @@ openapi: 'POST /v1/search'
 **cURL**
 ```bash
 curl -X POST https://api.reportify.cn/v1/search \
--H "Authorization: Bearer 447460****09c9" \
+-H "Authorization: Bearer YOUR_API_KEY" \
 -H "Content-Type: application/json" \
 -d '{
     "query": "Tesla",
-    "language": "english",
     "categories": ["financials", "reports"],
     "markets": ["us"],
     "institutions": ["Morgan Stanley"],
     "symbols": ["TSLA"],
-    "tags": ["AI"],
     "start_date": "2023-12-01",
     "end_date": "2023-12-31",
     "mode": "smart",
     "sort": "latest",
-    "page": 1,
-    "page_num": 10
+    "page_num": 1,
+    "page_size": 10
 }'
 ```
 
@@ -89,23 +87,21 @@ import requests
 
 url = "https://api.reportify.cn/v1/search"
 headers = {
-    "Authorization": "Bearer 447460****09c9",
+    "Authorization": "Bearer YOUR_API_KEY",
     "Content-Type": "application/json"
 }
 payload = {
     "query": "Tesla",
-    "language": "english",
     "categories": ["financials", "reports"],
     "markets": ["us"],
     "institutions": ["Morgan Stanley"],
     "symbols": ["TSLA"],
-    "tags": ["AI"],
     "start_date": "2023-12-01",
     "end_date": "2023-12-31",
     "mode": "smart",
     "sort": "latest",
-    "page": 1,
-    "page_num": 10
+    "page_num": 1,
+    "page_size": 10
 }
 
 response = requests.post(url, headers=headers, json=payload)
@@ -115,8 +111,8 @@ print(response.json())
 ### 响应示例
 ```json
 {
-  "page": 1,
-  "page_num": 10,
+  "page_num": 1,
+  "page_size": 10,
   "total_page": 5,
   "total_count": 50,
   "docs": [

@@ -88,6 +88,7 @@
             "group": "知识库和文件管理",
             "icon": "database",
             "pages": [
+              "apis/tools/kb/search",
               "apis/files/docs_folder_create",
               "apis/files/docs_folder_delete",
               "apis/files/docs_upload",
@@ -101,6 +102,12 @@
             "group": "账号关注",
             "icon": "user-plus",
             "pages": [
+              "apis/tools/user/followed_companies",
+              "apis/tools/timeline/companies",
+              "apis/tools/timeline/topics",
+              "apis/tools/timeline/institutes",
+              "apis/tools/timeline/public_media",
+              "apis/tools/timeline/social_media",              
               "apis/channels/channels_search",
               "apis/channels/channels_followings",
               "apis/channels/channels_followings_docs",
@@ -201,7 +208,8 @@
               "apis/agent/message_events_get",
               "apis/agent/message_cancel",
               "apis/agent/conversation_get",
-              "apis/agent/conversation_messages_list"
+              "apis/agent/conversation_messages_list",
+              "apis/agent/file_get"
             ]
           }
         ]
@@ -222,10 +230,11 @@
               "sdks/python/overview",
               "sdks/python/search",
               "sdks/python/docs",
+              "sdks/python/kb",
+              "sdks/python/user",
+              "sdks/python/timeline",
               "sdks/python/stock",
               "sdks/python/concepts",
-              "sdks/python/kb",
-              "sdks/python/timeline",
               "sdks/python/quant"
             ]
           },
@@ -236,10 +245,11 @@
               "sdks/typescript/overview",
               "sdks/typescript/search",
               "sdks/typescript/docs",
+              "sdks/typescript/kb",
+              "sdks/typescript/user",
+              "sdks/typescript/timeline",
               "sdks/typescript/stock",
               "sdks/typescript/concepts",
-              "sdks/typescript/kb",
-              "sdks/typescript/timeline",
               "sdks/typescript/quant"
             ]
           }

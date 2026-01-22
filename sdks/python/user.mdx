@@ -1,0 +1,56 @@
+---
+title: '用户数据'
+description: 'Python SDK 用户数据模块 - 获取用户关注的公司等信息'
+icon: 'user'
+---
+
+## 概述
+
+用户数据模块提供用户个人数据的访问，包括关注的公司列表等。
+
+## followed_companies()
+
+获取用户关注的所有公司列表。
+
+```python
+companies = client.user.followed_companies()
+for company in companies:
+    print(company["name"], company["symbol"])
+```
+
+<ResponseField name="返回值" type="list[dict]">
+  关注公司列表，每条包含 `symbol`, `ticker`, `market`, `name`, `chinese_name`, `english_name`, `logo`, `followed_at`
+</ResponseField>
+
+---
+
+## 返回数据结构
+
+```python
+{
+    "symbol": "US:AAPL",
+    "ticker": "AAPL",
+    "market": "US",
+    "name": "Apple Inc.",
+    "chinese_name": "苹果公司",
+    "english_name": "Apple Inc.",
+    "logo": "https://example.com/logos/aapl.png",
+    "followed_at": 1704067200000
+}
+```
+
+## 使用场景
+
+```python
+# 获取关注公司并查询其最新动态
+companies = client.user.followed_companies()
+print(f"共关注 {len(companies)} 家公司")
+
+for company in companies[:5]:
+    print(f"- {company['name']} ({company['symbol']})")
+    
+# 结合时间线使用
+timeline = client.timeline.companies(num=10)
+for item in timeline:
+    print(f"- {item['title']}")
+```

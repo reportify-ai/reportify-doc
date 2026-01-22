@@ -18,26 +18,23 @@ const results = await client.kb.search('投资策略', {
   num: 10
 });
 
-results.forEach(result => {
-  console.log(result.title, result.score);
+results.forEach(chunk => {
+  console.log(chunk.content.slice(0, 100));
 });
 ```
 
-<ParamField path="query" type="string" required>
-  搜索关键词
-</ParamField>
+**参数：**
 
-<ParamField path="options.folderIds" type="string[]">
-  文件夹 ID 列表，不传则搜索全部文件夹
-</ParamField>
+| 参数 | 类型 | 必填 | 默认值 | 说明 |
+|------|------|------|--------|------|
+| `query` | `string` | 是 | - | 搜索关键词 |
+| `options.folderIds` | `string[]` | 否 | - | 文件夹 ID 列表，不传则搜索全部文件夹 |
+| `options.docIds` | `string[]` | 否 | - | 文档 ID 列表，限定搜索范围 |
+| `options.startDate` | `string` | 否 | - | 开始日期过滤（YYYY-MM-DD） |
+| `options.endDate` | `string` | 否 | - | 结束日期过滤（YYYY-MM-DD） |
+| `options.num` | `number` | 否 | `10` | 返回结果数量 |
 
-<ParamField path="options.num" type="number" default="10">
-  返回结果数量
-</ParamField>
-
-<ResponseField name="返回值" type="Promise<KBSearchResult[]>">
-  搜索结果列表
-</ResponseField>
+**返回值：** `Promise<Chunk[]>` - 搜索结果列表（内容块）
 
 ---
 

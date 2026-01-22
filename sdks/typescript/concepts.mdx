@@ -21,13 +21,13 @@ for (const concept of concepts) {
 const conceptsNoDocs = await client.concepts.latest({ includeDocs: false });
 ```
 
-<ParamField path="options.includeDocs" type="boolean" default="true">
-  是否包含相关文档
-</ParamField>
+**参数：**
 
-<ResponseField name="返回值" type="Promise<Concept[]>">
-  概念列表数组
-</ResponseField>
+| 参数 | 类型 | 必填 | 默认值 | 说明 |
+|------|------|------|--------|------|
+| `options.includeDocs` | `boolean` | 否 | `true` | 是否包含相关文档 |
+
+**返回值：** `Promise<Concept[]>` - 概念列表数组
 
 ---
 
@@ -43,9 +43,7 @@ for (const feed of feeds) {
 }
 ```
 
-<ResponseField name="返回值" type="Promise<ConceptFeed[]>">
-  今日概念动态列表数组
-</ResponseField>
+**返回值：** `Promise<ConceptFeed[]>` - 今日概念动态列表数组
 
 ---
 

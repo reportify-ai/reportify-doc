@@ -1,0 +1,125 @@
+---
+title: 'Search Knowledge Base'
+openapi: 'POST /v1/tools/kb/search'
+---
+
+## 搜索知识库
+
+**URL**: `/v1/tools/kb/search`  
+**方法**: `POST`  
+**描述**: 搜索用户的私有知识库，包括上传的文档和文件夹。
+
+### 请求参数
+
+| 参数名     | 类型     | 必填 | 描述                               |
+|------------|----------|------|------------------------------------|
+| query      | string   | 是   | 搜索关键词                         |
+| folder_ids | string[] | 否   | 文件夹 ID 列表，筛选特定文件夹     |
+| doc_ids    | string[] | 否   | 文档 ID 列表，筛选特定文档         |
+| start_date | string   | 否   | 开始日期（YYYY-MM-DD）             |
+| end_date   | string   | 否   | 结束日期（YYYY-MM-DD）             |
+| num        | integer  | 否   | 返回结果数量，默认 10              |
+
+### 响应参数
+
+| 参数名              | 类型    | 描述                           |
+|---------------------|---------|--------------------------------|
+| chunks              | array   | 搜索结果块列表                 |
+| &nbsp;&nbsp;chunk_id       | string  | 内容块 ID                      |
+| &nbsp;&nbsp;content        | string  | 匹配的内容                     |
+| &nbsp;&nbsp;score          | number  | 相关性得分                     |
+| &nbsp;&nbsp;doc_id         | string  | 所属文档 ID                    |
+| &nbsp;&nbsp;doc_title      | string  | 文档标题                       |
+| &nbsp;&nbsp;folder_id      | string  | 文件夹 ID                      |
+| &nbsp;&nbsp;folder_name    | string  | 文件夹名称                     |
+
+### 请求示例
+
+**cURL**
+```bash
+curl -X POST "https://api.reportify.cn/v1/tools/kb/search" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "投资策略",
+    "num": 10
+  }'
+```
+
+**Python**
+```python
+import requests
+
+url = "https://api.reportify.cn/v1/tools/kb/search"
+headers = {
+    "Authorization": "Bearer YOUR_API_KEY",
+    "Content-Type": "application/json"
+}
+data = {
+    "query": "投资策略",
+    "folder_ids": ["folder_abc123"],
+    "num": 10
+}
+
+response = requests.post(url, headers=headers, json=data)
+results = response.json()
+
+for chunk in results["chunks"]:
+    print(f"[{chunk['doc_title']}] {chunk['content'][:100]}...")
+```
+
+**TypeScript**
+```typescript
+const response = await fetch('https://api.reportify.cn/v1/tools/kb/search', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer YOUR_API_KEY',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    query: '投资策略',
+    num: 10
+  })
+});
+
+const data = await response.json();
+console.log(`Found ${data.chunks.length} results`);
+```
+
+### 响应示例
+
+```json
+{
+  "chunks": [
+    {
+      "chunk_id": "chunk_abc123",
+      "content": "本报告提出的投资策略主要关注价值投资和成长投资的结合...",
+      "score": 0.95,
+      "doc_id": "doc_xyz789",
+      "doc_title": "2024年投资策略报告.pdf",
+      "folder_id": "folder_abc123",
+      "folder_name": "投资研究"
+    }
+  ]
+}
+```
+
+### 错误响应
+
+| 状态码 | 描述                     |
+|--------|--------------------------|
+| 422    | 请求参数验证失败         |
+
+### 使用场景
+
+1. **搜索私有文档**
+   - 在上传的研究报告中搜索特定内容
+   - 快速定位相关分析和数据
+
+2. **按时间范围筛选**
+   - 搜索特定时间段内的文档内容
+   - 追踪历史分析记录
+
+3. **分文件夹搜索**
+   - 在特定项目文件夹中搜索
+   - 隔离不同研究领域的内容
