@@ -1,3 +1,3 @@
 [submodule "code/sdks"]
 	path = code/sdks
-	url = /Users/pawa/Data/reportify-sdk
+	url = git@code.xiaobangtouzi.com:backend/reportify-sdk.git

@@ -26,12 +26,7 @@
         "label": "技术支持",
         "href": "mailto:hi@reportify.cn"
       }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "开发者中心",
-      "href": "https://reportify.cn/developer"
-    }
+    ]
   },
   "navigation": {
     "groups": [
