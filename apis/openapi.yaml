@@ -4076,7 +4076,7 @@ components:
         symbol:
           type: string
           title: Symbol
-          description: Stock symbol in market:ticker format (e.g., US:AAPL, HK:00700, SH:600519, SZ:000001)
+          description: Stock symbol
         type:
           type: string
           title: Type
@@ -4095,7 +4095,7 @@ components:
         symbol:
           type: string
           title: Symbol
-          description: Stock symbol in market:ticker format (e.g., US:AAPL, HK:00700, SH:600519, SZ:000001)
+          description: Stock symbol
         start_date:
           type: string
           title: Start Date
@@ -4114,7 +4114,7 @@ components:
         symbol:
           type: string
           title: Symbol
-          description: Stock symbol in market:ticker format (e.g., US:AAPL, HK:00700, SH:600519, SZ:000001)
+          description: Stock symbol
         period:
           type: string
           title: Period
@@ -4153,7 +4153,7 @@ components:
         symbol:
           type: string
           title: Symbol
-          description: Stock symbol in market:ticker format (e.g., US:AAPL, HK:00700, SH:600519, SZ:000001)
+          description: Stock symbol
         period:
           type: string
           title: Period
@@ -4192,7 +4192,7 @@ components:
         symbol:
           type: string
           title: Symbol
-          description: Stock symbol in market:ticker format (e.g., US:AAPL, HK:00700, SH:600519, SZ:000001)
+          description: Stock symbol
         period:
           type: string
           title: Period
@@ -4231,7 +4231,7 @@ components:
         symbol:
           type: string
           title: Symbol
-          description: Stock symbol in market:ticker format (e.g., US:AAPL, HK:00700, SH:600519, SZ:000001)
+          description: Stock symbol
         period:
           type: string
           title: Period
@@ -4281,7 +4281,7 @@ components:
         symbol:
           type: string
           title: Symbol
-          description: Stock symbol in market:ticker format (e.g., US:AAPL, HK:00700, SH:600519, SZ:000001)
+          description: Stock symbol
       type: object
       required:
       - symbol

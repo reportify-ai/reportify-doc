@@ -12,7 +12,7 @@ openapi: 'POST /v1/stock/company-income-statement'
 ### 请求参数
 | 参数名         | 类型   | 必填 | 描述                                                              |
 |----------------|--------|------|-------------------------------------------------------------------|
-| symbol         | str    | 是   | 股票代码，格式为 market:ticker（如 `US:AAPL`、`HK:00700`、`SH:600519`、`SZ:000001`）。|
+| symbol         | str    | 是   | 股票代码。                                                              |
 | period         | str    | 否   | 报告周期：`annual`、`quarterly`、`cumulative quarterly`。         |
 | limit          | int    | 否   | 返回最近 N 条记录，默认 8。                                       |
 | start_date     | str    | 否   | 开始日期（YYYY-MM-DD）。                                          |
