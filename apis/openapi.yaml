@@ -3669,7 +3669,7 @@ components:
             type: string
           type: array
           title: Symbols
-          description: Stock symbols to filter by
+          description: Stock symbols in market:ticker format (e.g., US:AAPL, HK:00700, SH:600519, SZ:000001)
         start_datetime:
           type: string
           title: Start Datetime
@@ -3710,7 +3710,7 @@ components:
             type: string
           type: array
           title: Symbols
-          description: Stock symbols to filter by
+          description: Stock symbols in market:ticker format (e.g., US:AAPL, HK:00700, SH:600519, SZ:000001)
         start_datetime:
           type: string
           title: Start Datetime
@@ -3751,7 +3751,7 @@ components:
             type: string
           type: array
           title: Symbols
-          description: Stock symbols to filter by
+          description: Stock symbols in market:ticker format (e.g., US:AAPL, HK:00700, SH:600519, SZ:000001)
         start_datetime:
           type: string
           title: Start Datetime
@@ -3783,7 +3783,7 @@ components:
             type: string
           type: array
           title: Symbols
-          description: Stock symbols to filter by
+          description: Stock symbols in market:ticker format (e.g., US:AAPL, HK:00700, SH:600519, SZ:000001)
         industries:
           items:
             type: string
@@ -3827,7 +3827,7 @@ components:
             type: string
           type: array
           title: Symbols
-          description: Stock symbols to filter by
+          description: Stock symbols in market:ticker format (e.g., US:AAPL, HK:00700, SH:600519, SZ:000001)
         start_datetime:
           type: string
           title: Start Datetime
@@ -3860,7 +3860,7 @@ components:
             type: string
           type: array
           title: Symbols
-          description: Stock symbols to filter by
+          description: Stock symbols in market:ticker format (e.g., US:AAPL, HK:00700, SH:600519, SZ:000001)
         channel_ids:
           items:
             type: string
@@ -3898,7 +3898,7 @@ components:
             type: string
           type: array
           title: Symbols
-          description: Stock symbols to filter by
+          description: Stock symbols in market:ticker format (e.g., US:AAPL, HK:00700, SH:600519, SZ:000001)
         channel_ids:
           items:
             type: string
@@ -3962,7 +3962,7 @@ components:
             type: string
           type: array
           title: Symbols
-          description: Stock symbols to filter by
+          description: Stock symbols in market:ticker format (e.g., US:AAPL, HK:00700, SH:600519, SZ:000001)
         industries:
           items:
             type: string
@@ -4076,7 +4076,7 @@ components:
         symbol:
           type: string
           title: Symbol
-          description: Stock symbol
+          description: Stock symbol in market:ticker format (e.g., US:AAPL, HK:00700, SH:600519, SZ:000001)
         type:
           type: string
           title: Type
@@ -4095,7 +4095,7 @@ components:
         symbol:
           type: string
           title: Symbol
-          description: Stock symbol
+          description: Stock symbol in market:ticker format (e.g., US:AAPL, HK:00700, SH:600519, SZ:000001)
         start_date:
           type: string
           title: Start Date
@@ -4114,7 +4114,7 @@ components:
         symbol:
           type: string
           title: Symbol
-          description: Stock symbol
+          description: Stock symbol in market:ticker format (e.g., US:AAPL, HK:00700, SH:600519, SZ:000001)
         period:
           type: string
           title: Period
@@ -4153,7 +4153,7 @@ components:
         symbol:
           type: string
           title: Symbol
-          description: Stock symbol
+          description: Stock symbol in market:ticker format (e.g., US:AAPL, HK:00700, SH:600519, SZ:000001)
         period:
           type: string
           title: Period
@@ -4192,7 +4192,7 @@ components:
         symbol:
           type: string
           title: Symbol
-          description: Stock symbol
+          description: Stock symbol in market:ticker format (e.g., US:AAPL, HK:00700, SH:600519, SZ:000001)
         period:
           type: string
           title: Period
@@ -4231,7 +4231,7 @@ components:
         symbol:
           type: string
           title: Symbol
-          description: Stock symbol
+          description: Stock symbol in market:ticker format (e.g., US:AAPL, HK:00700, SH:600519, SZ:000001)
         period:
           type: string
           title: Period
@@ -4281,7 +4281,7 @@ components:
         symbol:
           type: string
           title: Symbol
-          description: Stock symbol (e.g., AAPL, 688001, 00700)
+          description: Stock symbol in market:ticker format (e.g., US:AAPL, HK:00700, SH:600519, SZ:000001)
       type: object
       required:
       - symbol
@@ -4961,180 +4961,156 @@ components:
       title: WorkflowStreamEvent
       description: 工作流流式事件对象
       examples:
-        init:
-          value:
-            event_id: "019b24ef23a1f4da18256b402868fae31764"
-            event_type: "init"
-            timestamp: 1765851210657
-            response_id: "019b24ef238cc97730971a9a0080c99c"
-            workflow_id: "11887655289749510"
-            execution_id: "1dfccd9d-c365-4b7a-adae-aa9123684ec4"
-            run_id: ""
-            content: ""
-            offset: 9195
-        workflow_start:
-          value:
-            event_id: "019b24ef24707069ef923d72561a95812188"
-            event_type: "workflow_start"
-            timestamp: 1765851210864
-            response_id: "019b24ef238cc97730971a9a0080c99c"
-            workflow_id: "11887655289749510"
-            execution_id: ""
-            run_id: "019b24ef246ef1f8e14609660d1d65be"
-            offset: 9196
-        node_start:
-          value:
-            event_id: "019b24ef24a481260ead20b3ff894a845363"
-            event_type: "node_start"
-            timestamp: 1765851210916
-            response_id: "019b24ef238cc97730971a9a0080c99c"
-            workflow_id: "11887655289749510"
-            execution_id: ""
-            run_id: "019b24ef24a4c38d39a09dee2eff830a"
-            node_id: "start"
-            node_name: "开始"
-            node_type: "start"
-            offset: 9197
-        agent_start:
-          value:
-            event_id: "019b24ef4a297981a743b7f6dc55eb043579"
-            event_type: "agent_start"
-            timestamp: 1765851220521
-            response_id: "019b24ef238cc97730971a9a0080c99c"
-            workflow_id: "11887655289749510"
-            execution_id: ""
-            run_id: "019b24ef4a292fe173c0c73e0e334ce4"
-            node_id: "define_report_scope"
-            node_name: "确定报告范围"
-            node_type: "agent"
-            agent_id: "agent_action"
-            agent_name: "执行智能体"
-            agent_type: "action_agent"
-            offset: 9217
-        stream_start:
-          value:
-            event_id: "019b24ef25014cbf7f25f0043effd82c6665"
-            event_type: "stream_start"
-            timestamp: 1765851211009
-            response_id: "019b24ef238cc97730971a9a0080c99c"
-            workflow_id: "11887655289749510"
-            execution_id: ""
-            run_id: "019b24ef25015b3e6e9b3d2363cfb36c"
-            node_id: "start"
-            agent_id: "workflow_planner"
-            offset: 9198
-        streaming:
-          value:
-            event_id: "019b24ef2e3b40bc070e30a4843987b35668"
-            event_type: "streaming"
-            timestamp: 1765851213371
-            response_id: "019b24ef238cc97730971a9a0080c99c"
-            workflow_id: "11887655289749510"
-            execution_id: ""
-            run_id: "019b24ef25015b3e6e9b3d2363cfb36c"
-            node_id: "start"
-            agent_id: "workflow_planner"
-            content: "你的任务是获取关于Google Gemini最新模型评分以及Google IDEA antigravity"
-            offset: 9199
-        stream_end:
-          value:
-            event_id: "019b24f3717634bdd262947130af73b52555"
-            event_type: "stream_end"
-            timestamp: 1765851492726
-            response_id: "019b24ef238cc97730971a9a0080c99c"
-            workflow_id: "11887655289749510"
-            execution_id: ""
-            run_id: "019b24f348b67465f45353c50feb2367"
-            node_id: "end"
-            agent_id: "workflow_summarizer"
+        - event_id: "019b24ef23a1f4da18256b402868fae31764"
+          event_type: "init"
+          timestamp: 1765851210657
+          response_id: "019b24ef238cc97730971a9a0080c99c"
+          workflow_id: "11887655289749510"
+          execution_id: "1dfccd9d-c365-4b7a-adae-aa9123684ec4"
+          run_id: ""
+          content: ""
+          offset: 9195
+        - event_id: "019b24ef24707069ef923d72561a95812188"
+          event_type: "workflow_start"
+          timestamp: 1765851210864
+          response_id: "019b24ef238cc97730971a9a0080c99c"
+          workflow_id: "11887655289749510"
+          execution_id: ""
+          run_id: "019b24ef246ef1f8e14609660d1d65be"
+          offset: 9196
+        - event_id: "019b24ef24a481260ead20b3ff894a845363"
+          event_type: "node_start"
+          timestamp: 1765851210916
+          response_id: "019b24ef238cc97730971a9a0080c99c"
+          workflow_id: "11887655289749510"
+          execution_id: ""
+          run_id: "019b24ef24a4c38d39a09dee2eff830a"
+          node_id: "start"
+          node_name: "开始"
+          node_type: "start"
+          offset: 9197
+        - event_id: "019b24ef4a297981a743b7f6dc55eb043579"
+          event_type: "agent_start"
+          timestamp: 1765851220521
+          response_id: "019b24ef238cc97730971a9a0080c99c"
+          workflow_id: "11887655289749510"
+          execution_id: ""
+          run_id: "019b24ef4a292fe173c0c73e0e334ce4"
+          node_id: "define_report_scope"
+          node_name: "确定报告范围"
+          node_type: "agent"
+          agent_id: "agent_action"
+          agent_name: "执行智能体"
+          agent_type: "action_agent"
+          offset: 9217
+        - event_id: "019b24ef25014cbf7f25f0043effd82c6665"
+          event_type: "stream_start"
+          timestamp: 1765851211009
+          response_id: "019b24ef238cc97730971a9a0080c99c"
+          workflow_id: "11887655289749510"
+          execution_id: ""
+          run_id: "019b24ef25015b3e6e9b3d2363cfb36c"
+          node_id: "start"
+          agent_id: "workflow_planner"
+          offset: 9198
+        - event_id: "019b24ef2e3b40bc070e30a4843987b35668"
+          event_type: "streaming"
+          timestamp: 1765851213371
+          response_id: "019b24ef238cc97730971a9a0080c99c"
+          workflow_id: "11887655289749510"
+          execution_id: ""
+          run_id: "019b24ef25015b3e6e9b3d2363cfb36c"
+          node_id: "start"
+          agent_id: "workflow_planner"
+          content: "你的任务是获取关于Google Gemini最新模型评分以及Google IDEA antigravity"
+          offset: 9199
+        - event_id: "019b24f3717634bdd262947130af73b52555"
+          event_type: "stream_end"
+          timestamp: 1765851492726
+          response_id: "019b24ef238cc97730971a9a0080c99c"
+          workflow_id: "11887655289749510"
+          execution_id: ""
+          run_id: "019b24f348b67465f45353c50feb2367"
+          node_id: "end"
+          agent_id: "workflow_summarizer"
+          content: "本次工作流执行成功完成了任务，生成了一份全面的《AI行业每日深度报告》。"
+          offset: 9861
+        - event_id: "019b24efea2a626e2cb6f9c22b2683bb9594"
+          event_type: "tool_start"
+          timestamp: 1765851261482
+          response_id: "019b24ef238cc97730971a9a0080c99c"
+          workflow_id: "11887655289749510"
+          execution_id: ""
+          run_id: "019b24efea2a3e491e920de6003caf6c_5hyy41"
+          node_id: "collect_upstream_news"
+          agent_id: "agent_deep_search"
+          tool_id: "tool_news_search"
+          tool_name: "新闻搜索"
+          input:
+            query: "NVIDIA AMD Intel GPU 半导体 最新动态"
+            symbols: ["US:NVDA", "US:AMD", "US:INTC"]
+            start_datetime: "2025-12-15T00:00:00"
+            end_datetime: "2025-12-16T02:14:15"
+            num: 15
+            filetype: "json"
+          offset: 9323
+        - event_id: "019b24efec9274b499f96da757fb03a66788"
+          event_type: "tool_end"
+          timestamp: 1765851262098
+          response_id: "019b24ef238cc97730971a9a0080c99c"
+          workflow_id: "11887655289749510"
+          execution_id: ""
+          run_id: "019b24efdf9629d550ae7803264e3589_n1rz9t"
+          node_id: "collect_model_layer_news"
+          agent_id: "agent_deep_search"
+          tool_id: "tool_news_search"
+          tool_name: "新闻搜索"
+          output:
+            content: "{\"docs\": [{\"doc_id\": \"1197862772277383168\", \"title\": \"示例文档\"}], \"total_count\": 10}"
+        - event_id: "019b24efc138c7b1e3adc456762dda377273"
+          event_type: "agent_end"
+          timestamp: 1765851251000
+          response_id: "019b24ef238cc97730971a9a0080c99c"
+          workflow_id: "11887655289749510"
+          execution_id: ""
+          run_id: "019b24ef4a292fe173c0c73e0e334ce4"
+          node_id: "define_report_scope"
+          node_name: "确定报告范围"
+          node_type: "agent"
+          agent_id: "agent_action"
+          agent_name: "执行智能体"
+          agent_type: "action_agent"
+          output:
+            content: "# AI行业每日深度报告 - 覆盖范围与重点标的清单\n\n## 报告概述\n本报告将全面覆盖AI全产业链上下游..."
+          offset: 9264
+        - event_id: "019b24f3719913f41c7d391a00efe55a2581"
+          event_type: "node_end"
+          timestamp: 1765851492761
+          response_id: "019b24ef238cc97730971a9a0080c99c"
+          workflow_id: "11887655289749510"
+          execution_id: ""
+          run_id: "019b24f3485b8f786c3da7168d826202"
+          node_id: "end"
+          node_name: "结束"
+          node_type: "end"
+          output:
             content: "本次工作流执行成功完成了任务，生成了一份全面的《AI行业每日深度报告》。"
-            offset: 9861
-        tool_start:
-          value:
-            event_id: "019b24efea2a626e2cb6f9c22b2683bb9594"
-            event_type: "tool_start"
-            timestamp: 1765851261482
-            response_id: "019b24ef238cc97730971a9a0080c99c"
-            workflow_id: "11887655289749510"
-            execution_id: ""
-            run_id: "019b24efea2a3e491e920de6003caf6c_5hyy41"
-            node_id: "collect_upstream_news"
-            agent_id: "agent_deep_search"
-            tool_id: "tool_news_search"
-            tool_name: "新闻搜索"
-            input:
-              query: "NVIDIA AMD Intel GPU 半导体 最新动态"
-              symbols: ["US:NVDA", "US:AMD", "US:INTC"]
-              start_datetime: "2025-12-15T00:00:00"
-              end_datetime: "2025-12-16T02:14:15"
-              num: 15
-              filetype: "json"
-            offset: 9323
-        tool_end:
-          value:
-            event_id: "019b24efec9274b499f96da757fb03a66788"
-            event_type: "tool_end"
-            timestamp: 1765851262098
-            response_id: "019b24ef238cc97730971a9a0080c99c"
-            workflow_id: "11887655289749510"
-            execution_id: ""
-            run_id: "019b24efdf9629d550ae7803264e3589_n1rz9t"
-            node_id: "collect_model_layer_news"
-            agent_id: "agent_deep_search"
-            tool_id: "tool_news_search"
-            tool_name: "新闻搜索"
-            output:
-              content: "{\"docs\": [{\"doc_id\": \"1197862772277383168\", \"title\": \"示例文档\"}], \"total_count\": 10}"
-        agent_end:
-          value:
-            event_id: "019b24efc138c7b1e3adc456762dda377273"
-            event_type: "agent_end"
-            timestamp: 1765851251000
-            response_id: "019b24ef238cc97730971a9a0080c99c"
-            workflow_id: "11887655289749510"
-            execution_id: ""
-            run_id: "019b24ef4a292fe173c0c73e0e334ce4"
-            node_id: "define_report_scope"
-            node_name: "确定报告范围"
-            node_type: "agent"
-            agent_id: "agent_action"
-            agent_name: "执行智能体"
-            agent_type: "action_agent"
-            output:
-              content: "# AI行业每日深度报告 - 覆盖范围与重点标的清单\n\n## 报告概述\n本报告将全面覆盖AI全产业链上下游..."
-            offset: 9264
-        node_end:
-          value:
-            event_id: "019b24f3719913f41c7d391a00efe55a2581"
-            event_type: "node_end"
-            timestamp: 1765851492761
-            response_id: "019b24ef238cc97730971a9a0080c99c"
-            workflow_id: "11887655289749510"
-            execution_id: ""
-            run_id: "019b24f3485b8f786c3da7168d826202"
-            node_id: "end"
-            node_name: "结束"
-            node_type: "end"
-            output:
-              content: "本次工作流执行成功完成了任务，生成了一份全面的《AI行业每日深度报告》。"
-            offset: 9863
-        workflow_end:
-          value:
-            event_id: "019b24f371b1d3759377966a35173d099385"
-            event_type: "workflow_end"
-            timestamp: 1765851492785
-            response_id: "019b24ef238cc97730971a9a0080c99c"
-            workflow_id: "11887655289749510"
-            execution_id: ""
-            run_id: "019b24ef246ef1f8e14609660d1d65be"
-            output:
-              generate_daily_report:
-                title: "AI行业每日深度报告 - 2025年12月16日"
-                filetype: "markdown"
-                content: "# AI行业每日深度报告 - 2025年12月16日\n\n## 执行摘要\n..."
-                filename: "AI行业每日深度报告 - 2025年12月16日.md"
-                filepath: "/AI行业每日深度报告 - 2025年12月16日.md"
-            offset: 9864
+          offset: 9863
+        - event_id: "019b24f371b1d3759377966a35173d099385"
+          event_type: "workflow_end"
+          timestamp: 1765851492785
+          response_id: "019b24ef238cc97730971a9a0080c99c"
+          workflow_id: "11887655289749510"
+          execution_id: ""
+          run_id: "019b24ef246ef1f8e14609660d1d65be"
+          output:
+            generate_daily_report:
+              title: "AI行业每日深度报告 - 2025年12月16日"
+              filetype: "markdown"
+              content: "# AI行业每日深度报告 - 2025年12月16日\n\n## 执行摘要\n..."
+              filename: "AI行业每日深度报告 - 2025年12月16日.md"
+              filepath: "/AI行业每日深度报告 - 2025年12月16日.md"
+          offset: 9864
     # Common
     BaseResponse:
       type: object

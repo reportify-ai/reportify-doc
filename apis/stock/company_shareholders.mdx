@@ -12,7 +12,7 @@ openapi: 'POST /v1/stock/company-shareholders'
 ### 请求参数
 | 参数名  | 类型   | 必填 | 描述                                                      |
 |---------|--------|------|-----------------------------------------------------------|
-| symbol  | str    | 是   | 股票代码，如 `HK:00700`、`US:AAPL`。                      |
+| symbol  | str    | 是   | 股票代码，格式为 market:ticker（如 `US:AAPL`、`HK:00700`、`SH:600519`、`SZ:000001`）。|
 | type    | str    | 否   | 类型：`shareholders` 或 `outstanding_shareholders`。      |
 | limit   | int    | 否   | 返回数量限制，默认 10。                                   |
 

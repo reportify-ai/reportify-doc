@@ -32,7 +32,7 @@ docs = client.search.all(
 </ParamField>
 
 <ParamField path="symbols" type="list[str]">
-  股票代码过滤，格式：`市场:代码`，如 `US:AAPL`, `HK:0700`, `CN:600519`
+  股票代码列表，格式为 market:ticker（如 `US:AAPL`、`HK:00700`、`SH:600519`、`SZ:000001`）
 </ParamField>
 
 <ParamField path="industries" type="list[str]">

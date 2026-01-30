@@ -20,7 +20,7 @@ openapi: 'POST /v1/search'
 | institutions   | array  | 指定机构筛选，如 `Morgan Stanley`，`Seeking Alpha`。                |
 | language       | str    | 搜索语言，支持值为 `all`，`chinese`，`english`。*暂未支持*            |
 | markets        | array  | 市场区域，默认包括所有市场。可选值有 `sz`, `sh`，`hk`，`us`。     |
-| symbols        | array  | 股票代码筛选，如 `SH:000001`，`HK:00700`，`US:AAPL`。                |
+| symbols        | array  | 股票代码列表，格式为 market:ticker（如 `US:AAPL`、`HK:00700`、`SH:600519`、`SZ:000001`）。|
 | tags           | dict   | 标签数组。                                                        |
 | &nbsp;&nbsp;key| str    | 标签类型（如 `industry`, `company`, `person`, `event`）。            |
 | &nbsp;&nbsp;value| array | 标签内容数组。                                                      |

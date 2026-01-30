@@ -13,7 +13,7 @@ openapi: 'POST /v2/search/conference-calls'
 | 参数名           | 类型         | 必填 | 描述                                                                 |
 |------------------|--------------|------|----------------------------------------------------------------------|
 | query            | str          | 是   | 搜索关键词。                                                         |
-| symbols          | array[str]   | 是   | 股票代码列表，如 `["US:AAPL", "US:TSLA"]`。                          |
+| symbols          | array[str]   | 是   | 股票代码列表，格式为 market:ticker（如 `US:AAPL`、`HK:00700`、`SH:600519`、`SZ:000001`）。|
 | num              | int          | 否   | 返回的结果数量，默认值为 `10`，最大值为 `100`。                      |
 | start_datetime   | str          | 否   | 开始时间，格式为 `YYYY-MM-DD` 或 `YYYY-MM-DD HH:MM:SS`。             |
 | end_datetime     | str          | 否   | 结束时间，格式为 `YYYY-MM-DD` 或 `YYYY-MM-DD HH:MM:SS`。             |

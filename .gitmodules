@@ -1,3 +1,6 @@
 [submodule "code/sdks"]
 	path = code/sdks
 	url = git@code.xiaobangtouzi.com:backend/reportify-sdk.git
+[submodule "code/mcp"]
+	path = code/mcp
+	url = git@code.xiaobangtouzi.com:backend/reportify-mcp.git

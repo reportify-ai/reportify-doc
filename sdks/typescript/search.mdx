@@ -25,7 +25,7 @@ const docs = await client.search.all('Tesla earnings', {
 | `query` | `string` | 是 | - | 搜索关键词 |
 | `options.num` | `number` | 否 | `10` | 返回结果数量，最大 100 |
 | `options.categories` | `string[]` | 否 | - | 文档类别过滤，可选值：`news`, `reports`, `filings`, `transcripts`, `socials` |
-| `options.symbols` | `string[]` | 否 | - | 股票代码过滤，格式：`市场:代码`，如 `US:AAPL`, `HK:0700`, `CN:600519` |
+| `options.symbols` | `string[]` | 否 | - | 股票代码列表，格式为 market:ticker（如 `US:AAPL`、`HK:00700`、`SH:600519`、`SZ:000001`）|
 | `options.industries` | `string[]` | 否 | - | 行业过滤 |
 | `options.channelIds` | `string[]` | 否 | - | 渠道 ID 过滤 |
 | `options.startDatetime` | `string` | 否 | - | 开始时间，格式：`YYYY-MM-DD` 或 `YYYY-MM-DD HH:MM:SS` |
