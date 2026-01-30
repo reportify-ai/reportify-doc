@@ -13,39 +13,53 @@ Reportify MCP 是一个基于 MCP (Model Context Protocol) 协议的金融数据
 - 获取实时股票行情和历史数据
 - 与智能体进行对话交互
 
-## 核心功能
+## 架构设计
+
+服务采用 **Gateway + 多 MCP 服务器** 架构，按功能分类提供 4 个独立的 MCP 端点：
+
+```
+MCP Gateway (https://mcp.reportify.cn)
+├── /search/mcp    - 文档搜索类工具
+├── /stock/mcp     - 股票数据类工具
+├── /agent/mcp     - Agent 对话类工具
+└── /channels/mcp  - 频道与时间线类工具
+```
+
+每个端点都是独立的 MCP 服务器，客户端可以按需选择连接。
 
 <CardGroup cols={2}>
-  <Card title="文档搜索" icon="magnifying-glass" color="#0072ff">
-    提供多种文档搜索能力
+  <Card title="Search MCP" icon="magnifying-glass" color="#0072ff">
+    文档搜索类工具
     
     - 综合文档搜索（财报、研报、公告等）
     - 语义搜索和内容块检索
-    - 按文档类型、股票代码、时间范围筛选
+    - 文档列表和详情获取
+    - 知识库搜索
   </Card>
   
-  <Card title="公司数据" icon="building" color="#0072ff">
-    完整的公司数据查询功能
+  <Card title="Stock MCP" icon="chart-candlestick" color="#0072ff">
+    股票数据类工具
     
-    - 公司基本信息和股东结构
-    - 财务三表（资产负债表、利润表、现金流量表）
-    - 收入构成和历史股价
+    - 公司基本信息和财务报表
+    - 实时行情和历史股价
+    - 指数和行业数据
+    - 量化分析工具
   </Card>
   
-  <Card title="股票行情" icon="chart-candlestick" color="#0072ff">
-    实时和历史行情数据
-    
-    - 实时报价和 K 线数据
-    - 指数价格查询
-    - 股票筛选和财报日历
-  </Card>
-  
-  <Card title="Agent 对话" icon="robot" color="#0072ff">
-    与智能体的完整对话能力
+  <Card title="Agent MCP" icon="robot" color="#0072ff">
+    Agent 对话类工具
     
     - 创建和管理对话会话
     - 发送消息并接收响应
     - 获取对话历史和生成文件
+  </Card>
+  
+  <Card title="Channels MCP" icon="rss" color="#0072ff">
+    频道与时间线类工具
+    
+    - 频道搜索和订阅管理
+    - 公司/话题/机构时间线
+    - 媒体内容时间线
   </Card>
 </CardGroup>
 
@@ -53,21 +67,42 @@ Reportify MCP 是一个基于 MCP (Model Context Protocol) 协议的金融数据
 
 ### MCP 服务端点
 
-```
-https://mcp.reportify.cn/mcp
-```
+| 服务 | 端点 URL | 说明 |
+|------|----------|------|
+| Search MCP | `https://mcp.reportify.cn/search/mcp` | 文档搜索类工具 |
+| Stock MCP | `https://mcp.reportify.cn/stock/mcp` | 股票数据类工具 |
+| Agent MCP | `https://mcp.reportify.cn/agent/mcp` | Agent 对话类工具 |
+| Channels MCP | `https://mcp.reportify.cn/channels/mcp` | 频道时间线类工具 |
 
 ### 客户端配置
 
 <Tabs>
   <Tab title="Cursor">
-    在 Cursor 的 MCP 配置文件中添加以下配置：
+    在 Cursor 的 MCP 配置文件中添加以下配置（可按需选择部分或全部服务）：
 
     ```json
     {
       "mcpServers": {
-        "reportify": {
-          "url": "https://mcp.reportify.cn/mcp",
+        "reportify-search": {
+          "url": "https://mcp.reportify.cn/search/mcp",
+          "headers": {
+            "Authorization": "Bearer YOUR_API_KEY"
+          }
+        },
+        "reportify-stock": {
+          "url": "https://mcp.reportify.cn/stock/mcp",
+          "headers": {
+            "Authorization": "Bearer YOUR_API_KEY"
+          }
+        },
+        "reportify-agent": {
+          "url": "https://mcp.reportify.cn/agent/mcp",
+          "headers": {
+            "Authorization": "Bearer YOUR_API_KEY"
+          }
+        },
+        "reportify-channels": {
+          "url": "https://mcp.reportify.cn/channels/mcp",
           "headers": {
             "Authorization": "Bearer YOUR_API_KEY"
           }
@@ -83,9 +118,16 @@ https://mcp.reportify.cn/mcp
     ```json
     {
       "mcpServers": {
-        "reportify": {
+        "reportify-search": {
           "command": "mcp-client",
-          "args": ["https://mcp.reportify.cn/mcp"],
+          "args": ["https://mcp.reportify.cn/search/mcp"],
+          "env": {
+            "AUTHORIZATION": "Bearer YOUR_API_KEY"
+          }
+        },
+        "reportify-stock": {
+          "command": "mcp-client",
+          "args": ["https://mcp.reportify.cn/stock/mcp"],
           "env": {
             "AUTHORIZATION": "Bearer YOUR_API_KEY"
           }
@@ -118,225 +160,189 @@ Authorization: Bearer YOUR_API_KEY
 
 ## Tools 参考
 
-<AccordionGroup>
-  <Accordion title="文档搜索类" icon="magnifying-glass" defaultOpen>
-  
-  ### docs_search
-  根据指定条件搜索文档。
+### Search MCP (`/search/mcp`)
 
+文档与搜索相关工具。
+
+<Info>
+  股票代码使用 `market:ticker` 格式，如 `US:AAPL`、`HK:00700`、`SH:600519`
+</Info>
+
+<AccordionGroup>
+  <Accordion title="搜索工具" icon="magnifying-glass" defaultOpen>
+  
+  | 工具名 | 功能描述 |
+  |--------|----------|
+  | `comprehensive_search` | 综合搜索金融投资文档 |
+  | `earnings_search` | 搜索财报文档 |
+  | `conferences_search` | 搜索电话会议记录和演示文稿 |
+  | `minutes_search` | 搜索电话会议和 IR 会议 |
+  | `reports_search` | 搜索机构研究报告 |
+  | `filings_search` | 搜索公司公告 |
+  | `news_search` | 搜索金融新闻 |
+  | `socials_search` | 搜索社交媒体内容 |
+  | `webpage_search` | 搜索网页内容 |
+  | `kb_search` | 搜索知识库 |
+  
+  **公共参数**：
+  
   | 参数 | 类型 | 必填 | 说明 |
   |------|------|------|------|
   | `query` | string | 是 | 搜索关键词 |
   | `num` | integer | 否 | 返回结果数量，默认 10 |
-  | `symbols` | string[] | 否 | 股票代码列表 |
-  | `industries` | string[] | 否 | 行业筛选 |
-  | `channel_ids` | string[] | 否 | 渠道 ID 列表 |
+  | `symbols` | string[] | 否 | 股票代码列表（格式：`market:ticker`） |
   | `start_datetime` | string | 否 | 开始时间 |
   | `end_datetime` | string | 否 | 结束时间 |
-
-  ### chunks_search
-  根据指定条件进行语义搜索文档内容块。
-
-  | 参数 | 类型 | 必填 | 说明 |
-  |------|------|------|------|
-  | `query` | string | 是 | 搜索关键词 |
-  | `num` | integer | 否 | 返回结果数量 |
-  | `symbols` | string[] | 否 | 股票代码列表 |
-  | `start_datetime` | string | 否 | 开始时间 |
-  | `end_datetime` | string | 否 | 结束时间 |
-
-  ### document_fetch
-  根据文档 ID 获取文档详细内容。
-
-  | 参数 | 类型 | 必填 | 说明 |
-  |------|------|------|------|
-  | `doc_id` | string | 是 | 文档 ID |
-
-  ### V2 搜索接口
-
-  #### comprehensive_search
-  综合搜索金融投资文档，涵盖财报、会议、研报、公告、新闻、社交媒体等。
-
-  | 参数 | 类型 | 必填 | 说明 |
-  |------|------|------|------|
-  | `query` | string | 是 | 搜索关键词 |
-  | `num` | integer | 否 | 返回结果数量 |
-  | `symbols` | string[] | 否 | 股票代码列表 |
-  | `doc_types` | string[] | 否 | 文档类型筛选 |
-  | `start_datetime` | string | 否 | 开始时间 |
-  | `end_datetime` | string | 否 | 结束时间 |
-
-  #### earnings_search
-  搜索财报相关文档。
-
-  #### conferences_search
-  搜索非财报电话会议资料。
-
-  #### reports_search
-  搜索机构研究报告。
-
-  #### filings_search
-  搜索公司公告。
-
-  #### news_search
-  搜索金融投资新闻。
-
-  #### socials_search
-  搜索社交媒体内容。
-
-  #### webpage_search
-  搜索网页内容。
-
-  <Info>
-    V2 搜索接口参数结构与 comprehensive_search 类似，具体参数请参考对应接口文档
-  </Info>
   
   </Accordion>
 
-  <Accordion title="公司数据类" icon="building">
+  <Accordion title="文档工具" icon="file">
   
-  ### get_company_overview
-  获取公司基本信息概览。
+  | 工具名 | 功能描述 |
+  |--------|----------|
+  | `docs_list` | 文档列表查询 |
+  | `docs_by_symbols` | 按股票代码查询文档 |
+  | `docs_by_tags` | 按标签查询文档 |
+  | `document_fetch` | 获取文档详情 |
+  | `document_raw_content` | 获取文档原始内容 |
+  | `document_summary` | 获取文档摘要 |
+  | `docs_upload` | 上传文档 |
+  | `docs_delete` | 删除文档 |
+  | `folder_create` | 创建文件夹 |
+  | `folder_delete` | 删除文件夹 |
+  
+  </Accordion>
+</AccordionGroup>
 
-  | 参数 | 类型 | 必填 | 说明 |
-  |------|------|------|------|
-  | `symbol` | string | 是 | 股票代码，如 `AAPL`、`0700.HK` |
+---
 
-  ### get_company_shareholders
-  获取公司股东信息。
+### Stock MCP (`/stock/mcp`)
 
-  | 参数 | 类型 | 必填 | 说明 |
-  |------|------|------|------|
-  | `symbol` | string | 是 | 股票代码 |
+股票数据、概念板块和量化分析工具。
 
-  ### get_company_stock_prices
-  获取公司历史股价数据。
+<Info>
+  股票代码直接使用 ticker，不带市场前缀，如 `AAPL`、`00700`、`600519`
+</Info>
 
-  | 参数 | 类型 | 必填 | 说明 |
-  |------|------|------|------|
-  | `symbol` | string | 是 | 股票代码 |
-  | `start_date` | string | 否 | 开始日期 |
-  | `end_date` | string | 否 | 结束日期 |
-
-  ### 财务报表
-
-  #### get_company_balance_sheet
-  获取公司资产负债表数据。
-
-  #### get_company_income_statement
-  获取公司利润表数据。
-
-  #### get_company_cashflow_statement
-  获取公司现金流量表数据。
-
-  #### get_company_revenue_breakdown
-  获取公司收入构成细分数据。
-
+<AccordionGroup>
+  <Accordion title="公司数据" icon="building" defaultOpen>
+  
+  | 工具名 | 功能描述 |
+  |--------|----------|
+  | `company_overview` | 获取公司基本面信息 |
+  | `company_shareholders` | 获取股东信息 |
+  | `stock_prices` | 获取历史股价数据 |
+  | `income_statement` | 获取利润表 |
+  | `balance_sheet` | 获取资产负债表 |
+  | `cashflow_statement` | 获取现金流量表 |
+  | `revenue_breakdown` | 获取营收构成 |
+  
   **公共参数**：
-
+  
   | 参数 | 类型 | 必填 | 说明 |
   |------|------|------|------|
-  | `symbol` | string | 是 | 股票代码 |
+  | `symbol` | string | 是 | 股票代码（不带市场前缀） |
   | `period` | string | 否 | 报告周期（annual/quarterly） |
   | `limit` | integer | 否 | 返回记录数量 |
   
   </Accordion>
 
-  <Accordion title="股票行情类" icon="chart-candlestick">
+  <Accordion title="行情数据" icon="chart-candlestick">
   
-  ### get_stock_realtime_quote
-  获取股票实时行情报价。
-
-  | 参数 | 类型 | 必填 | 说明 |
-  |------|------|------|------|
-  | `symbols` | string[] | 是 | 股票代码列表 |
-
-  ### get_stock_kline
-  获取股票 K 线数据。
-
-  | 参数 | 类型 | 必填 | 说明 |
-  |------|------|------|------|
-  | `symbol` | string | 是 | 股票代码 |
-  | `interval` | string | 否 | K 线周期 |
-  | `start_date` | string | 否 | 开始日期 |
-  | `end_date` | string | 否 | 结束日期 |
-  | `limit` | integer | 否 | 返回数据条数 |
-
-  ### get_index_prices
-  获取指数价格数据。
-
-  | 参数 | 类型 | 必填 | 说明 |
-  |------|------|------|------|
-  | `symbols` | string[] | 是 | 指数代码列表 |
-  | `start_date` | string | 否 | 开始日期 |
-  | `end_date` | string | 否 | 结束日期 |
-
-  ### get_stock_screener
-  股票筛选器，根据条件筛选股票。
-
-  | 参数 | 类型 | 必填 | 说明 |
-  |------|------|------|------|
-  | `market` | string | 否 | 市场（US/HK/CN） |
-  | `industry` | string | 否 | 行业筛选 |
-  | `market_cap_min` | number | 否 | 最小市值 |
-  | `market_cap_max` | number | 否 | 最大市值 |
-  | `limit` | integer | 否 | 返回数量 |
-
-  ### 日历数据
-
-  #### get_stock_earnings_calendar
-  获取财报发布日历。
-
-  #### get_stock_ipo_calendar_hk
-  获取港股 IPO 日历。
-
-  **公共参数**：
-
-  | 参数 | 类型 | 必填 | 说明 |
-  |------|------|------|------|
-  | `start_date` | string | 否 | 开始日期 |
-  | `end_date` | string | 否 | 结束日期 |
-  | `symbols` | string[] | 否 | 股票代码列表 |
+  | 工具名 | 功能描述 |
+  |--------|----------|
+  | `realtime_quote` | 获取实时行情 |
+  | `index_prices` | 获取指数价格 |
+  | `stock_screener` | 股票筛选器 |
+  | `earnings_calendar` | 财报日历 |
+  | `ipo_calendar_hk` | 港股 IPO 日历 |
   
   </Accordion>
 
-  <Accordion title="Agent 对话类" icon="robot">
+  <Accordion title="指数和行业" icon="chart-pie">
   
-  ### create_conversation
-  创建一个新的 Agent 对话会话。
+  | 工具名 | 功能描述 |
+  |--------|----------|
+  | `index_constituents` | 获取指数成分股 |
+  | `index_tracking_funds` | 获取指数跟踪基金（ETF） |
+  | `industry_constituents` | 获取行业成分股 |
+  | `concepts_today` | 今日概念板块 |
+  | `concepts_latest` | 最新概念动态 |
+  | `followed_companies` | 用户关注的公司 |
+  
+  </Accordion>
 
-  | 参数 | 类型 | 必填 | 说明 |
-  |------|------|------|------|
-  | `title` | string | 否 | 会话标题 |
+  <Accordion title="量化分析" icon="calculator">
+  
+  | 工具名 | 功能描述 |
+  |--------|----------|
+  | `quant_indicators` | 量化指标列表 |
+  | `indicator_compute` | 计算技术指标（RSI, MACD, KDJ 等） |
+  | `quant_factors` | 因子列表 |
+  | `factor_compute` | 因子计算 |
+  | `factor_screen` | 因子筛选 |
+  | `ohlcv` | 获取 OHLCV 数据 |
+  | `ohlcv_batch` | 批量获取 OHLCV 数据 |
+  | `backtest` | 策略回测 |
+  
+  </Accordion>
+</AccordionGroup>
 
-  **返回值**: 包含 `conversation_id` 的响应对象
+---
 
-  ### agent_chat
-  向 Agent 发送消息进行对话。
+### Agent MCP (`/agent/mcp`)
 
-  | 参数 | 类型 | 必填 | 说明 |
-  |------|------|------|------|
-  | `conversation_id` | string | 是 | 会话 ID |
-  | `message` | string | 是 | 用户消息内容 |
+Agent 对话相关工具。
 
-  ### 会话管理
+<Accordion title="对话工具" icon="robot" defaultOpen>
 
-  #### get_conversation
-  获取会话详情。
+| 工具名 | 功能描述 |
+|--------|----------|
+| `create_conversation` | 创建新对话 |
+| `agent_chat` | 与 Agent 对话 |
+| `get_conversation` | 获取对话详情 |
+| `list_messages` | 列出对话消息 |
+| `get_message_events` | 获取消息事件 |
+| `cancel_execution` | 取消 Agent 执行 |
+| `get_agent_file` | 获取 Agent 生成的文件 |
 
-  #### get_conversation_message
-  获取会话中的消息详情。
+**使用流程**：
 
-  #### conversation_list_message
-  列出会话中的所有消息。
+1. 调用 `create_conversation` 创建对话，获取 `conversation_id`
+2. 调用 `agent_chat` 发送消息，传入 `conversation_id` 和 `message`
+3. 调用 `get_message_events` 获取响应内容
+4. 如需要，调用 `get_agent_file` 获取生成的文件
 
-  #### cancel_conversation
-  取消正在执行的 Agent 任务。
+</Accordion>
 
-  #### get_agent_file
-  获取 Agent 生成的文件。
+---
 
-  **公共参数**：所有接口都需要 `conversation_id`，部分接口需要 `message_id` 或 `file_id`
+### Channels MCP (`/channels/mcp`)
+
+频道订阅与时间线工具。
+
+<AccordionGroup>
+  <Accordion title="频道工具" icon="rss" defaultOpen>
+  
+  | 工具名 | 功能描述 |
+  |--------|----------|
+  | `channels_search` | 搜索频道 |
+  | `following_channels` | 获取已关注频道 |
+  | `channel_follow` | 关注频道 |
+  | `channel_unfollow` | 取消关注 |
+  | `channel_docs` | 获取频道文档 |
+  
+  </Accordion>
+
+  <Accordion title="时间线工具" icon="clock">
+  
+  | 工具名 | 功能描述 |
+  |--------|----------|
+  | `timeline_companies` | 公司时间线 |
+  | `timeline_topics` | 话题时间线 |
+  | `timeline_institutes` | 机构时间线 |
+  | `timeline_public_media` | 公共媒体时间线 |
+  | `timeline_social_media` | 社交媒体时间线 |
   
   </Accordion>
 </AccordionGroup>
@@ -345,14 +351,14 @@ Authorization: Bearer YOUR_API_KEY
 
 <Tabs>
   <Tab title="搜索财报">
-    搜索苹果公司最近的财报相关文档：
+    使用 Search MCP 搜索苹果公司最近的财报相关文档：
 
     ```json
     {
       "tool": "earnings_search",
       "parameters": {
         "query": "revenue growth",
-        "symbols": ["AAPL"],
+        "symbols": ["US:AAPL"],
         "num": 5
       }
     }
@@ -360,40 +366,39 @@ Authorization: Bearer YOUR_API_KEY
   </Tab>
 
   <Tab title="获取公司数据">
-    获取特斯拉公司的基本信息：
+    使用 Stock MCP 获取特斯拉公司的基本信息：
 
     ```json
     {
-      "tool": "get_company_overview",
+      "tool": "company_overview",
       "parameters": {
-        "symbol": "TSLA"
+        "symbols": "TSLA"
       }
     }
     ```
   </Tab>
 
   <Tab title="获取实时行情">
-    获取多只科技股的实时报价：
+    使用 Stock MCP 获取实时报价：
 
     ```json
     {
-      "tool": "get_stock_realtime_quote",
+      "tool": "realtime_quote",
       "parameters": {
-        "symbols": ["AAPL", "GOOGL", "MSFT", "NVDA"]
+        "symbol": "AAPL"
       }
     }
     ```
   </Tab>
 
   <Tab title="搜索研报">
-    搜索 AI 行业相关的研究报告：
+    使用 Search MCP 搜索 AI 行业相关的研究报告：
 
     ```json
     {
       "tool": "reports_search",
       "parameters": {
         "query": "artificial intelligence market analysis",
-        "industries": ["Technology"],
         "num": 10,
         "start_datetime": "2025-01-01 00:00:00"
       }
@@ -404,13 +409,30 @@ Authorization: Bearer YOUR_API_KEY
 
 ## 股票代码格式
 
-不同市场的股票代码格式如下：
+<Warning>
+  **注意**：Search MCP 和 Stock MCP 使用不同的股票代码格式
+</Warning>
+
+### Search MCP（搜索和文档）
+
+使用 `market:ticker` 格式：
+
+| 市场 | 格式 | 示例 |
+|------|------|------|
+| 美股 | `US:代码` | `US:AAPL`, `US:GOOGL`, `US:TSLA` |
+| 港股 | `HK:代码` | `HK:00700`, `HK:09988` |
+| 沪市 | `SH:代码` | `SH:600519`, `SH:601398` |
+| 深市 | `SZ:代码` | `SZ:000001`, `SZ:000858` |
+
+### Stock MCP（股票数据）
+
+直接使用股票代码，不带市场前缀：
 
 | 市场 | 格式 | 示例 |
 |------|------|------|
 | 美股 | 直接使用代码 | `AAPL`, `GOOGL`, `TSLA` |
-| 港股 | 代码.HK | `0700.HK`, `9988.HK` |
-| A股 | 代码.SH / 代码.SZ | `600519.SH`, `000001.SZ` |
+| 港股 | 直接使用代码 | `00700`, `09988` |
+| A股 | 直接使用代码 | `600519`, `000001` |
 
 ## 错误处理
 
@@ -443,6 +465,15 @@ MCP 调用使用标准的 HTTP 状态码：
 </Warning>
 
 <Tip>
+  **按需选择 MCP 服务**
+  
+  根据实际需求选择连接的 MCP 服务：
+  - 只需搜索功能：连接 Search MCP
+  - 只需股票数据：连接 Stock MCP
+  - 需要完整功能：连接全部 4 个服务
+</Tip>
+
+<Tip>
   **合理使用参数**
   
   优化查询性能和结果质量：
@@ -450,15 +481,6 @@ MCP 调用使用标准的 HTTP 状态码：
   - 通过股票代码精确筛选
   - 合理设置返回结果数量
 </Tip>
-
-<Info>
-  **处理数据延迟**
-  
-  实时行情数据可能存在延迟：
-  - 实时数据通常有 15 分钟延迟
-  - 历史数据每日更新
-  - 财务数据以公告时间为准
-</Info>
 
 <Note>
   **时间格式规范**
