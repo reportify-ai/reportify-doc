@@ -153,7 +153,7 @@ docs = client.docs.list_by_label(
 
 ```python
 # 搜索文档后获取详情
-results = client.search("Tesla earnings", num=5)
+results = client.search.all("Tesla earnings", num=5)
 for result in results:
     doc_id = result["doc_id"]
     

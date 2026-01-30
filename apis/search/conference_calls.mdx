@@ -7,7 +7,7 @@ openapi: 'POST /v2/search/conference-calls'
 
 **URL**: `/v2/search/conference-calls`  
 **方法**: `POST`  
-**描述**: 搜索电话会议记录，包括财报电话会议、研究电话会议、行业电话会议等。
+**描述**: 搜索财报电话会议记录和演示文稿。
 
 ### 请求参数
 | 参数名           | 类型         | 必填 | 描述                                                                 |
@@ -17,6 +17,8 @@ openapi: 'POST /v2/search/conference-calls'
 | num              | int          | 否   | 返回的结果数量，默认值为 `10`，最大值为 `100`。                      |
 | start_datetime   | str          | 否   | 开始时间，格式为 `YYYY-MM-DD` 或 `YYYY-MM-DD HH:MM:SS`。             |
 | end_datetime     | str          | 否   | 结束时间，格式为 `YYYY-MM-DD` 或 `YYYY-MM-DD HH:MM:SS`。             |
+| fiscal_year      | str          | 否   | 财年筛选，如 `2025`、`2026`。                                        |
+| fiscal_quarter   | str          | 否   | 财季筛选，如 `Q1`、`Q2`、`Q3`、`Q4`。                                |
 
 ### 响应参数
 | 参数名              | 类型    | 描述                                                   |

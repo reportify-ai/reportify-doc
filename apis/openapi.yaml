@@ -494,7 +494,7 @@ paths:
       tags:
       - openapi-v2-search
       summary: Earnings Pack Search
-      description: Search earnings pack documents include Financial reports, Earnings call transcripts, Presentation materials, Press releases
+      description: Search earnings financial reports
       operationId: earnings_pack_search_reportify_api_v2_search_earnings_pack_post
       requestBody:
         content:
@@ -522,7 +522,7 @@ paths:
       tags:
       - openapi-v2-search
       summary: Conference Calls Search
-      description: Search conference call transcripts including Earnings calls, Research calls, Industry calls
+      description: Search earnings call transcripts and slides
       operationId: conference_calls_search_reportify_api_v2_search_conference_calls_post
       requestBody:
         content:
@@ -550,7 +550,7 @@ paths:
       tags:
       - openapi-v2-search
       summary: Minutes Search
-      description: Search minutes transcripts including Conference calls, IR (Investor Relations) meetings
+      description: Search conference calls and IR (Investor Relations) meetings
       operationId: minutes_search_reportify_api_v2_search_minutes_post
       requestBody:
         content:
@@ -3678,12 +3678,20 @@ components:
           type: string
           title: End Datetime
           description: End datetime in YYYY-MM-DD or YYYY-MM-DD HH:MM:SS format
+        fiscal_year:
+          type: string
+          title: Fiscal Year
+          description: Fiscal year filter (e.g., '2025', '2026')
+        fiscal_quarter:
+          type: string
+          title: Fiscal Quarter
+          description: Fiscal quarter filter (e.g., 'Q1', 'Q2', 'Q3', 'Q4')
       type: object
       required:
       - query
       - symbols
       title: SearchToolsEarningsPackRequest
-      description: Request model for earnings pack search
+      description: Request model for earnings financial reports search
     SearchToolsConferenceCallsRequest:
       properties:
         query:
@@ -3711,12 +3719,20 @@ components:
           type: string
           title: End Datetime
           description: End datetime in YYYY-MM-DD or YYYY-MM-DD HH:MM:SS format
+        fiscal_year:
+          type: string
+          title: Fiscal Year
+          description: Fiscal year filter (e.g., '2025', '2026')
+        fiscal_quarter:
+          type: string
+          title: Fiscal Quarter
+          description: Fiscal quarter filter (e.g., 'Q1', 'Q2', 'Q3', 'Q4')
       type: object
       required:
       - query
       - symbols
       title: SearchToolsConferenceCallsRequest
-      description: Request model for conference calls search
+      description: Request model for earnings call transcripts and slides search
     SearchToolsMinutesRequest:
       properties:
         query:
@@ -3748,7 +3764,7 @@ components:
       required:
       - query
       title: SearchToolsMinutesRequest
-      description: Request model for minutes search
+      description: Request model for conference calls and IR meetings search
     SearchToolsReportsRequest:
       properties:
         query:

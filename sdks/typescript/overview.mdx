@@ -31,8 +31,11 @@ import { Reportify } from 'reportify-sdk';
 const client = new Reportify({ apiKey: 'your-api-key' });
 
 // 搜索文档
-const docs = await client.search('Tesla earnings', { num: 10 });
+const docs = await client.search.all('Tesla earnings', { num: 10 });
 docs.forEach(doc => console.log(doc.title));
+
+// 搜索新闻
+const news = await client.search.news('Apple iPhone', { symbols: ['US:AAPL'] });
 
 // 获取股票财务数据
 const income = await client.stock.incomeStatement('US:AAPL', { period: 'quarterly' });
@@ -82,7 +85,7 @@ import {
 } from 'reportify-sdk';
 
 try {
-  const docs = await client.search('Tesla');
+  const docs = await client.search.all('Tesla');
 } catch (error) {
   if (error instanceof AuthenticationError) {
     console.error('API Key 无效');
@@ -115,7 +118,7 @@ const options: SearchOptions = {
   symbols: ['US:TSLA']
 };
 
-const docs: Document[] = await client.search('Tesla', options);
+const docs: Document[] = await client.search.all('Tesla', options);
 ```
 
 ## ESM 和 CommonJS

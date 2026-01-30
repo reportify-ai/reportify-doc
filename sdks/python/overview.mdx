@@ -27,9 +27,12 @@ from reportify_sdk import Reportify
 client = Reportify(api_key="your-api-key")
 
 # 搜索文档
-docs = client.search("Tesla earnings", num=10)
+docs = client.search.all("Tesla earnings", num=10)
 for doc in docs:
     print(doc["title"])
+
+# 搜索新闻
+news = client.search.news("Apple iPhone", symbols=["US:AAPL"])
 
 # 获取股票财务数据（返回 pandas DataFrame）
 income = client.stock.income_statement("US:AAPL", period="quarterly")
@@ -79,7 +82,7 @@ from reportify_sdk import (
 )
 
 try:
-    docs = client.search("Tesla")
+    docs = client.search.all("Tesla")
 except AuthenticationError:
     print("API Key 无效")
 except RateLimitError:
@@ -95,7 +98,7 @@ except APIError as e:
 ```python
 # 自动关闭连接
 with Reportify(api_key="your-api-key") as client:
-    docs = client.search("Tesla")
+    docs = client.search.all("Tesla")
 ```
 
 ## 下一步

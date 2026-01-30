@@ -405,7 +405,7 @@ interface UploadDocRequest {
 
 ```typescript
 // 搜索文档后获取详情
-const results = await client.search('Tesla earnings', { num: 5 });
+const results = await client.search.all('Tesla earnings', { num: 5 });
 
 for (const result of results) {
   const docId = result.docId;

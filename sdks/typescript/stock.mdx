@@ -85,7 +85,7 @@ console.log(income[0].revenue, income[0].netIncome);
 | `options.endDate` | `string` | 否 | - | 结束日期（YYYY-MM-DD） |
 | `options.calendar` | `string` | 否 | `fiscal` | 日历类型：`calendar` 或 `fiscal` |
 | `options.fiscalYear` | `string` | 否 | - | 指定财年（如 `2023`） |
-| `options.fiscalQuarter` | `string` | 否 | - | 指定财季（Q1, Q2, Q3, Q4, FY, H1） |
+| `options.fiscalQuarter` | `string` | 否 | - | 指定财季（Q1, Q2, Q3, Q4, FY, H1, `Q3 (9 months)`） |
 
 **返回值：** `Promise<FinancialStatement[]>` - 利润表数据数组
 
@@ -144,7 +144,7 @@ const cashflow2 = await client.stock.cashflowStatement('US:AAPL', {
 | `options.endDate` | `string` | 否 | - | 结束日期（YYYY-MM-DD） |
 | `options.calendar` | `string` | 否 | `fiscal` | 日历类型：`calendar` 或 `fiscal` |
 | `options.fiscalYear` | `string` | 否 | - | 指定财年（如 `2023`） |
-| `options.fiscalQuarter` | `string` | 否 | - | 指定财季（Q1, Q2, Q3, Q4, FY, H1） |
+| `options.fiscalQuarter` | `string` | 否 | - | 指定财季（Q1, Q2, Q3, Q4, FY, H1, `Q3 (9 months)`） |
 
 **返回值：** `Promise<FinancialStatement[]>` - 现金流量表数据数组
 

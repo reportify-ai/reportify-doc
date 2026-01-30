@@ -4,18 +4,18 @@ description: 'Python SDK 文档搜索功能'
 icon: 'magnifying-glass'
 ---
 
-## search()
+## search.all()
 
 搜索所有类型的文档。
 
 ```python
-docs = client.search(
+docs = client.search.all(
     query="Tesla earnings",
     num=10,
     categories=["news", "reports"],
     symbols=["US:TSLA"],
-    start_date="2024-01-01",
-    end_date="2024-12-31"
+    start_datetime="2024-01-01",
+    end_datetime="2024-12-31"
 )
 ```
 
@@ -35,12 +35,20 @@ docs = client.search(
   股票代码过滤，格式：`市场:代码`，如 `US:AAPL`, `HK:0700`, `CN:600519`
 </ParamField>
 
-<ParamField path="start_date" type="str">
-  开始日期，格式：`YYYY-MM-DD`
+<ParamField path="industries" type="list[str]">
+  行业过滤
 </ParamField>
 
-<ParamField path="end_date" type="str">
-  结束日期，格式：`YYYY-MM-DD`
+<ParamField path="channel_ids" type="list[str]">
+  渠道 ID 过滤
+</ParamField>
+
+<ParamField path="start_datetime" type="str">
+  开始时间，格式：`YYYY-MM-DD` 或 `YYYY-MM-DD HH:MM:SS`
+</ParamField>
+
+<ParamField path="end_datetime" type="str">
+  结束时间，格式：`YYYY-MM-DD` 或 `YYYY-MM-DD HH:MM:SS`
 </ParamField>
 
 <ResponseField name="返回值" type="list[dict]">
@@ -49,12 +57,12 @@ docs = client.search(
 
 ---
 
-## search_news()
+## search.news()
 
 搜索新闻文章。
 
 ```python
-news = client.search_news(
+news = client.search.news(
     query="Apple iPhone",
     num=10,
     symbols=["US:AAPL"]
@@ -73,22 +81,26 @@ news = client.search_news(
   股票代码过滤
 </ParamField>
 
-<ParamField path="start_date" type="str">
-  开始日期
+<ParamField path="channel_ids" type="list[str]">
+  渠道 ID 过滤
 </ParamField>
 
-<ParamField path="end_date" type="str">
-  结束日期
+<ParamField path="start_datetime" type="str">
+  开始时间
+</ParamField>
+
+<ParamField path="end_datetime" type="str">
+  结束时间
 </ParamField>
 
 ---
 
-## search_reports()
+## search.reports()
 
 搜索研究报告。
 
 ```python
-reports = client.search_reports(
+reports = client.search.reports(
     query="semiconductor analysis",
     num=10
 )
@@ -106,23 +118,150 @@ reports = client.search_reports(
   股票代码过滤
 </ParamField>
 
-<ParamField path="start_date" type="str">
-  开始日期
+<ParamField path="industries" type="list[str]">
+  行业过滤
 </ParamField>
 
-<ParamField path="end_date" type="str">
-  结束日期
+<ParamField path="channel_ids" type="list[str]">
+  渠道 ID 过滤
+</ParamField>
+
+<ParamField path="start_datetime" type="str">
+  开始时间
+</ParamField>
+
+<ParamField path="end_datetime" type="str">
+  结束时间
 </ParamField>
 
 ---
 
-## search_filings()
+## search.filings()
 
 搜索公司公告和财报。
 
 ```python
-filings = client.search_filings(
+filings = client.search.filings(
     query="10-K annual report",
+    symbols=["US:AAPL"]
+)
+```
+
+<ParamField path="query" type="string" required>
+  搜索关键词
+</ParamField>
+
+<ParamField path="symbols" type="list[str]" required>
+  股票代码列表（必填）
+</ParamField>
+
+<ParamField path="num" type="int" default="10">
+  返回结果数量
+</ParamField>
+
+<ParamField path="start_datetime" type="str">
+  开始时间
+</ParamField>
+
+<ParamField path="end_datetime" type="str">
+  结束时间
+</ParamField>
+
+---
+
+## search.conference_calls()
+
+搜索财报电话会议记录和演示文稿。
+
+```python
+calls = client.search.conference_calls(
+    query="AI strategy",
+    symbols=["US:AAPL", "US:MSFT"],
+    fiscal_year="2025",
+    fiscal_quarter="Q4"
+)
+```
+
+<ParamField path="query" type="string" required>
+  搜索关键词
+</ParamField>
+
+<ParamField path="symbols" type="list[str]" required>
+  股票代码列表（必填）
+</ParamField>
+
+<ParamField path="num" type="int" default="10">
+  返回结果数量
+</ParamField>
+
+<ParamField path="start_datetime" type="str">
+  开始时间，格式：`YYYY-MM-DD` 或 `YYYY-MM-DD HH:MM:SS`
+</ParamField>
+
+<ParamField path="end_datetime" type="str">
+  结束时间，格式：`YYYY-MM-DD` 或 `YYYY-MM-DD HH:MM:SS`
+</ParamField>
+
+<ParamField path="fiscal_year" type="str">
+  财年筛选，如 `2025`、`2026`
+</ParamField>
+
+<ParamField path="fiscal_quarter" type="str">
+  财季筛选，如 `Q1`、`Q2`、`Q3`、`Q4`
+</ParamField>
+
+---
+
+## search.earnings_pack()
+
+搜索财报文档。
+
+```python
+docs = client.search.earnings_pack(
+    query="revenue growth",
+    symbols=["US:AAPL", "US:TSLA"],
+    fiscal_year="2025",
+    fiscal_quarter="Q4"
+)
+```
+
+<ParamField path="query" type="string" required>
+  搜索关键词
+</ParamField>
+
+<ParamField path="symbols" type="list[str]" required>
+  股票代码列表（必填）
+</ParamField>
+
+<ParamField path="num" type="int" default="10">
+  返回结果数量
+</ParamField>
+
+<ParamField path="start_datetime" type="str">
+  开始时间，格式：`YYYY-MM-DD` 或 `YYYY-MM-DD HH:MM:SS`
+</ParamField>
+
+<ParamField path="end_datetime" type="str">
+  结束时间，格式：`YYYY-MM-DD` 或 `YYYY-MM-DD HH:MM:SS`
+</ParamField>
+
+<ParamField path="fiscal_year" type="str">
+  财年筛选，如 `2025`、`2026`
+</ParamField>
+
+<ParamField path="fiscal_quarter" type="str">
+  财季筛选，如 `Q1`、`Q2`、`Q3`、`Q4`
+</ParamField>
+
+---
+
+## search.minutes()
+
+搜索电话会议和投资者关系（IR）会议。
+
+```python
+minutes = client.search.minutes(
+    query="board meeting",
     symbols=["US:AAPL"]
 )
 ```
@@ -139,23 +278,23 @@ filings = client.search_filings(
   股票代码过滤
 </ParamField>
 
-<ParamField path="start_date" type="str">
-  开始日期
+<ParamField path="start_datetime" type="str">
+  开始时间
 </ParamField>
 
-<ParamField path="end_date" type="str">
-  结束日期
+<ParamField path="end_datetime" type="str">
+  结束时间
 </ParamField>
 
 ---
 
-## search_transcripts()
+## search.socials()
 
-搜索财报电话会议纪要。
+搜索社交媒体内容。
 
 ```python
-transcripts = client.search_transcripts(
-    query="guidance revenue",
+socials = client.search.socials(
+    query="Tesla stock",
     symbols=["US:TSLA"]
 )
 ```
@@ -172,12 +311,45 @@ transcripts = client.search_transcripts(
   股票代码过滤
 </ParamField>
 
-<ParamField path="start_date" type="str">
-  开始日期
+<ParamField path="channel_ids" type="list[str]">
+  渠道 ID 过滤
 </ParamField>
 
-<ParamField path="end_date" type="str">
-  结束日期
+<ParamField path="start_datetime" type="str">
+  开始时间
+</ParamField>
+
+<ParamField path="end_datetime" type="str">
+  结束时间
+</ParamField>
+
+---
+
+## search.webpages()
+
+搜索网页内容。
+
+```python
+pages = client.search.webpages(
+    query="AI technology",
+    num=20
+)
+```
+
+<ParamField path="query" type="string" required>
+  搜索关键词
+</ParamField>
+
+<ParamField path="num" type="int" default="10">
+  返回结果数量
+</ParamField>
+
+<ParamField path="start_datetime" type="str">
+  开始时间
+</ParamField>
+
+<ParamField path="end_datetime" type="str">
+  结束时间
 </ParamField>
 
 ---

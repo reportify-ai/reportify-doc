@@ -81,7 +81,7 @@ results = client.kb.search(
 all_results = client.kb.search(query="财务分析")
 
 # 结合文档搜索和知识库搜索
-public_docs = client.search("Tesla analysis")
+public_docs = client.search.all("Tesla analysis")
 private_docs = client.kb.search("Tesla analysis")
 
 print(f"公开文档: {len(public_docs)} 条")
