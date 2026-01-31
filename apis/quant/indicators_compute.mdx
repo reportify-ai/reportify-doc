@@ -79,15 +79,47 @@ const response = await fetch('https://api.reportify.cn/v1/quant/indicators/compu
   结束日期，格式：`YYYY-MM-DD`（默认：今天）
 </ParamField>
 
-### 公式示例
+## 公式示例
+
+### Level 0 - 核心函数
+
+| 公式 | 描述 |
+|------|------|
+| `MA(20)` | 20 日简单移动平均 |
+| `EMA(12)` | 12 日指数移动平均 |
+| `HHV(20)` | 20 日内最高值 |
+| `STD(CLOSE, 20)` | 收盘价 20 日标准差 |
+
+### Level 1 - 应用函数
+
+| 公式 | 描述 |
+|------|------|
+| `CROSS(MA(5), MA(20))` | MA5 上穿 MA20 |
+| `COUNT(CLOSE > REF(CLOSE, 1), 10)` | 10 日内上涨天数 |
+
+### Level 2 - 趋势指标
+
+| 公式 | 描述 |
+|------|------|
+| `MACD()` | MACD 指标，默认参数 (12, 26, 9) |
+| `BOLL(20, 2)` | 布林带，周期 20，标准差 2 倍 |
+| `KTN(20, 10)` | 肯特纳通道 |
+
+### Level 2 - 动量指标
 
 | 公式 | 描述 |
 |------|------|
 | `RSI(14)` | RSI 指标，周期 14 |
-| `MACD()` | MACD 指标，默认参数 (12, 26, 9) |
-| `MACD(12, 26, 9)` | MACD 指标，自定义参数 |
-| `KDJ(9, 3, 3)` | KDJ 指标 |
-| `BOLL(20, 2)` | 布林带，周期 20，标准差 2 倍 |
+| `KDJ(9, 3, 3)` | KDJ 指标，自定义参数 |
+| `CCI(14)` | 商品通道指数 |
+
+### Level 2 - 波动率指标
+
+| 公式 | 描述 |
+|------|------|
+| `ATR(14)` | 平均真实波幅 |
+| `DMI(14, 6)` | 趋向指标 |
+| `OBV()` | 能量潮 |
 
 ## 响应参数
 
@@ -98,6 +130,16 @@ const response = await fetch('https://api.reportify.cn/v1/quant/indicators/compu
 <ResponseField name="metadata" type="object">
   计算元数据
 </ResponseField>
+
+### 指标返回字段
+
+| 指标 | 返回字段 |
+|------|----------|
+| RSI | `rsi` |
+| MACD | `dif`, `dea`, `macd` |
+| KDJ | `k`, `d`, `j` |
+| BOLL | `upper`, `middle`, `lower` |
+| DMI | `pdi`, `mdi`, `adx`, `adxr` |
 
 ## 响应示例
 

@@ -4,7 +4,7 @@ description: '计算指定股票的因子数据'
 openapi: 'POST /v1/quant/factors/compute'
 ---
 
-计算指定股票的因子数据，支持数值因子和布尔因子。
+计算指定股票的因子数据，支持技术因子和基本面因子，公式使用麦语言语法（兼容通达信/同花顺）。
 
 <CodeGroup>
 
@@ -79,7 +79,9 @@ const response = await fetch('https://api.reportify.cn/v1/quant/factors/compute'
   结束日期，格式：`YYYY-MM-DD`（默认：今天）
 </ParamField>
 
-### 公式示例
+## 公式示例
+
+### 技术因子
 
 | 公式 | 类型 | 描述 |
 |------|------|------|
@@ -88,14 +90,47 @@ const response = await fetch('https://api.reportify.cn/v1/quant/factors/compute'
 | `CLOSE > MA(20)` | 布尔 | 收盘价高于 20 日均线 |
 | `(CLOSE - MA(20)) / MA(20) * 100` | 数值 | 偏离 MA20 的百分比 |
 
-### 运算符
+### 基本面因子
+
+| 公式 | 类型 | 描述 |
+|------|------|------|
+| `PE` | 数值 | 市盈率 |
+| `PE_TTM` | 数值 | 市盈率（TTM） |
+| `PB` | 数值 | 市净率 |
+| `ROE` | 数值 | 净资产收益率 |
+| `ROA` | 数值 | 总资产收益率 |
+| `INCOME.net_profit` | 数值 | 利润表 - 净利润 |
+| `BALANCESHEET.total_assets` | 数值 | 资产负债表 - 总资产 |
+| `PE < 20` | 布尔 | 市盈率小于 20 |
+| `ROE > 0.15` | 布尔 | ROE 大于 15% |
+
+## 运算符
 
 | 类型 | 运算符 | 示例 |
 |------|--------|------|
 | 比较 | `>`, `<`, `>=`, `<=`, `==`, `!=` | `CLOSE > MA(20)` |
-| 逻辑与 | `&` | `(RSI(14) < 30) & (CLOSE > MA(20))` |
-| 逻辑或 | `\|` | `(RSI(14) < 30) \| (RSI(14) > 70)` |
+| 逻辑与 | `&`（注意：不是 `AND`） | `(RSI(14) < 30) & (CLOSE > MA(20))` |
+| 逻辑或 | `\|`（注意：不是 `OR`） | `(RSI(14) < 30) \| (RSI(14) > 70)` |
 | 算术 | `+`, `-`, `*`, `/` | `(CLOSE - MA(20)) / MA(20) * 100` |
+
+## 支持的变量
+
+| 变量 | 别名 | 描述 |
+|------|------|------|
+| `CLOSE` | `C` | 收盘价 |
+| `OPEN` | `O` | 开盘价 |
+| `HIGH` | `H` | 最高价 |
+| `LOW` | `L` | 最低价 |
+| `VOLUME` | `V`, `VOL` | 成交量 |
+
+## 支持的函数
+
+| 级别 | 函数 |
+|------|------|
+| Level 0 | `MA`, `EMA`, `SMA`, `REF`, `HHV`, `LLV`, `STD`, `SUM`, `ABS`, `MAX`, `MIN`, `IF`... |
+| Level 1 | `CROSS`, `CROSSDOWN`, `COUNT`, `EVERY`, `EXIST`, `BARSLAST`... |
+| Level 2 技术 | `RSI`, `MACD`, `BOLL`, `KDJ`, `WR`, `ATR`, `CCI`, `BIAS`, `PSY`... |
+| Level 2 基本面 | `PE`, `PB`, `PS`, `ROE`, `ROA`, `EPS`, `BPS`, `CURRENT_RATIO`... |
 
 ## 响应参数
 
@@ -151,6 +186,30 @@ const response = await fetch('https://api.reportify.cn/v1/quant/factors/compute'
   ],
   "metadata": {
     "formula": "CLOSE > MA(20)",
+    "market": "cn",
+    "count": 2
+  }
+}
+```
+
+### 基本面因子
+
+```json
+{
+  "datas": [
+    {
+      "symbol": "000001",
+      "date": "2026-01-10",
+      "value": 8.52
+    },
+    {
+      "symbol": "600519",
+      "date": "2026-01-10",
+      "value": 28.65
+    }
+  ],
+  "metadata": {
+    "formula": "PE_TTM",
     "market": "cn",
     "count": 2
   }

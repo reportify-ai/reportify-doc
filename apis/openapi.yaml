@@ -2020,9 +2020,35 @@ paths:
     get:
       tags:
       - openapi-quant
-      summary: List Indicators
-      description: List all available indicators
-      operationId: list_indicators_reportify_api_v1_quant_indicators_get
+      summary: List available indicators
+      description: |
+        List all available technical indicators.
+
+        **Core Functions (Level 0 核心函数):**
+        - Math: ABS, LN, POW, SQRT, SIN, COS, TAN, MAX, MIN
+        - Moving Averages: MA, EMA, SMA, DMA, WMA
+        - Statistics: HHV, LLV, STD, AVEDEV, SUM, REF
+        - Logic: IF, CONST, DIFF, RD, RET
+
+        **Application Functions (Level 1 应用函数):**
+        - Crossover: CROSS, CROSSDOWN, LONGCROSS
+        - Counting: COUNT, EVERY, EXIST, BARSLAST, LAST
+        - Value: VALUEWHEN, BETWEEN
+
+        **Trend Indicators (Level 2 趋势指标):**
+        - MACD, BOLL, TAQ, KTN, EXPMA, BBI
+
+        **Momentum Indicators (Level 2 动量指标):**
+        - KDJ, RSI, WR, CCI, BIAS, PSY, MTM, ROC
+
+        **Volatility Indicators (Level 2 波动率指标):**
+        - ATR, DMI, TRIX, VR, CR, EMV, DPO, BRAR, DFMA, MASS, OBV, MFI, ASI, XSII
+
+        Returns indicators with:
+        - `name`: Indicator name for use in formulas
+        - `description`: Brief description
+        - `fields`: Output field names (e.g., ["dif", "dea", "macd"] for MACD)
+      operationId: list_indicators
       responses:
         '200':
           description: Successful Response
@@ -2050,19 +2076,38 @@ paths:
       description: |
         Compute indicator values for given symbols and date range.
 
-        **Formula Examples:**
-        - `RSI(14)` - RSI with period 14
+        **Core Function Examples (Level 0):**
+        - `MA(20)` - 20-day Simple Moving Average
+        - `EMA(12)` - 12-day Exponential Moving Average
+        - `HHV(20)` - Highest value in 20 days
+        - `STD(CLOSE, 20)` - 20-day Standard Deviation
+
+        **Application Function Examples (Level 1):**
+        - `CROSS(MA(5), MA(20))` - MA5 crosses above MA20
+        - `COUNT(CLOSE > REF(CLOSE, 1), 10)` - Count up days in 10 periods
+
+        **Trend Indicator Examples (Level 2):**
         - `MACD()` - MACD with default parameters (12, 26, 9)
-        - `MACD(12, 26, 9)` - MACD with custom parameters
-        - `KDJ(9, 3, 3)` - KDJ with custom parameters
         - `BOLL(20, 2)` - Bollinger Bands with period 20 and 2 std dev
+        - `KTN(20, 10)` - Keltner Channel
+
+        **Momentum Indicator Examples (Level 2):**
+        - `RSI(14)` - RSI with period 14
+        - `KDJ(9, 3, 3)` - KDJ with custom parameters
+        - `CCI(14)` - Commodity Channel Index
+
+        **Volatility Indicator Examples (Level 2):**
+        - `ATR(14)` - Average True Range
+        - `DMI(14, 6)` - Directional Movement Index
+        - `OBV()` - On Balance Volume
 
         **Response Fields:**
         Each indicator returns its specific fields:
         - RSI: `rsi`
         - MACD: `dif`, `dea`, `macd`
         - KDJ: `k`, `d`, `j`
-        - BOLL: `upper`, `mid`, `lower`
+        - BOLL: `upper`, `middle`, `lower`
+        - DMI: `pdi`, `mdi`, `adx`, `adxr`
       operationId: indicator_compute
       requestBody:
         content:
@@ -2093,18 +2138,36 @@ paths:
       description: |
         List all available factors (variables and functions) for formula computation.
 
-        Returns factors organized by level:
+        **Technical Factors (Level 0-2):**
         - **Level 0 Variables**: CLOSE, OPEN, HIGH, LOW, VOLUME and aliases
         - **Level 0 Functions**: Core functions (MA, EMA, REF, HHV, LLV, STD, etc.)
         - **Level 1 Functions**: Application functions (CROSS, COUNT, EVERY, etc.)
         - **Level 2 Functions**: Technical indicators (MACD, KDJ, RSI, BOLL, etc.)
 
+        **Fundamental Factors (Level 2):**
+        - **Financial Statements**: INCOME, BALANCESHEET, CASHFLOW, EQUITY (with field access like `INCOME.net_profit`)
+        - **Profitability**: ROE, ROA, GPM, NPM, ROIC, etc.
+        - **Valuation**: PE, PE_TTM, PB, PS, PCF, EV, PEG, etc.
+        - **Solvency**: CURRENT_RATIO, QUICK_RATIO, DEBT_RATIO, etc.
+        - **Growth**: REVENUE_GROWTH_RATE, NET_PROFIT_GROWTH_RATE, EPS_GROWTH_RATE, etc.
+        - **Operating**: INVENTORY_TURNOVER, ACCOUNTS_RECEIVABLE_DAYS, TOTAL_ASSET_TURNOVER, etc.
+        - **Per Share**: EPS, BPS, OCFPS, REVENUE_PER_SHARE, etc.
+
         Each factor includes:
         - `name`: Factor name for use in formulas
         - `type`: "variable" or "function"
         - `level`: 0, 1, or 2
-        - `description`: Brief description
+        - `description`: Brief description (Chinese)
+        - `description_en`: English description (optional)
       operationId: list_factors
+      parameters:
+      - name: market
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/StockMarket'
+          default: cn
+        description: Stock market (cn, hk, us), default cn
       responses:
         '200':
           description: Successful Response
@@ -2133,11 +2196,22 @@ paths:
 
         The formula uses Mai-language syntax compatible with TongDaXin/TongHuaShun.
 
-        **Formula Examples:**
+        **Technical Factor Examples:**
         - `RSI(14)` - RSI indicator with period 14
         - `MACD().dif` - MACD DIF line
         - `CLOSE > MA(20)` - Close above 20-day MA (boolean)
         - `(CLOSE - MA(20)) / MA(20) * 100` - Deviation from MA20 in percent
+
+        **Fundamental Factor Examples:**
+        - `PE` - Price to Earnings ratio
+        - `PE_TTM` - P/E ratio (TTM)
+        - `PB` - Price to Book ratio
+        - `ROE` - Return on Equity
+        - `ROA` - Return on Assets
+        - `INCOME.net_profit` - Net profit from income statement
+        - `BALANCESHEET.total_assets` - Total assets from balance sheet
+        - `PE < 20` - Stocks with P/E less than 20
+        - `ROE > 0.15` - Stocks with ROE greater than 15%
 
         **Supported Operators:**
         - Comparison: `>`, `<`, `>=`, `<=`, `==`, `!=`
@@ -2155,7 +2229,8 @@ paths:
         **Supported Functions:**
         - Level 0: MA, EMA, SMA, REF, HHV, LLV, STD, SUM, ABS, MAX, MIN, IF...
         - Level 1: CROSS, CROSSDOWN, COUNT, EVERY, EXIST, BARSLAST...
-        - Level 2: RSI, MACD, BOLL, KDJ, WR, ATR, CCI, BIAS, PSY...
+        - Level 2 Technical: RSI, MACD, BOLL, KDJ, WR, ATR, CCI, BIAS, PSY...
+        - Level 2 Fundamental: PE, PB, PS, ROE, ROA, EPS, BPS, CURRENT_RATIO...
       operationId: factor_compute
       requestBody:
         content:
@@ -2189,11 +2264,39 @@ paths:
         Returns stocks where the formula evaluates to True (for boolean formulas)
         or non-null (for numeric formulas).
 
-        **Formula Examples:**
+        **Technical Screening Examples:**
         - `RSI(14) < 30` - RSI oversold
-        - `CROSS(MA(5), MA(10))` - Golden cross
-        - `(CLOSE > MA(20)) & (MA(20) > MA(60))` - Uptrend
+        - `CROSS(MA(5), MA(10))` - Golden cross (MA5 crosses above MA10)
+        - `CROSSDOWN(MA(5), MA(10))` - Death cross (MA5 crosses below MA10)
+        - `(CLOSE > MA(20)) & (MA(20) > MA(60))` - Uptrend with MA alignment
         - `CLOSE > BOLL(20, 2).upper` - Above upper Bollinger Band
+        - `(KDJ().j < 20) & CROSS(KDJ().k, KDJ().d)` - KDJ low golden cross
+        - `MACD().dif > MACD().dea` - MACD bullish
+        - `CLOSE > REF(CLOSE, 1) * 1.05` - Up more than 5% from yesterday
+        - `CLOSE > HHV(20)` - New 20-day high
+        - `COUNT(CLOSE > REF(CLOSE, 1), 5) >= 4` - Up at least 4 of last 5 days
+        - `EVERY(CLOSE > REF(CLOSE, 1), 3)` - Up 3 consecutive days
+        - `(CLOSE > MA(10)) & (MA(10) > MA(20)) & (MA(20) > MA(60))` - Multi-MA bullish
+        - `(MA(10) > REF(MA(10), 5)) & (MA(20) > REF(MA(20), 5))` - MA trending up
+        - `VOLUME > MA(20, VOLUME) * 2` - Volume spike (2x 20-day average)
+
+        **Fundamental Screening Examples:**
+        - `PE < 15` - Low P/E stocks
+        - `PE_TTM < 20` - P/E TTM under 20
+        - `PB < 1` - Price below book value
+        - `ROE > 0.15` - ROE greater than 15%
+        - `(PE < 20) & (ROE > 0.1)` - Value + quality
+        - `(PE_TTM < 15) & (PB < 2) & (ROE > 0.12)` - Multi-factor value screening
+        - `REVENUE_GROWTH_RATE > 0.2` - Revenue growth > 20%
+        - `NET_PROFIT_GROWTH_RATE > 0.3` - Net profit growth > 30%
+        - `CURRENT_RATIO > 2` - Strong liquidity
+        - `DEBT_TO_EQUITY_RATIO < 0.5` - Low leverage
+        - `GPM > 0.3` - Gross profit margin > 30%
+
+        **Combined Technical + Fundamental:**
+        - `(PE < 20) & (RSI(14) < 40)` - Cheap + oversold
+        - `(ROE > 0.12) & (CLOSE > MA(20))` - Quality + uptrend
+        - `(PB < 1.5) & CROSS(MA(5), MA(20))` - Value + golden cross
 
         **Supported Operators:**
         - Comparison: `>`, `<`, `>=`, `<=`, `==`, `!=`
@@ -2211,7 +2314,8 @@ paths:
         **Supported Functions:**
         - Level 0: MA, EMA, SMA, REF, HHV, LLV, STD, SUM, ABS, MAX, MIN, IF...
         - Level 1: CROSS, CROSSDOWN, COUNT, EVERY, EXIST, BARSLAST...
-        - Level 2: RSI, MACD, BOLL, KDJ, WR, ATR, CCI, BIAS, PSY...
+        - Level 2 Technical: RSI, MACD, BOLL, KDJ, WR, ATR, CCI, BIAS, PSY...
+        - Level 2 Fundamental: PE, PB, PS, ROE, ROA, EPS, BPS, CURRENT_RATIO...
       operationId: factor_screen
       requestBody:
         content:
@@ -2329,44 +2433,117 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
       - BearerAuth: []
+  /v1/quant/financials/{financial_type}:
+    get:
+      tags:
+      - openapi-quant
+      summary: Get financial history for a symbol
+      description: |
+        Get historical financial data for a single symbol.
+
+        **Financial Types:**
+        - `income` - Income statement (营收、利润等)
+        - `cashflow` - Cash flow statement (现金流量表)
+        - `balancesheet` - Balance sheet (资产负债表)
+        - `equity` - Equity statement (股东权益变动表)
+
+        **Parameters:**
+        - `financial_type`: Type of financial statement (required)
+        - `symbol`: Stock code (required)
+        - `market`: Stock market (cn, hk, us), default: cn
+        - `start_year`: Start year (optional, default: 3 years ago)
+        - `end_year`: End year (optional, default: current year)
+
+        **Response:**
+        Returns historical financial data sorted by report period.
+      operationId: financials_history
+      parameters:
+      - name: financial_type
+        in: path
+        required: true
+        schema:
+          $ref: '#/components/schemas/FinancialType'
+        description: Type of financial statement
+      - name: symbol
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Symbol
+        description: Stock code
+      - name: market
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/StockMarket'
+          default: cn
+        description: Stock market (cn, hk, us)
+      - name: start_year
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Start Year
+        description: Start year (default 3 years ago)
+      - name: end_year
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: End Year
+        description: End year (default current year)
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DataOutput'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
   /v1/quant/backtest:
     post:
       tags:
-      - backtest
-      summary: Backtest
-      description: |-
-        执行策略回测接口
+      - openapi-quant
+      summary: Run strategy backtest
+      description: |
+        Execute strategy backtest with the given parameters.
 
-        该接口接收回测参数，调用回测引擎执行策略回测，并返回回测结果。
+        **Input Parameters:**
+        - `start_date`: Backtest start date (required)
+        - `end_date`: Backtest end date (required)
+        - `market`: Stock market (cn, hk, us), default: cn
+        - `symbol`: Stock code (required)
+        - `entry_formula`: Buy/entry formula, triggers buy when result > 0 (required)
+        - `exit_formula`: Sell/exit formula, triggers sell when result > 0 (optional)
+        - `initial_cash`: Initial capital, default: 100000.0
+        - `commission`: Commission rate, default: 0.0
+        - `stop_loss`: Stop loss percentage, default: 0.0 (disabled)
+        - `sizer_percent`: Position size percentage, default: 99%
+        - `auto_close`: Auto close position at end, default: true
+        - `labels`: Label dictionary for returning additional indicator values in daily data
 
-        Args:
-            request: 回测输入参数，包含以下字段：
-                start_date: 回测开始日期
-                end_date: 回测结束日期
-                market: 股票市场（默认：StockMarket.CN）
-                symbol: 股票代码
-                entry_formula: 买入/开仓公式，结果>0触发买入
-                exit_formula: 卖出/平仓公式，结果>0触发卖出（可选）
-                initial_cash: 初始资金（默认：100000.0）
-                commission: 佣金（默认：0.0）
-                stop_loss: 止损设置（默认：0.0）
-                sizer_percent: 仓位百分比（默认：99）
-                auto_close: 是否自动平仓（默认：True）
-                labels: 标签字典，用于在每日数据中返回额外的指标值（可选）
+        **Formula Examples:**
+        - `CROSS(MA(5), MA(20))` - Golden cross signal
+        - `RSI(14) < 30` - RSI oversold
+        - `MA(5) > MA(20)` - State-based uptrend
 
-        Returns:
-            BacktestOutput: 回测结果，包含以下主要字段：
-                success: 回测是否成功
-                initial_cash: 初始资金
-                final_cash: 最终资金
-                total_return: 总收益
-                total_return_pct: 总收益率
-                max_drawdown: 最大回撤
-                profit_factor: 盈利因子
-                win_rate: 胜率
-                total_trades: 总交易次数
-                trades: 交易详情列表
-      operationId: backtest_v1_backtest_post
+        **Output:**
+        Returns backtest results including:
+        - Performance metrics (return, drawdown, win rate, etc.)
+        - Trade list with entry/exit details
+        - Daily data with OHLC and label values
+      operationId: quant_backtest
       requestBody:
         content:
           application/json:
@@ -2378,7 +2555,8 @@ paths:
           description: Successful Response
           content:
             application/json:
-              schema: {}
+              schema:
+                $ref: '#/components/schemas/BacktestOutput'
         '422':
           description: Validation Error
           content:
@@ -5215,15 +5393,25 @@ components:
         name:
           type: string
           title: Name
+          description: Factor name for use in formulas
         type:
           type: string
           title: Type
+          description: '"variable" or "function"'
         level:
           type: integer
           title: Level
+          description: 'Level: 0 (variable/core), 1 (application functions), 2 (indicators)'
         description:
           type: string
           title: Description
+          description: Brief description in Chinese
+        description_en:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description En
+          description: Brief description in English (optional)
       title: FactorMeta
       description: Metadata for a factor (variable or function).
     FactorComputeInput:
@@ -5352,6 +5540,13 @@ components:
           - type: 'null'
           title: Factor Value
           description: Factor value (if applicable)
+        indicators:
+          anyOf:
+          - type: object
+            additionalProperties: true
+          - type: 'null'
+          title: Indicators
+          description: Intermediate indicator values from formula
       title: ScreenedStock
       description: A stock that passed the screening filter.
     OHLCVOutput:
@@ -5495,10 +5690,149 @@ components:
       - symbol
       - entry_formula
       title: BacktestInput
-      description: |-
-        回测输入参数模型
-
-        定义了回测引擎执行策略回测所需的所有参数。
+      description: Backtest input parameters for strategy execution.
+    BacktestOutput:
+      type: object
+      properties:
+        success:
+          type: boolean
+          title: Success
+          description: Whether backtest completed successfully
+          default: true
+        initial_cash:
+          type: number
+          title: Initial Cash
+          description: Initial capital
+          default: 100000.0
+        commission:
+          type: number
+          title: Commission
+          description: Commission rate
+          default: 0.0
+        final_cash:
+          type: number
+          title: Final Cash
+          description: Final capital after backtest
+          default: 100000.0
+        total_return:
+          type: number
+          title: Total Return
+          description: Total profit/loss amount
+          default: 0.0
+        total_return_pct:
+          type: number
+          title: Total Return Pct
+          description: Total return percentage
+          default: 0.0
+        max_drawdown:
+          type: number
+          title: Max Drawdown
+          description: Maximum drawdown percentage
+          default: 0.0
+        profit_factor:
+          type: number
+          title: Profit Factor
+          description: Gross profit / Gross loss ratio
+          default: 0.0
+        win_rate:
+          type: number
+          title: Win Rate
+          description: Winning trades percentage
+          default: 0.0
+        total_trades:
+          type: integer
+          title: Total Trades
+          description: Total number of completed trades
+          default: 0
+        winning_trades:
+          type: integer
+          title: Winning Trades
+          description: Number of profitable trades
+          default: 0
+        losing_trades:
+          type: integer
+          title: Losing Trades
+          description: Number of losing trades
+          default: 0
+        trades:
+          type: array
+          title: Trades
+          description: List of trade details
+          items:
+            $ref: '#/components/schemas/TradeItem'
+          default: []
+        daily_data:
+          type: array
+          title: Daily Data
+          description: Daily data list with OHLC and label values
+          items:
+            type: object
+            additionalProperties: true
+          default: []
+        error_msg:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Error Msg
+          description: Error message when success is false
+      title: BacktestOutput
+      description: Backtest result containing performance metrics and trade details.
+    TradeItem:
+      type: object
+      required:
+      - id
+      - type
+      - entry_date
+      - exit_date
+      - entry_price
+      - exit_price
+      - size
+      - net_pnl
+      - return_pct
+      - cumulative_pnl
+      properties:
+        id:
+          type: integer
+          title: Id
+          description: Trade ID
+        type:
+          type: string
+          title: Type
+          description: Trade type, "Long" for long position, "Short" for short position
+        entry_date:
+          type: string
+          title: Entry Date
+          description: Entry date (YYYY-MM-DD)
+        exit_date:
+          type: string
+          title: Exit Date
+          description: Exit date (YYYY-MM-DD)
+        entry_price:
+          type: number
+          title: Entry Price
+          description: Entry price
+        exit_price:
+          type: number
+          title: Exit Price
+          description: Exit price
+        size:
+          type: integer
+          title: Size
+          description: Trade size (number of shares)
+        net_pnl:
+          type: number
+          title: Net Pnl
+          description: Net profit/loss after commission
+        return_pct:
+          type: number
+          title: Return Pct
+          description: Return percentage for this trade
+        cumulative_pnl:
+          type: number
+          title: Cumulative Pnl
+          description: Cumulative profit/loss after this trade
+      title: TradeItem
+      description: Single trade details from entry to exit.
     ConceptFeed:
       type: object
       properties:
@@ -5547,6 +5881,41 @@ components:
       - hk
       - us
       title: StockMarket
+      description: Stock market identifier
+    FinancialType:
+      type: string
+      enum:
+      - income
+      - cashflow
+      - balancesheet
+      - equity
+      title: FinancialType
+      description: |
+        Financial statement type:
+        - income: Income statement (利润表)
+        - cashflow: Cash flow statement (现金流量表)
+        - balancesheet: Balance sheet (资产负债表)
+        - equity: Equity statement (股东权益变动表)
+    DataOutput:
+      type: object
+      required:
+      - metadata
+      properties:
+        datas:
+          type: array
+          title: Datas
+          description: Data list sorted by date
+          items:
+            type: object
+            additionalProperties: true
+          default: []
+        metadata:
+          type: object
+          title: Metadata
+          description: Query metadata
+          additionalProperties: true
+      title: DataOutput
+      description: Generic data response with metadata.
     FollowedCompanyItem:
       properties:
         symbol:

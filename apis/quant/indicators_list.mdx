@@ -72,45 +72,65 @@ const data = await response.json();
     "name": "BOLL",
     "description": "Bollinger Bands",
     "fields": ["upper", "mid", "lower"]
-  },
-  {
-    "name": "WR",
-    "description": "Williams %R",
-    "fields": ["wr"]
-  },
-  {
-    "name": "ATR",
-    "description": "Average True Range",
-    "fields": ["atr"]
-  },
-  {
-    "name": "CCI",
-    "description": "Commodity Channel Index",
-    "fields": ["cci"]
-  },
-  {
-    "name": "BIAS",
-    "description": "Bias Ratio",
-    "fields": ["bias"]
-  },
-  {
-    "name": "PSY",
-    "description": "Psychological Line",
-    "fields": ["psy"]
   }
 ]
 ```
 
-## 支持的指标
+## 指标分类
+
+### Level 0 - 核心函数
+
+| 类别 | 函数 | 说明 |
+|------|------|------|
+| 数学运算 | `ABS`, `LN`, `POW`, `SQRT`, `SIN`, `COS`, `TAN`, `MAX`, `MIN` | 基础数学函数 |
+| 移动平均 | `MA`, `EMA`, `SMA`, `DMA`, `WMA` | 各类均线 |
+| 统计函数 | `HHV`, `LLV`, `STD`, `AVEDEV`, `SUM`, `REF` | 统计计算 |
+| 逻辑函数 | `IF`, `CONST`, `DIFF`, `RD`, `RET` | 条件判断 |
+
+### Level 1 - 应用函数
+
+| 类别 | 函数 | 说明 |
+|------|------|------|
+| 交叉信号 | `CROSS`, `CROSSDOWN`, `LONGCROSS` | 均线交叉判断 |
+| 计数函数 | `COUNT`, `EVERY`, `EXIST`, `BARSLAST`, `LAST` | 条件计数 |
+| 取值函数 | `VALUEWHEN`, `BETWEEN` | 条件取值 |
+
+### Level 2 - 趋势指标
 
 | 指标 | 公式 | 返回字段 | 描述 |
 |------|------|----------|------|
-| RSI | `RSI(N)` | `rsi` | 相对强弱指数 |
 | MACD | `MACD(S, L, M)` | `dif`, `dea`, `macd` | 指数平滑异同移动平均 |
-| KDJ | `KDJ(N, M1, M2)` | `k`, `d`, `j` | 随机指标 |
 | BOLL | `BOLL(N, P)` | `upper`, `mid`, `lower` | 布林带 |
+| TAQ | `TAQ(N)` | - | 唐奇安通道 |
+| KTN | `KTN(N, M)` | - | 肯特纳通道 |
+| EXPMA | `EXPMA(N)` | - | 指数移动平均 |
+| BBI | `BBI()` | - | 多空指数 |
+
+### Level 2 - 动量指标
+
+| 指标 | 公式 | 返回字段 | 描述 |
+|------|------|----------|------|
+| KDJ | `KDJ(N, M1, M2)` | `k`, `d`, `j` | 随机指标 |
+| RSI | `RSI(N)` | `rsi` | 相对强弱指数 |
 | WR | `WR(N)` | `wr` | 威廉指标 |
-| ATR | `ATR(N)` | `atr` | 平均真实波幅 |
 | CCI | `CCI(N)` | `cci` | 商品通道指数 |
 | BIAS | `BIAS(N)` | `bias` | 乖离率 |
 | PSY | `PSY(N)` | `psy` | 心理线 |
+| MTM | `MTM(N)` | `mtm` | 动量指标 |
+| ROC | `ROC(N)` | `roc` | 变动率 |
+
+### Level 2 - 波动率指标
+
+| 指标 | 公式 | 返回字段 | 描述 |
+|------|------|----------|------|
+| ATR | `ATR(N)` | `atr` | 平均真实波幅 |
+| DMI | `DMI(N, M)` | `pdi`, `mdi`, `adx`, `adxr` | 趋向指标 |
+| TRIX | `TRIX(N)` | `trix` | 三重指数平滑 |
+| VR | `VR(N)` | `vr` | 成交量变异率 |
+| CR | `CR(N)` | `cr` | 能量指标 |
+| EMV | `EMV(N)` | `emv` | 简易波动 |
+| DPO | `DPO(N)` | `dpo` | 去趋势价格 |
+| BRAR | `BRAR(N)` | `br`, `ar` | 情绪指标 |
+| OBV | `OBV()` | `obv` | 能量潮 |
+| MFI | `MFI(N)` | `mfi` | 资金流量指标 |
+| ASI | `ASI(N)` | `asi` | 累积摆动指标 |

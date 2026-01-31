@@ -276,14 +276,21 @@ Authorization: Bearer YOUR_API_KEY
   
   | 工具名 | 功能描述 |
   |--------|----------|
-  | `quant_indicators` | 量化指标列表 |
-  | `indicator_compute` | 计算技术指标（RSI, MACD, KDJ 等） |
-  | `quant_factors` | 因子列表 |
-  | `factor_compute` | 因子计算 |
-  | `factor_screen` | 因子筛选 |
-  | `ohlcv` | 获取 OHLCV 数据 |
-  | `ohlcv_batch` | 批量获取 OHLCV 数据 |
+  | `indicators` | 获取可用技术指标列表 |
+  | `indicator_compute` | 计算技术指标（RSI, MACD, KDJ, BOLL, ATR 等） |
+  | `factors` | 获取可用因子列表（技术因子 + 基本面因子） |
+  | `factor_compute` | 计算因子值（支持技术和基本面因子） |
+  | `factor_screen` | 因子筛选选股 |
+  | `ohlcv` | 获取单只股票 OHLCV 数据 |
+  | `ohlcv_batch` | 批量获取多只股票 OHLCV 数据 |
+  | `financials` | 获取历史财务数据（利润表/资产负债表/现金流量表） |
   | `backtest` | 策略回测 |
+  
+  **支持的因子类型**：
+  - 技术因子：`RSI(14)`, `MACD()`, `BOLL(20,2)`, `KDJ()`, `ATR(14)` 等
+  - 基本面因子：`PE`, `PE_TTM`, `PB`, `ROE`, `ROA`, `EPS` 等
+  - 财务报表：`INCOME.net_profit`, `BALANCESHEET.total_assets` 等
+  - 组合筛选：`(PE < 20) & (RSI(14) < 40)`
   
   </Accordion>
 </AccordionGroup>
@@ -401,6 +408,36 @@ Agent 对话相关工具。
         "query": "artificial intelligence market analysis",
         "num": 10,
         "start_datetime": "2025-01-01 00:00:00"
+      }
+    }
+    ```
+  </Tab>
+
+  <Tab title="因子选股">
+    使用 Stock MCP 筛选低市盈率且 ROE 高的股票：
+
+    ```json
+    {
+      "tool": "factor_screen",
+      "parameters": {
+        "market": "cn",
+        "formula": "(PE < 20) & (ROE > 0.15)"
+      }
+    }
+    ```
+  </Tab>
+
+  <Tab title="计算指标">
+    使用 Stock MCP 计算 RSI 指标：
+
+    ```json
+    {
+      "tool": "indicator_compute",
+      "parameters": {
+        "market": "cn",
+        "symbols": ["000001", "600519"],
+        "formula": "RSI(14)",
+        "start_date": "2025-01-01"
       }
     }
     ```

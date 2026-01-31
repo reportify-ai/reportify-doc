@@ -34,6 +34,12 @@ const data = await response.json();
 
 </CodeGroup>
 
+## 请求参数
+
+<ParamField query="market" type="string" default="cn">
+  股票市场：`cn`（A股）, `hk`（港股）, `us`（美股）
+</ParamField>
+
 ## 响应参数
 
 返回 `FactorMeta[]` 数组，因子列表按 level 分类。
@@ -49,7 +55,10 @@ const data = await response.json();
     级别：0, 1 或 2
   </ResponseField>
   <ResponseField name="description" type="string">
-    因子描述
+    因子描述（中文）
+  </ResponseField>
+  <ResponseField name="description_en" type="string">
+    因子描述（英文，可选）
   </ResponseField>
 </Expandable>
 
@@ -64,46 +73,10 @@ const data = await response.json();
     "description": "收盘价"
   },
   {
-    "name": "OPEN",
-    "type": "variable",
-    "level": 0,
-    "description": "开盘价"
-  },
-  {
-    "name": "HIGH",
-    "type": "variable",
-    "level": 0,
-    "description": "最高价"
-  },
-  {
-    "name": "LOW",
-    "type": "variable",
-    "level": 0,
-    "description": "最低价"
-  },
-  {
-    "name": "VOLUME",
-    "type": "variable",
-    "level": 0,
-    "description": "成交量"
-  },
-  {
     "name": "MA",
     "type": "function",
     "level": 0,
     "description": "简单移动平均"
-  },
-  {
-    "name": "EMA",
-    "type": "function",
-    "level": 0,
-    "description": "指数移动平均"
-  },
-  {
-    "name": "CROSS",
-    "type": "function",
-    "level": 1,
-    "description": "上穿信号"
   },
   {
     "name": "RSI",
@@ -112,15 +85,15 @@ const data = await response.json();
     "description": "相对强弱指数"
   },
   {
-    "name": "MACD",
-    "type": "function",
+    "name": "PE",
+    "type": "variable",
     "level": 2,
-    "description": "指数平滑异同移动平均"
+    "description": "市盈率"
   }
 ]
 ```
 
-## 因子分类
+## 技术因子（Level 0-2）
 
 ### Level 0 - 变量
 
@@ -173,3 +146,73 @@ const data = await response.json();
 | `CCI(N)` | 商品通道指数 | `cci` |
 | `BIAS(N)` | 乖离率 | `bias` |
 | `PSY(N)` | 心理线 | `psy` |
+
+---
+
+## 基本面因子（Level 2）
+
+### 财务报表
+
+通过 `.` 访问报表字段：
+
+| 报表 | 描述 | 示例 |
+|------|------|------|
+| `INCOME` | 利润表 | `INCOME.net_profit` |
+| `BALANCESHEET` | 资产负债表 | `BALANCESHEET.total_assets` |
+| `CASHFLOW` | 现金流量表 | `CASHFLOW.operating_cashflow` |
+| `EQUITY` | 股东权益表 | `EQUITY.total_equity` |
+
+### 盈利能力
+
+| 因子 | 描述 |
+|------|------|
+| `ROE` | 净资产收益率 |
+| `ROA` | 总资产收益率 |
+| `GPM` | 毛利率 |
+| `NPM` | 净利率 |
+| `ROIC` | 投入资本回报率 |
+
+### 估值因子
+
+| 因子 | 描述 |
+|------|------|
+| `PE` | 市盈率 |
+| `PE_TTM` | 市盈率（TTM） |
+| `PB` | 市净率 |
+| `PS` | 市销率 |
+| `PCF` | 市现率 |
+| `EV` | 企业价值 |
+| `PEG` | PEG 比率 |
+
+### 偿债能力
+
+| 因子 | 描述 |
+|------|------|
+| `CURRENT_RATIO` | 流动比率 |
+| `QUICK_RATIO` | 速动比率 |
+| `DEBT_RATIO` | 资产负债率 |
+
+### 成长能力
+
+| 因子 | 描述 |
+|------|------|
+| `REVENUE_GROWTH_RATE` | 营收增长率 |
+| `NET_PROFIT_GROWTH_RATE` | 净利润增长率 |
+| `EPS_GROWTH_RATE` | EPS 增长率 |
+
+### 运营能力
+
+| 因子 | 描述 |
+|------|------|
+| `INVENTORY_TURNOVER` | 存货周转率 |
+| `ACCOUNTS_RECEIVABLE_DAYS` | 应收账款周转天数 |
+| `TOTAL_ASSET_TURNOVER` | 总资产周转率 |
+
+### 每股指标
+
+| 因子 | 描述 |
+|------|------|
+| `EPS` | 每股收益 |
+| `BPS` | 每股净资产 |
+| `OCFPS` | 每股经营现金流 |
+| `REVENUE_PER_SHARE` | 每股营收 |

@@ -102,6 +102,46 @@ icon: 'book-open'
     | `CCI(N)` | 商品通道指数 | `cci` |
     | `BIAS(N)` | 乖离率 | `bias` |
     | `PSY(N)` | 心理线 | `psy` |
+    | `DMI(N, M)` | 趋向指标 | `pdi`, `mdi`, `adx`, `adxr` |
+    | `OBV()` | 能量潮 | `obv` |
+  </Accordion>
+  
+  <Accordion title="Level 2 - 基本面因子">
+    **财务报表**（通过 `.` 访问字段）：
+    | 报表 | 描述 | 示例 |
+    |------|------|------|
+    | `INCOME` | 利润表 | `INCOME.net_profit` |
+    | `BALANCESHEET` | 资产负债表 | `BALANCESHEET.total_assets` |
+    | `CASHFLOW` | 现金流量表 | `CASHFLOW.operating_cashflow` |
+    
+    **估值因子**：
+    | 因子 | 描述 |
+    |------|------|
+    | `PE`, `PE_TTM` | 市盈率 |
+    | `PB` | 市净率 |
+    | `PS` | 市销率 |
+    | `PEG` | PEG 比率 |
+    
+    **盈利能力**：
+    | 因子 | 描述 |
+    |------|------|
+    | `ROE` | 净资产收益率 |
+    | `ROA` | 总资产收益率 |
+    | `GPM` | 毛利率 |
+    | `NPM` | 净利率 |
+    
+    **成长能力**：
+    | 因子 | 描述 |
+    |------|------|
+    | `REVENUE_GROWTH_RATE` | 营收增长率 |
+    | `NET_PROFIT_GROWTH_RATE` | 净利润增长率 |
+    | `EPS_GROWTH_RATE` | EPS 增长率 |
+    
+    **每股指标**：
+    | 因子 | 描述 |
+    |------|------|
+    | `EPS` | 每股收益 |
+    | `BPS` | 每股净资产 |
   </Accordion>
 </AccordionGroup>
 
@@ -119,7 +159,7 @@ icon: 'book-open'
 
 ## 公式示例
 
-### 基础公式
+### 技术面公式
 
 ```python
 # RSI 超卖
@@ -142,6 +182,41 @@ icon: 'book-open'
 
 # 多头排列：5日线 > 10日线 > 20日线
 "(MA(5) > MA(10)) & (MA(10) > MA(20))"
+```
+
+### 基本面公式
+
+```python
+# 低市盈率
+"PE < 15"
+
+# 市盈率（TTM）低于 20
+"PE_TTM < 20"
+
+# 高 ROE
+"ROE > 0.15"
+
+# 价值 + 质量
+"(PE < 20) & (ROE > 0.1)"
+
+# 多因子价值筛选
+"(PE_TTM < 15) & (PB < 2) & (ROE > 0.12)"
+
+# 营收增长率大于 20%
+"REVENUE_GROWTH_RATE > 0.2"
+```
+
+### 技术面 + 基本面组合
+
+```python
+# 便宜 + 超卖
+"(PE < 20) & (RSI(14) < 40)"
+
+# 质量 + 上涨趋势
+"(ROE > 0.12) & (CLOSE > MA(20))"
+
+# 价值 + 金叉
+"(PB < 1.5) & CROSS(MA(5), MA(20))"
 ```
 
 ### 回测策略公式
