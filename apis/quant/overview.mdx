@@ -54,20 +54,20 @@ icon: 'book-open'
 
 | 类型 | 运算符 | 示例 |
 |------|--------|------|
-| 比较 | `>`, `<`, `>=`, `<=`, `==`, `!=` | `CLOSE > MA(20)` |
-| 逻辑与 | `&` | `(RSI(14) < 30) & (CLOSE > MA(20))` |
+| 比较 | `>`, `<`, `>=`, `<=`, `==`, `!=` | `CLOSE > MA(CLOSE, 20)` |
+| 逻辑与 | `&` | `(RSI(14) < 30) & (CLOSE > MA(CLOSE, 20))` |
 | 逻辑或 | `\|` | `(RSI(14) < 30) \| (RSI(14) > 70)` |
-| 算术 | `+`, `-`, `*`, `/` | `(CLOSE - MA(20)) / MA(20) * 100` |
+| 算术 | `+`, `-`, `*`, `/` | `(CLOSE - MA(CLOSE, 20)) / MA(CLOSE, 20) * 100` |
 
 ### 支持的函数
 
 <AccordionGroup>
-  <Accordion title="Level 0 - 基础函数">
+  <Accordion title="Level 0 - 基础函数 (TongDaXin 风格: col 在前, n 在后)">
     | 函数 | 描述 | 示例 |
     |------|------|------|
-    | `MA(N)` | N 日简单移动平均 | `MA(20)` |
-    | `EMA(N)` | N 日指数移动平均 | `EMA(12)` |
-    | `SMA(N, M)` | 平滑移动平均 | `SMA(9, 1)` |
+    | `MA(X, N)` | N 日简单移动平均 | `MA(CLOSE, 20)` |
+    | `EMA(X, N)` | N 日指数移动平均 | `EMA(CLOSE, 12)` |
+    | `SMA(X, N, M)` | 平滑移动平均 | `SMA(CLOSE, 9, 1)` |
     | `REF(X, N)` | 引用 N 天前的值 | `REF(CLOSE, 1)` |
     | `HHV(X, N)` | N 周期最高值 | `HHV(HIGH, 20)` |
     | `LLV(X, N)` | N 周期最低值 | `LLV(LOW, 20)` |
@@ -82,12 +82,12 @@ icon: 'book-open'
   <Accordion title="Level 1 - 应用函数">
     | 函数 | 描述 | 示例 |
     |------|------|------|
-    | `CROSS(A, B)` | A 上穿 B | `CROSS(MA(5), MA(10))` |
-    | `CROSSDOWN(A, B)` | A 下穿 B | `CROSSDOWN(MA(5), MA(10))` |
+    | `CROSS(A, B)` | A 上穿 B | `CROSS(MA(CLOSE, 5), MA(CLOSE, 10))` |
+    | `CROSSDOWN(A, B)` | A 下穿 B | `CROSSDOWN(MA(CLOSE, 5), MA(CLOSE, 10))` |
     | `COUNT(X, N)` | N 周期内满足条件的天数 | `COUNT(CLOSE > OPEN, 10)` |
-    | `EVERY(X, N)` | N 周期内全部满足条件 | `EVERY(CLOSE > MA(20), 5)` |
+    | `EVERY(X, N)` | N 周期内全部满足条件 | `EVERY(CLOSE > MA(CLOSE, 20), 5)` |
     | `EXIST(X, N)` | N 周期内存在满足条件 | `EXIST(CLOSE > HHV(HIGH, 60), 5)` |
-    | `BARSLAST(X)` | 上次满足条件到现在的周期数 | `BARSLAST(CROSS(MA(5), MA(10)))` |
+    | `BARSLAST(X)` | 上次满足条件到现在的周期数 | `BARSLAST(CROSS(MA(CLOSE, 5), MA(CLOSE, 10)))` |
   </Accordion>
   
   <Accordion title="Level 2 - 技术指标">
@@ -117,31 +117,31 @@ icon: 'book-open'
     **估值因子**：
     | 因子 | 描述 |
     |------|------|
-    | `PE`, `PE_TTM` | 市盈率 |
-    | `PB` | 市净率 |
-    | `PS` | 市销率 |
-    | `PEG` | PEG 比率 |
+    | `PE()`, `PE_TTM()` | 市盈率 |
+    | `PB()` | 市净率 |
+    | `PS()` | 市销率 |
+    | `PEG()` | PEG 比率 |
     
     **盈利能力**：
     | 因子 | 描述 |
     |------|------|
-    | `ROE` | 净资产收益率 |
-    | `ROA` | 总资产收益率 |
-    | `GPM` | 毛利率 |
-    | `NPM` | 净利率 |
+    | `ROE()` | 净资产收益率 |
+    | `ROA()` | 总资产收益率 |
+    | `GPM()` | 毛利率 |
+    | `NPM()` | 净利率 |
     
     **成长能力**：
     | 因子 | 描述 |
     |------|------|
-    | `REVENUE_GROWTH_RATE` | 营收增长率 |
-    | `NET_PROFIT_GROWTH_RATE` | 净利润增长率 |
-    | `EPS_GROWTH_RATE` | EPS 增长率 |
+    | `REVENUE_GROWTH_RATE()` | 营收增长率 |
+    | `NET_PROFIT_GROWTH_RATE()` | 净利润增长率 |
+    | `EPS_GROWTH_RATE()` | EPS 增长率 |
     
     **每股指标**：
     | 因子 | 描述 |
     |------|------|
-    | `EPS` | 每股收益 |
-    | `BPS` | 每股净资产 |
+    | `EPS()` | 每股收益 |
+    | `BPS()` | 每股净资产 |
   </Accordion>
 </AccordionGroup>
 
@@ -166,57 +166,57 @@ icon: 'book-open'
 "RSI(14) < 30"
 
 # 金叉
-"CROSS(MA(5), MA(10))"
+"CROSS(MA(CLOSE, 5), MA(CLOSE, 10))"
 
 # MACD DIF 线
 "MACD().dif"
 
 # 收盘价偏离 20 日均线的百分比
-"(CLOSE - MA(20)) / MA(20) * 100"
+"(CLOSE - MA(CLOSE, 20)) / MA(CLOSE, 20) * 100"
 
 # RSI 超卖且价格在 20 日均线上方
-"(RSI(14) < 30) & (CLOSE > MA(20))"
+"(RSI(14) < 30) & (CLOSE > MA(CLOSE, 20))"
 
 # 价格突破布林带上轨
 "CLOSE > BOLL(20, 2).upper"
 
 # 多头排列：5日线 > 10日线 > 20日线
-"(MA(5) > MA(10)) & (MA(10) > MA(20))"
+"(MA(CLOSE, 5) > MA(CLOSE, 10)) & (MA(CLOSE, 10) > MA(CLOSE, 20))"
 ```
 
 ### 基本面公式
 
 ```python
 # 低市盈率
-"PE < 15"
+"PE() < 15"
 
 # 市盈率（TTM）低于 20
-"PE_TTM < 20"
+"PE_TTM() < 20"
 
 # 高 ROE
-"ROE > 0.15"
+"ROE() > 0.15"
 
 # 价值 + 质量
-"(PE < 20) & (ROE > 0.1)"
+"(PE() < 20) & (ROE() > 0.1)"
 
 # 多因子价值筛选
-"(PE_TTM < 15) & (PB < 2) & (ROE > 0.12)"
+"(PE_TTM() < 15) & (PB() < 2) & (ROE() > 0.12)"
 
 # 营收增长率大于 20%
-"REVENUE_GROWTH_RATE > 0.2"
+"REVENUE_GROWTH_RATE() > 0.2"
 ```
 
 ### 技术面 + 基本面组合
 
 ```python
 # 便宜 + 超卖
-"(PE < 20) & (RSI(14) < 40)"
+"(PE() < 20) & (RSI(14) < 40)"
 
 # 质量 + 上涨趋势
-"(ROE > 0.12) & (CLOSE > MA(20))"
+"(ROE() > 0.12) & (CLOSE > MA(CLOSE, 20))"
 
 # 价值 + 金叉
-"(PB < 1.5) & CROSS(MA(5), MA(20))"
+"(PB() < 1.5) & CROSS(MA(CLOSE, 5), MA(CLOSE, 20))"
 ```
 
 ### 回测策略公式
@@ -225,14 +225,14 @@ icon: 'book-open'
 
 ```json
 {
-  "entry_formula": "CROSS(MA(5), MA(10))",
-  "exit_formula": "CROSS(MA(10), MA(5))",
+  "entry_formula": "CROSS(MA(CLOSE, 5), MA(CLOSE, 10))",
+  "exit_formula": "CROSS(MA(CLOSE, 10), MA(CLOSE, 5))",
   "symbol": "000001",
   "start_date": "2024-01-01",
   "end_date": "2025-01-01",
   "labels": {
-    "ma5": "MA(5)",
-    "ma10": "MA(10)",
+    "ma5": "MA(CLOSE, 5)",
+    "ma10": "MA(CLOSE, 10)",
     "rsi": "RSI(14)"
   }
 }
@@ -250,8 +250,8 @@ icon: 'book-open'
 ```json
 {
   "labels": {
-    "ma5": "MA(5)",
-    "ma10": "MA(10)",
+    "ma5": "MA(CLOSE, 5)",
+    "ma10": "MA(CLOSE, 10)",
     "rsi": "RSI(14)"
   }
 }

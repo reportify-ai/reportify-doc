@@ -86,9 +86,9 @@ const data = await response.json();
   },
   {
     "name": "PE",
-    "type": "variable",
+    "type": "function",
     "level": 2,
-    "description": "市盈率"
+    "description": "市盈率（需括号调用：PE()）"
   }
 ]
 ```
@@ -105,13 +105,13 @@ const data = await response.json();
 | `LOW` | `L` | 最低价 |
 | `VOLUME` | `V`, `VOL` | 成交量 |
 
-### Level 0 - 基础函数
+### Level 0 - 基础函数 (TongDaXin 风格: col 在前, n 在后)
 
 | 函数 | 描述 | 示例 |
 |------|------|------|
-| `MA(N)` | N 日简单移动平均 | `MA(20)` |
-| `EMA(N)` | N 日指数移动平均 | `EMA(12)` |
-| `SMA(N, M)` | 平滑移动平均 | `SMA(9, 1)` |
+| `MA(X, N)` | N 日简单移动平均 | `MA(CLOSE, 20)` |
+| `EMA(X, N)` | N 日指数移动平均 | `EMA(CLOSE, 12)` |
+| `SMA(X, N, M)` | 平滑移动平均 | `SMA(CLOSE, 9, 1)` |
 | `REF(X, N)` | 引用 N 天前的值 | `REF(CLOSE, 1)` |
 | `HHV(X, N)` | N 周期最高值 | `HHV(HIGH, 20)` |
 | `LLV(X, N)` | N 周期最低值 | `LLV(LOW, 20)` |
@@ -126,12 +126,12 @@ const data = await response.json();
 
 | 函数 | 描述 | 示例 |
 |------|------|------|
-| `CROSS(A, B)` | A 上穿 B | `CROSS(MA(5), MA(10))` |
-| `CROSSDOWN(A, B)` | A 下穿 B | `CROSSDOWN(MA(5), MA(10))` |
+| `CROSS(A, B)` | A 上穿 B | `CROSS(MA(CLOSE, 5), MA(CLOSE, 10))` |
+| `CROSSDOWN(A, B)` | A 下穿 B | `CROSSDOWN(MA(CLOSE, 5), MA(CLOSE, 10))` |
 | `COUNT(X, N)` | N 周期内满足条件的天数 | `COUNT(CLOSE > OPEN, 10)` |
-| `EVERY(X, N)` | N 周期内全部满足条件 | `EVERY(CLOSE > MA(20), 5)` |
+| `EVERY(X, N)` | N 周期内全部满足条件 | `EVERY(CLOSE > MA(CLOSE, 20), 5)` |
 | `EXIST(X, N)` | N 周期内存在满足条件 | `EXIST(CLOSE > HHV(HIGH, 60), 5)` |
-| `BARSLAST(X)` | 上次满足条件到现在的周期数 | `BARSLAST(CROSS(MA(5), MA(10)))` |
+| `BARSLAST(X)` | 上次满足条件到现在的周期数 | `BARSLAST(CROSS(MA(CLOSE, 5), MA(CLOSE, 10)))` |
 
 ### Level 2 - 技术指标
 
@@ -166,31 +166,31 @@ const data = await response.json();
 
 | 因子 | 描述 |
 |------|------|
-| `ROE` | 净资产收益率 |
-| `ROA` | 总资产收益率 |
-| `GPM` | 毛利率 |
-| `NPM` | 净利率 |
-| `ROIC` | 投入资本回报率 |
+| `ROE()` | 净资产收益率 |
+| `ROA()` | 总资产收益率 |
+| `GPM()` | 毛利率 |
+| `NPM()` | 净利率 |
+| `ROIC()` | 投入资本回报率 |
 
 ### 估值因子
 
 | 因子 | 描述 |
 |------|------|
-| `PE` | 市盈率 |
-| `PE_TTM` | 市盈率（TTM） |
-| `PB` | 市净率 |
-| `PS` | 市销率 |
-| `PCF` | 市现率 |
-| `EV` | 企业价值 |
-| `PEG` | PEG 比率 |
+| `PE()` | 市盈率 |
+| `PE_TTM()` | 市盈率（TTM） |
+| `PB()` | 市净率 |
+| `PS()` | 市销率 |
+| `PCF()` | 市现率 |
+| `EV()` | 企业价值 |
+| `PEG()` | PEG 比率 |
 
 ### 偿债能力
 
 | 因子 | 描述 |
 |------|------|
-| `CURRENT_RATIO` | 流动比率 |
-| `QUICK_RATIO` | 速动比率 |
-| `DEBT_RATIO` | 资产负债率 |
+| `CURRENT_RATIO()` | 流动比率 |
+| `QUICK_RATIO()` | 速动比率 |
+| `DEBT_RATIO()` | 资产负债率 |
 
 ### 成长能力
 

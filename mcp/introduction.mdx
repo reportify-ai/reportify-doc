@@ -283,14 +283,13 @@ Authorization: Bearer YOUR_API_KEY
   | `factor_screen` | 因子筛选选股 |
   | `ohlcv` | 获取单只股票 OHLCV 数据 |
   | `ohlcv_batch` | 批量获取多只股票 OHLCV 数据 |
-  | `financials` | 获取历史财务数据（利润表/资产负债表/现金流量表） |
   | `backtest` | 策略回测 |
   
   **支持的因子类型**：
   - 技术因子：`RSI(14)`, `MACD()`, `BOLL(20,2)`, `KDJ()`, `ATR(14)` 等
-  - 基本面因子：`PE`, `PE_TTM`, `PB`, `ROE`, `ROA`, `EPS` 等
+  - 基本面因子：`PE()`, `PE_TTM()`, `PB()`, `ROE()`, `ROA()`, `EPS()` 等
   - 财务报表：`INCOME.net_profit`, `BALANCESHEET.total_assets` 等
-  - 组合筛选：`(PE < 20) & (RSI(14) < 40)`
+  - 组合筛选：`(PE() < 20) & (RSI(14) < 40)`
   
   </Accordion>
 </AccordionGroup>
@@ -421,7 +420,7 @@ Agent 对话相关工具。
       "tool": "factor_screen",
       "parameters": {
         "market": "cn",
-        "formula": "(PE < 20) & (ROE > 0.15)"
+        "formula": "(PE() < 20) & (ROE() > 0.15)"
       }
     }
     ```

@@ -1,5 +1,6 @@
 ---
 title: '获取指标列表'
+description: '获取所有可用的技术指标定义，包括指标名称、描述和返回字段'
 openapi: 'GET /v1/quant/indicators'
 ---
 
@@ -80,20 +81,22 @@ const data = await response.json();
 
 ### Level 0 - 核心函数
 
-| 类别 | 函数 | 说明 |
-|------|------|------|
-| 数学运算 | `ABS`, `LN`, `POW`, `SQRT`, `SIN`, `COS`, `TAN`, `MAX`, `MIN` | 基础数学函数 |
-| 移动平均 | `MA`, `EMA`, `SMA`, `DMA`, `WMA` | 各类均线 |
-| 统计函数 | `HHV`, `LLV`, `STD`, `AVEDEV`, `SUM`, `REF` | 统计计算 |
-| 逻辑函数 | `IF`, `CONST`, `DIFF`, `RD`, `RET` | 条件判断 |
+通达信风格：列参数在前，周期参数在后。
+
+| 类别 | 函数 | 示例 | 说明 |
+|------|------|------|------|
+| 数学运算 | `ABS(X)`, `LN(X)`, `POW(X, N)`, `SQRT(X)`, `MAX(X, Y)`, `MIN(X, Y)` | `ABS(CLOSE - OPEN)` | 基础数学函数 |
+| 移动平均 | `MA(X, N)`, `EMA(X, N)`, `SMA(X, N, M)`, `DMA(X, A)`, `WMA(X, N)` | `MA(CLOSE, 20)` | 各类均线 |
+| 统计函数 | `HHV(X, N)`, `LLV(X, N)`, `STD(X, N)`, `AVEDEV(X, N)`, `SUM(X, N)`, `REF(X, N)` | `HHV(HIGH, 20)` | 统计计算 |
+| 逻辑函数 | `IF(C, A, B)`, `CONST(X)`, `DIFF(X, N)`, `RD(X, N)`, `RET(X, N)` | `IF(CLOSE > OPEN, 1, 0)` | 条件判断 |
 
 ### Level 1 - 应用函数
 
-| 类别 | 函数 | 说明 |
-|------|------|------|
-| 交叉信号 | `CROSS`, `CROSSDOWN`, `LONGCROSS` | 均线交叉判断 |
-| 计数函数 | `COUNT`, `EVERY`, `EXIST`, `BARSLAST`, `LAST` | 条件计数 |
-| 取值函数 | `VALUEWHEN`, `BETWEEN` | 条件取值 |
+| 类别 | 函数 | 示例 | 说明 |
+|------|------|------|------|
+| 交叉信号 | `CROSS(A, B)`, `CROSSDOWN(A, B)`, `LONGCROSS(A, B, N)` | `CROSS(MA(CLOSE, 5), MA(CLOSE, 20))` | 均线交叉判断 |
+| 计数函数 | `COUNT(X, N)`, `EVERY(X, N)`, `EXIST(X, N)`, `BARSLAST(X)`, `LAST(X, A, B)` | `COUNT(CLOSE > OPEN, 10)` | 条件计数 |
+| 取值函数 | `VALUEWHEN(C, X)`, `BETWEEN(X, A, B)` | `VALUEWHEN(CROSS(MA(CLOSE, 5), MA(CLOSE, 20)), CLOSE)` | 条件取值 |
 
 ### Level 2 - 趋势指标
 

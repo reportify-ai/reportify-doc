@@ -34,7 +34,7 @@ const ohlcv = await client.quant.ohlcv({ symbol: '000001' });
 // 策略回测
 const result = await client.quant.backtest({
   symbol: '000001',
-  formula: 'CROSS(MA(5), MA(20))',
+  formula: 'CROSS(MA(CLOSE, 5), MA(CLOSE, 20))',
   startDate: '2023-01-01',
   endDate: '2024-01-01'
 });
@@ -177,13 +177,13 @@ const dif = await client.quant.computeFactors({
 // 收盘价是否高于 20 日均线（布尔值）
 const aboveMA = await client.quant.computeFactors({
   symbols: ['000001'],
-  formula: 'CLOSE > MA(20)'
+  formula: 'CLOSE > MA(CLOSE, 20)'
 });
 
 // MA20 偏离度（百分比）
 const deviation = await client.quant.computeFactors({
   symbols: ['000001'],
-  formula: '(CLOSE - MA(20)) / MA(20) * 100'
+  formula: '(CLOSE - MA(CLOSE, 20)) / MA(CLOSE, 20) * 100'
 });
 ```
 
@@ -230,12 +230,12 @@ const oversold = await client.quant.screen({
 
 // 金叉
 const goldenCross = await client.quant.screen({
-  formula: 'CROSS(MA(5), MA(10))'
+  formula: 'CROSS(MA(CLOSE, 5), MA(CLOSE, 10))'
 });
 
 // 上升趋势
 const uptrend = await client.quant.screen({
-  formula: '(CLOSE > MA(20)) & (MA(20) > MA(60))'
+  formula: '(CLOSE > MA(CLOSE, 20)) & (MA(CLOSE, 20) > MA(CLOSE, 60))'
 });
 
 // 在指定股票池中筛选
@@ -299,90 +299,6 @@ const data = await client.quant.ohlcvBatch({
 
 ---
 
-## 财务数据 (Financials)
-
-### financials()
-
-获取股票历史财务报表数据。
-
-```typescript
-const data = await client.quant.financials({
-  financialType: 'income',  // 报表类型
-  symbol: '000001',
-  market: 'cn',             // 可选
-  startYear: 2020,          // 可选
-  endYear: 2024             // 可选
-});
-
-data.forEach(d => {
-  console.log(`${d.report_period}: 营收${d.revenue} 净利润${d.net_profit}`);
-});
-```
-
-**参数：**
-
-| 参数 | 类型 | 必填 | 说明 |
-|------|------|------|------|
-| `financialType` | `string` | 是 | 报表类型（见下表） |
-| `symbol` | `string` | 是 | 股票代码 |
-| `market` | `string` | 否 | 市场，默认 cn |
-| `startYear` | `number` | 否 | 开始年份，默认 3 年前 |
-| `endYear` | `number` | 否 | 结束年份，默认当前年份 |
-
-**报表类型：**
-
-| 类型 | 说明 |
-|------|------|
-| `income` | 利润表（营收、利润等） |
-| `cashflow` | 现金流量表 |
-| `balancesheet` | 资产负债表 |
-| `equity` | 股东权益变动表 |
-
-**返回类型：**
-
-```typescript
-interface FinancialData {
-  symbol: string;
-  report_period: string;
-  // 根据报表类型不同，包含不同的财务字段
-  [key: string]: unknown;
-}
-```
-
-**使用示例：**
-
-```typescript
-// 获取利润表
-const income = await client.quant.financials({
-  financialType: 'income',
-  symbol: '600519'
-});
-
-// 获取资产负债表
-const balance = await client.quant.financials({
-  financialType: 'balancesheet',
-  symbol: '000001',
-  startYear: 2020,
-  endYear: 2024
-});
-
-// 获取港股现金流量表
-const cashflow = await client.quant.financials({
-  financialType: 'cashflow',
-  symbol: '00700',
-  market: 'hk'
-});
-
-// 获取美股财务数据
-const usIncome = await client.quant.financials({
-  financialType: 'income',
-  symbol: 'AAPL',
-  market: 'us'
-});
-```
-
----
-
 ## 回测 (Backtest)
 
 ### backtest()
@@ -395,14 +311,14 @@ const result = await client.quant.backtest({
   endDate: '2024-01-01',
   symbol: '000001',
   market: 'cn',
-  entryFormula: 'CROSS(MA(5), MA(20))',  // 买入信号：MA5 上穿 MA20
-  exitFormula: 'CROSSDOWN(MA(5), MA(20))',  // 卖出信号（可选）
+  entryFormula: 'CROSS(MA(CLOSE, 5), MA(CLOSE, 20))',  // 买入信号：MA5 上穿 MA20
+  exitFormula: 'CROSSDOWN(MA(CLOSE, 5), MA(CLOSE, 20))',  // 卖出信号（可选）
   initialCash: 100000,  // 初始资金
   commission: 0.0003,   // 佣金费率
   stopLoss: 0.05,       // 止损 5%
   sizerPercent: 99,     // 仓位 99%
   autoClose: true,      // 自动平仓
-  labels: { rsi: 'RSI(14)', ma20: 'MA(20)' }  // 额外指标（可选）
+  labels: { rsi: 'RSI(14)', ma20: 'MA(CLOSE, 20)' }  // 额外指标（可选）
 });
 ```
 
@@ -455,7 +371,7 @@ const result = await client.quant.backtest({
   startDate: '2023-01-01',
   endDate: '2024-01-01',
   symbol: '000001',
-  entryFormula: 'CROSS(MA(5), MA(20))'
+  entryFormula: 'CROSS(MA(CLOSE, 5), MA(CLOSE, 20))'
 });
 
 console.log(`总收益: ${result.total_return.toFixed(2)}`);
@@ -470,8 +386,8 @@ const result2 = await client.quant.backtest({
   startDate: '2023-01-01',
   endDate: '2024-01-01',
   symbol: '000001',
-  entryFormula: 'CROSS(MA(5), MA(20))',      // 金叉买入
-  exitFormula: 'CROSSDOWN(MA(5), MA(20))'    // 死叉卖出
+  entryFormula: 'CROSS(MA(CLOSE, 5), MA(CLOSE, 20))',      // 金叉买入
+  exitFormula: 'CROSSDOWN(MA(CLOSE, 5), MA(CLOSE, 20))'    // 死叉卖出
 });
 
 // 3. RSI 超卖超买策略
@@ -491,8 +407,8 @@ const result4 = await client.quant.backtest({
   entryFormula: 'CROSS(RSI(14), 30)',
   labels: {
     rsi: 'RSI(14)',
-    ma20: 'MA(20)',
-    ma60: 'MA(60)'
+    ma20: 'MA(CLOSE, 20)',
+    ma60: 'MA(CLOSE, 60)'
   }
 });
 // 每日数据中会包含 rsi、ma20、ma60 的值

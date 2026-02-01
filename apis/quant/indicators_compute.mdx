@@ -81,20 +81,20 @@ const response = await fetch('https://api.reportify.cn/v1/quant/indicators/compu
 
 ## 公式示例
 
-### Level 0 - 核心函数
+### Level 0 - 核心函数 (TongDaXin 风格: col 在前, n 在后)
 
 | 公式 | 描述 |
 |------|------|
-| `MA(20)` | 20 日简单移动平均 |
-| `EMA(12)` | 12 日指数移动平均 |
-| `HHV(20)` | 20 日内最高值 |
+| `MA(CLOSE, 20)` | 20 日简单移动平均 |
+| `EMA(CLOSE, 12)` | 12 日指数移动平均 |
+| `HHV(HIGH, 20)` | 20 日内最高值 |
 | `STD(CLOSE, 20)` | 收盘价 20 日标准差 |
 
 ### Level 1 - 应用函数
 
 | 公式 | 描述 |
 |------|------|
-| `CROSS(MA(5), MA(20))` | MA5 上穿 MA20 |
+| `CROSS(MA(CLOSE, 5), MA(CLOSE, 20))` | MA5 上穿 MA20 |
 | `COUNT(CLOSE > REF(CLOSE, 1), 10)` | 10 日内上涨天数 |
 
 ### Level 2 - 趋势指标

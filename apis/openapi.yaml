@@ -2024,28 +2024,27 @@ paths:
       description: |
         List all available technical indicators.
 
-        **Core Functions (Level 0 核心函数):**
-        - Math: ABS, LN, POW, SQRT, SIN, COS, TAN, MAX, MIN
-        - Moving Averages: MA, EMA, SMA, DMA, WMA
-        - Statistics: HHV, LLV, STD, AVEDEV, SUM, REF
-        - Logic: IF, CONST, DIFF, RD, RET
+        **How to Use:** All indicators are functions, call with parentheses: `MA(CLOSE, 20)`, `RSI(14)`, `MACD()`
 
-        **Application Functions (Level 1 应用函数):**
-        - Crossover: CROSS, CROSSDOWN, LONGCROSS
-        - Counting: COUNT, EVERY, EXIST, BARSLAST, LAST
-        - Value: VALUEWHEN, BETWEEN
+        **Core Functions (Level 0, TongDaXin style: col first, n second):**
+        - Math: `ABS()`, `LN()`, `POW()`, `SQRT()`, `SIN()`, `COS()`, `TAN()`, `MAX()`, `MIN()`
+        - Moving Averages: `MA(col, n)`, `EMA(col, n)`, `SMA(col, n, m)`, `DMA(col, alpha)`, `WMA(col, n)`
+        - Statistics: `HHV(col, n)`, `LLV(col, n)`, `STD(col, n)`, `AVEDEV(col, n)`, `SUM(col, n)`, `REF(col, n)`
+        - Logic: `IF()`, `CONST()`, `DIFF(col, n)`, `RD()`, `RET()`
 
-        **Trend Indicators (Level 2 趋势指标):**
-        - MACD, BOLL, TAQ, KTN, EXPMA, BBI
+        **Application Functions (Level 1, need parentheses):**
+        - Crossover: `CROSS()`, `CROSSDOWN()`, `LONGCROSS()`
+        - Counting: `COUNT()`, `EVERY()`, `EXIST()`, `BARSLAST()`, `LAST()`
+        - Value: `VALUEWHEN()`, `BETWEEN()`
 
-        **Momentum Indicators (Level 2 动量指标):**
-        - KDJ, RSI, WR, CCI, BIAS, PSY, MTM, ROC
+        **Trend Indicators (Level 2):** `MACD()`, `BOLL()`, `TAQ()`, `KTN()`, `EXPMA()`, `BBI()`
 
-        **Volatility Indicators (Level 2 波动率指标):**
-        - ATR, DMI, TRIX, VR, CR, EMV, DPO, BRAR, DFMA, MASS, OBV, MFI, ASI, XSII
+        **Momentum Indicators (Level 2):** `KDJ()`, `RSI()`, `WR()`, `CCI()`, `BIAS()`, `PSY()`, `MTM()`, `ROC()`
+
+        **Volatility Indicators (Level 2):** `ATR()`, `DMI()`, `TRIX()`, `VR()`, `CR()`, `EMV()`, `DPO()`, `BRAR()`, `DFMA()`, `MASS()`, `OBV()`, `MFI()`, `ASI()`, `XSII()`
 
         Returns indicators with:
-        - `name`: Indicator name for use in formulas
+        - `name`: Indicator name for use in formulas (call with parentheses)
         - `description`: Brief description
         - `fields`: Output field names (e.g., ["dif", "dea", "macd"] for MACD)
       operationId: list_indicators
@@ -2076,15 +2075,21 @@ paths:
       description: |
         Compute indicator values for given symbols and date range.
 
-        **Core Function Examples (Level 0):**
-        - `MA(20)` - 20-day Simple Moving Average
-        - `EMA(12)` - 12-day Exponential Moving Average
-        - `HHV(20)` - Highest value in 20 days
+        **Variables vs Functions:**
+        - Variables (no parentheses): `CLOSE`, `OPEN`, `HIGH`, `LOW`, `VOLUME` (aliases: `C`, `O`, `H`, `L`, `V`, `VOL`)
+        - Functions (with parentheses): `MA(CLOSE, 20)`, `RSI(14)`, `MACD()`, etc.
+
+        **Core Function Examples (Level 0, TongDaXin style: col first, n second):**
+        - `MA(CLOSE, 20)` - 20-day Simple Moving Average
+        - `EMA(CLOSE, 12)` - 12-day Exponential Moving Average
+        - `HHV(HIGH, 20)` - Highest value in 20 days
         - `STD(CLOSE, 20)` - 20-day Standard Deviation
+        - `REF(CLOSE, 1)` - Yesterday's close
 
         **Application Function Examples (Level 1):**
-        - `CROSS(MA(5), MA(20))` - MA5 crosses above MA20
+        - `CROSS(MA(CLOSE, 5), MA(CLOSE, 20))` - MA5 crosses above MA20
         - `COUNT(CLOSE > REF(CLOSE, 1), 10)` - Count up days in 10 periods
+        - `EVERY(CLOSE > REF(CLOSE, 1), 3)` - Up 3 consecutive days
 
         **Trend Indicator Examples (Level 2):**
         - `MACD()` - MACD with default parameters (12, 26, 9)
@@ -2138,24 +2143,28 @@ paths:
       description: |
         List all available factors (variables and functions) for formula computation.
 
-        **Technical Factors (Level 0-2):**
-        - **Level 0 Variables**: CLOSE, OPEN, HIGH, LOW, VOLUME and aliases
-        - **Level 0 Functions**: Core functions (MA, EMA, REF, HHV, LLV, STD, etc.)
-        - **Level 1 Functions**: Application functions (CROSS, COUNT, EVERY, etc.)
-        - **Level 2 Functions**: Technical indicators (MACD, KDJ, RSI, BOLL, etc.)
+        **How to Use:**
+        - `type="variable"`: Use directly without parentheses, e.g. `CLOSE`, `VOLUME`
+        - `type="function"`: Call with parentheses, e.g. `MA(CLOSE, 20)`, `PE()`, `ROE()`
 
-        **Fundamental Factors (Level 2):**
-        - **Financial Statements**: INCOME, BALANCESHEET, CASHFLOW, EQUITY (with field access like `INCOME.net_profit`)
-        - **Profitability**: ROE, ROA, GPM, NPM, ROIC, etc.
-        - **Valuation**: PE, PE_TTM, PB, PS, PCF, EV, PEG, etc.
-        - **Solvency**: CURRENT_RATIO, QUICK_RATIO, DEBT_RATIO, etc.
-        - **Growth**: REVENUE_GROWTH_RATE, NET_PROFIT_GROWTH_RATE, EPS_GROWTH_RATE, etc.
-        - **Operating**: INVENTORY_TURNOVER, ACCOUNTS_RECEIVABLE_DAYS, TOTAL_ASSET_TURNOVER, etc.
-        - **Per Share**: EPS, BPS, OCFPS, REVENUE_PER_SHARE, etc.
+        **Technical Factors (Level 0-2):**
+        - **Level 0 Variables** (no parentheses): `CLOSE`, `OPEN`, `HIGH`, `LOW`, `VOLUME` and aliases
+        - **Level 0 Functions** (TongDaXin style: col first, n second): `MA(col, n)`, `EMA(col, n)`, `REF(col, n)`, `HHV(col, n)`, `LLV(col, n)`, `STD(col, n)`, etc.
+        - **Level 1 Functions** (need parentheses): `CROSS()`, `COUNT()`, `EVERY()`, etc.
+        - **Level 2 Functions** (need parentheses): `MACD()`, `KDJ()`, `RSI()`, `BOLL()`, etc.
+
+        **Fundamental Factors (Level 2, all need parentheses):**
+        - **Data Accessors**: `INCOME.field`, `BALANCESHEET.field`, `CASHFLOW.field`, `EQUITY.field`
+        - **Profitability**: `ROE()`, `ROA()`, `GPM()`, `NPM()`, `ROIC()`, etc.
+        - **Valuation**: `PE()`, `PE_TTM()`, `PB()`, `PS()`, `PCF()`, `EV()`, `PEG()`, etc.
+        - **Solvency**: `CURRENT_RATIO()`, `QUICK_RATIO()`, `DEBT_RATIO()`, etc.
+        - **Growth**: `REVENUE_GROWTH_RATE()`, `NET_PROFIT_GROWTH_RATE()`, `EPS_GROWTH_RATE()`, etc.
+        - **Operating**: `INVENTORY_TURNOVER()`, `ACCOUNTS_RECEIVABLE_DAYS()`, `TOTAL_ASSET_TURNOVER()`, etc.
+        - **Per Share**: `EPS()`, `BPS()`, `OCFPS()`, `REVENUE_PER_SHARE()`, etc.
 
         Each factor includes:
         - `name`: Factor name for use in formulas
-        - `type`: "variable" or "function"
+        - `type`: "variable" (no parentheses) or "function" (need parentheses)
         - `level`: 0, 1, or 2
         - `description`: Brief description (Chinese)
         - `description_en`: English description (optional)
@@ -2196,22 +2205,27 @@ paths:
 
         The formula uses Mai-language syntax compatible with TongDaXin/TongHuaShun.
 
+        **Variables vs Functions:**
+        - Variables (no parentheses): `CLOSE`, `OPEN`, `HIGH`, `LOW`, `VOLUME` (aliases: `C`, `O`, `H`, `L`, `V`, `VOL`)
+        - Functions (with parentheses): `MA(CLOSE, 20)`, `RSI(14)`, `PE()`, `ROE()`, etc.
+        - Rule: Technical indicators and fundamental factors are functions, need `()`
+
         **Technical Factor Examples:**
         - `RSI(14)` - RSI indicator with period 14
         - `MACD().dif` - MACD DIF line
-        - `CLOSE > MA(20)` - Close above 20-day MA (boolean)
-        - `(CLOSE - MA(20)) / MA(20) * 100` - Deviation from MA20 in percent
+        - `CLOSE > MA(CLOSE, 20)` - Close above 20-day MA (boolean)
+        - `(CLOSE - MA(CLOSE, 20)) / MA(CLOSE, 20) * 100` - Deviation from MA20 in percent
 
-        **Fundamental Factor Examples:**
-        - `PE` - Price to Earnings ratio
-        - `PE_TTM` - P/E ratio (TTM)
-        - `PB` - Price to Book ratio
-        - `ROE` - Return on Equity
-        - `ROA` - Return on Assets
-        - `INCOME.net_profit` - Net profit from income statement
-        - `BALANCESHEET.total_assets` - Total assets from balance sheet
-        - `PE < 20` - Stocks with P/E less than 20
-        - `ROE > 0.15` - Stocks with ROE greater than 15%
+        **Fundamental Factor Examples (all need parentheses):**
+        - `PE()` - Price to Earnings ratio
+        - `PE_TTM()` - P/E ratio (TTM)
+        - `PB()` - Price to Book ratio
+        - `ROE()` - Return on Equity
+        - `ROA()` - Return on Assets
+        - `INCOME.net_profit` - Net profit from income statement (data accessor)
+        - `BALANCESHEET.total_assets` - Total assets from balance sheet (data accessor)
+        - `PE() < 20` - Stocks with P/E less than 20
+        - `ROE() > 0.15` - Stocks with ROE greater than 15%
 
         **Supported Operators:**
         - Comparison: `>`, `<`, `>=`, `<=`, `==`, `!=`
@@ -2219,18 +2233,18 @@ paths:
         - Logical OR: `|` (NOT `OR`)
         - Arithmetic: `+`, `-`, `*`, `/`
 
-        **Supported Variables:**
+        **Supported Variables (no parentheses):**
         - `CLOSE`, `C` - Close price
         - `OPEN`, `O` - Open price
         - `HIGH`, `H` - High price
         - `LOW`, `L` - Low price
         - `VOLUME`, `V`, `VOL` - Volume
 
-        **Supported Functions:**
-        - Level 0: MA, EMA, SMA, REF, HHV, LLV, STD, SUM, ABS, MAX, MIN, IF...
-        - Level 1: CROSS, CROSSDOWN, COUNT, EVERY, EXIST, BARSLAST...
-        - Level 2 Technical: RSI, MACD, BOLL, KDJ, WR, ATR, CCI, BIAS, PSY...
-        - Level 2 Fundamental: PE, PB, PS, ROE, ROA, EPS, BPS, CURRENT_RATIO...
+        **Supported Functions (TongDaXin style: col first, n second):**
+        - Level 0: MA(col, n), EMA(col, n), SMA(col, n, m), REF(col, n), HHV(col, n), LLV(col, n), STD(col, n), SUM(col, n), ABS(), MAX(), MIN(), IF()...
+        - Level 1: CROSS(), CROSSDOWN(), COUNT(), EVERY(), EXIST(), BARSLAST()...
+        - Level 2 Technical: RSI(), MACD(), BOLL(), KDJ(), WR(), ATR(), CCI(), BIAS(), PSY()...
+        - Level 2 Fundamental: PE(), PB(), PS(), ROE(), ROA(), EPS(), BPS(), CURRENT_RATIO()...
       operationId: factor_compute
       requestBody:
         content:
@@ -2264,39 +2278,44 @@ paths:
         Returns stocks where the formula evaluates to True (for boolean formulas)
         or non-null (for numeric formulas).
 
+        **Variables vs Functions:**
+        - Variables (no parentheses): `CLOSE`, `OPEN`, `HIGH`, `LOW`, `VOLUME` (aliases: `C`, `O`, `H`, `L`, `V`, `VOL`)
+        - Functions (with parentheses): `MA(CLOSE, 20)`, `RSI(14)`, `PE()`, `ROE()`, etc.
+        - Rule: Technical indicators and fundamental factors are functions, need `()`
+
         **Technical Screening Examples:**
         - `RSI(14) < 30` - RSI oversold
-        - `CROSS(MA(5), MA(10))` - Golden cross (MA5 crosses above MA10)
-        - `CROSSDOWN(MA(5), MA(10))` - Death cross (MA5 crosses below MA10)
-        - `(CLOSE > MA(20)) & (MA(20) > MA(60))` - Uptrend with MA alignment
+        - `CROSS(MA(CLOSE, 5), MA(CLOSE, 10))` - Golden cross (MA5 crosses above MA10)
+        - `CROSSDOWN(MA(CLOSE, 5), MA(CLOSE, 10))` - Death cross (MA5 crosses below MA10)
+        - `(CLOSE > MA(CLOSE, 20)) & (MA(CLOSE, 20) > MA(CLOSE, 60))` - Uptrend with MA alignment
         - `CLOSE > BOLL(20, 2).upper` - Above upper Bollinger Band
         - `(KDJ().j < 20) & CROSS(KDJ().k, KDJ().d)` - KDJ low golden cross
         - `MACD().dif > MACD().dea` - MACD bullish
         - `CLOSE > REF(CLOSE, 1) * 1.05` - Up more than 5% from yesterday
-        - `CLOSE > HHV(20)` - New 20-day high
+        - `CLOSE > HHV(HIGH, 20)` - New 20-day high
         - `COUNT(CLOSE > REF(CLOSE, 1), 5) >= 4` - Up at least 4 of last 5 days
         - `EVERY(CLOSE > REF(CLOSE, 1), 3)` - Up 3 consecutive days
-        - `(CLOSE > MA(10)) & (MA(10) > MA(20)) & (MA(20) > MA(60))` - Multi-MA bullish
-        - `(MA(10) > REF(MA(10), 5)) & (MA(20) > REF(MA(20), 5))` - MA trending up
-        - `VOLUME > MA(20, VOLUME) * 2` - Volume spike (2x 20-day average)
+        - `(CLOSE > MA(CLOSE, 10)) & (MA(CLOSE, 10) > MA(CLOSE, 20)) & (MA(CLOSE, 20) > MA(CLOSE, 60))` - Multi-MA bullish
+        - `(MA(CLOSE, 10) > REF(MA(CLOSE, 10), 5)) & (MA(CLOSE, 20) > REF(MA(CLOSE, 20), 5))` - MA trending up
+        - `VOLUME > MA(VOLUME, 20) * 2` - Volume spike (2x 20-day average)
 
-        **Fundamental Screening Examples:**
-        - `PE < 15` - Low P/E stocks
-        - `PE_TTM < 20` - P/E TTM under 20
-        - `PB < 1` - Price below book value
-        - `ROE > 0.15` - ROE greater than 15%
-        - `(PE < 20) & (ROE > 0.1)` - Value + quality
-        - `(PE_TTM < 15) & (PB < 2) & (ROE > 0.12)` - Multi-factor value screening
-        - `REVENUE_GROWTH_RATE > 0.2` - Revenue growth > 20%
-        - `NET_PROFIT_GROWTH_RATE > 0.3` - Net profit growth > 30%
-        - `CURRENT_RATIO > 2` - Strong liquidity
-        - `DEBT_TO_EQUITY_RATIO < 0.5` - Low leverage
-        - `GPM > 0.3` - Gross profit margin > 30%
+        **Fundamental Screening Examples (all need parentheses):**
+        - `PE() < 15` - Low P/E stocks
+        - `PE_TTM() < 20` - P/E TTM under 20
+        - `PB() < 1` - Price below book value
+        - `ROE() > 0.15` - ROE greater than 15%
+        - `(PE() < 20) & (ROE() > 0.1)` - Value + quality
+        - `(PE_TTM() < 15) & (PB() < 2) & (ROE() > 0.12)` - Multi-factor value screening
+        - `REVENUE_GROWTH_RATE() > 0.2` - Revenue growth > 20%
+        - `NET_PROFIT_GROWTH_RATE() > 0.3` - Net profit growth > 30%
+        - `CURRENT_RATIO() > 2` - Strong liquidity
+        - `DEBT_TO_EQUITY_RATIO() < 0.5` - Low leverage
+        - `GPM() > 0.3` - Gross profit margin > 30%
 
         **Combined Technical + Fundamental:**
-        - `(PE < 20) & (RSI(14) < 40)` - Cheap + oversold
-        - `(ROE > 0.12) & (CLOSE > MA(20))` - Quality + uptrend
-        - `(PB < 1.5) & CROSS(MA(5), MA(20))` - Value + golden cross
+        - `(PE() < 20) & (RSI(14) < 40)` - Cheap + oversold
+        - `(ROE() > 0.12) & (CLOSE > MA(CLOSE, 20))` - Quality + uptrend
+        - `(PB() < 1.5) & CROSS(MA(CLOSE, 5), MA(CLOSE, 20))` - Value + golden cross
 
         **Supported Operators:**
         - Comparison: `>`, `<`, `>=`, `<=`, `==`, `!=`
@@ -2304,18 +2323,18 @@ paths:
         - Logical OR: `|` (NOT `OR`)
         - Arithmetic: `+`, `-`, `*`, `/`
 
-        **Supported Variables:**
+        **Supported Variables (no parentheses):**
         - `CLOSE`, `C` - Close price
         - `OPEN`, `O` - Open price
         - `HIGH`, `H` - High price
         - `LOW`, `L` - Low price
         - `VOLUME`, `V`, `VOL` - Volume
 
-        **Supported Functions:**
-        - Level 0: MA, EMA, SMA, REF, HHV, LLV, STD, SUM, ABS, MAX, MIN, IF...
-        - Level 1: CROSS, CROSSDOWN, COUNT, EVERY, EXIST, BARSLAST...
-        - Level 2 Technical: RSI, MACD, BOLL, KDJ, WR, ATR, CCI, BIAS, PSY...
-        - Level 2 Fundamental: PE, PB, PS, ROE, ROA, EPS, BPS, CURRENT_RATIO...
+        **Supported Functions (TongDaXin style: col first, n second):**
+        - Level 0: MA(col, n), EMA(col, n), SMA(col, n, m), REF(col, n), HHV(col, n), LLV(col, n), STD(col, n), SUM(col, n), ABS(), MAX(), MIN(), IF()...
+        - Level 1: CROSS(), CROSSDOWN(), COUNT(), EVERY(), EXIST(), BARSLAST()...
+        - Level 2 Technical: RSI(), MACD(), BOLL(), KDJ(), WR(), ATR(), CCI(), BIAS(), PSY()...
+        - Level 2 Fundamental: PE(), PB(), PS(), ROE(), ROA(), EPS(), BPS(), CURRENT_RATIO()...
       operationId: factor_screen
       requestBody:
         content:
@@ -2358,6 +2377,7 @@ paths:
         schema:
           type: string
           title: Symbol
+        description: Stock code (e.g., 600519, 00700, AAPL)
       - name: market
         in: query
         required: false
@@ -2519,6 +2539,10 @@ paths:
       description: |
         Execute strategy backtest with the given parameters.
 
+        **Variables vs Functions:**
+        - Variables (no parentheses): `CLOSE`, `OPEN`, `HIGH`, `LOW`, `VOLUME`
+        - Functions (with parentheses): `MA(CLOSE, 20)`, `RSI(14)`, `PE()`, `ROE()`, etc.
+
         **Input Parameters:**
         - `start_date`: Backtest start date (required)
         - `end_date`: Backtest end date (required)
@@ -2534,9 +2558,11 @@ paths:
         - `labels`: Label dictionary for returning additional indicator values in daily data
 
         **Formula Examples:**
-        - `CROSS(MA(5), MA(20))` - Golden cross signal
+        - `CROSS(MA(CLOSE, 5), MA(CLOSE, 20))` - Golden cross signal
         - `RSI(14) < 30` - RSI oversold
-        - `MA(5) > MA(20)` - State-based uptrend
+        - `MA(CLOSE, 5) > MA(CLOSE, 20)` - State-based uptrend
+        - `CLOSE > REF(CLOSE, 1) * 1.05` - Up more than 5%
+        - `(PE() < 20) & (ROE() > 0.1)` - Fundamental screening
 
         **Output:**
         Returns backtest results including:
@@ -5339,7 +5365,7 @@ components:
         symbols:
           type: array
           title: Symbols
-          description: Stock code list (required)
+          description: Stock code list, e.g., ["600519", "000001"] for CN market (required)
           items:
             type: string
         formula:
@@ -5427,7 +5453,7 @@ components:
         symbols:
           type: array
           title: Symbols
-          description: Stock code list (required)
+          description: Stock code list, e.g., ["600519", "000001"] for CN market (required)
           items:
             type: string
         formula:
@@ -5497,7 +5523,7 @@ components:
               type: string
           - type: 'null'
           title: Symbols
-          description: Stock code list (optional, None = full market)
+          description: Stock code list, e.g., ["600519", "000001"] (optional, None = full market)
       title: FactorScreenInput
       description: Input for factor-based stock screening.
     FactorScreenOutput:
@@ -5581,7 +5607,7 @@ components:
         symbols:
           type: array
           title: Symbols
-          description: List of stock code
+          description: List of stock codes, e.g., ["600519", "000001"] for CN market (required)
           minItems: 1
           items:
             type: string
@@ -5627,54 +5653,54 @@ components:
           type: string
           format: date
           title: Start Date
-          description: 回测开始日期
+          description: Backtest start date (required)
         end_date:
           type: string
           format: date
           title: End Date
-          description: 回测结束日期
+          description: Backtest end date (required)
         market:
           $ref: '#/components/schemas/StockMarket'
-          description: 股票市场，默认为中国市场
+          description: Stock market (cn, hk, us), default cn
           default: cn
         symbol:
           type: string
           title: Symbol
-          description: 股票代码
+          description: Stock code (e.g., 600519, 00700, AAPL)
         entry_formula:
           type: string
           title: Entry Formula
-          description: 买入/开仓公式，结果>0触发买入
+          description: Buy/entry formula, triggers buy when result > 0 (required)
         exit_formula:
           anyOf:
           - type: string
           - type: 'null'
           title: Exit Formula
-          description: 卖出/平仓公式，结果>0触发卖出
+          description: Sell/exit formula, triggers sell when result > 0 (optional)
         initial_cash:
           type: number
           title: Initial Cash
-          description: 初始资金，默认100000.0元
+          description: Initial capital, default 100000.0
           default: 100000.0
         commission:
           type: number
           title: Commission
-          description: 佣金费率，默认0.0
+          description: Commission rate, default 0.0
           default: 0.0
         stop_loss:
           type: number
           title: Stop Loss
-          description: 止损设置，默认0.0（不设置止损）
+          description: Stop loss percentage, default 0.0 (disabled)
           default: 0.0
         sizer_percent:
           type: integer
           title: Sizer Percent
-          description: 仓位百分比，默认99%
+          description: Position size percentage, default 99%
           default: 99
         auto_close:
           type: boolean
           title: Auto Close
-          description: 是否自动平仓，默认True
+          description: Auto close position at end, default true
           default: true
         labels:
           anyOf:
@@ -5682,7 +5708,7 @@ components:
             type: object
           - type: 'null'
           title: Labels
-          description: '标签列表，如 {"up": "CROSS(MA(20), MA(60))"}'
+          description: 'Label dictionary for additional indicators, e.g., {"up": "CROSS(MA(CLOSE, 20), MA(CLOSE, 60))"}'
       type: object
       required:
       - start_date

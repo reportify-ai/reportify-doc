@@ -23,8 +23,8 @@ curl -X POST https://api.reportify.cn/v1/quant/backtest \
     "end_date": "2025-01-01",
     "market": "cn",
     "symbol": "000001",
-    "entry_formula": "CROSS(MA(5), MA(10))",
-    "exit_formula": "CROSS(MA(10), MA(5))",
+    "entry_formula": "CROSS(MA(CLOSE, 5), MA(CLOSE, 10))",
+    "exit_formula": "CROSS(MA(CLOSE, 10), MA(CLOSE, 5))",
     "initial_cash": 100000,
     "commission": 0.0003,
     "sizer_percent": 99
@@ -42,8 +42,8 @@ response = requests.post(
         "end_date": "2025-01-01",
         "market": "cn",
         "symbol": "000001",
-        "entry_formula": "CROSS(MA(5), MA(10))",
-        "exit_formula": "CROSS(MA(10), MA(5))",
+        "entry_formula": "CROSS(MA(CLOSE, 5), MA(CLOSE, 10))",
+        "exit_formula": "CROSS(MA(CLOSE, 10), MA(CLOSE, 5))",
         "initial_cash": 100000,
         "commission": 0.0003,
         "sizer_percent": 99
@@ -64,8 +64,8 @@ const response = await fetch('https://api.reportify.cn/v1/quant/backtest', {
     end_date: '2025-01-01',
     market: 'cn',
     symbol: '000001',
-    entry_formula: 'CROSS(MA(5), MA(10))',
-    exit_formula: 'CROSS(MA(10), MA(5))',
+    entry_formula: 'CROSS(MA(CLOSE, 5), MA(CLOSE, 10))',
+    exit_formula: 'CROSS(MA(CLOSE, 10), MA(CLOSE, 5))',
     initial_cash: 100000,
     commission: 0.0003,
     sizer_percent: 99
@@ -98,10 +98,10 @@ const data = await response.json();
   买入/开仓公式，结果大于 0 时触发买入
   
   <Expandable title="公式示例">
-    - `CROSS(MA(5), MA(10))` - 均线金叉买入
+    - `CROSS(MA(CLOSE, 5), MA(CLOSE, 10))` - 均线金叉买入
     - `RSI(14) < 30` - RSI 超卖买入
     - `CLOSE > BOLL(20, 2).upper` - 突破布林带上轨买入
-    - `(RSI(14) < 30) & (CLOSE > MA(20))` - 组合条件
+    - `(RSI(14) < 30) & (CLOSE > MA(CLOSE, 20))` - 组合条件
   </Expandable>
 </ParamField>
 
@@ -109,7 +109,7 @@ const data = await response.json();
   卖出/平仓公式，结果大于 0 时触发卖出（可选）
   
   <Expandable title="公式示例">
-    - `CROSS(MA(10), MA(5))` - 均线死叉卖出
+    - `CROSS(MA(CLOSE, 10), MA(CLOSE, 5))` - 均线死叉卖出
     - `RSI(14) > 70` - RSI 超买卖出
     - `CLOSE < BOLL(20, 2).lower` - 跌破布林带下轨卖出
   </Expandable>
@@ -141,8 +141,8 @@ const data = await response.json();
   <Expandable title="labels 示例">
     ```json
     {
-      "ma5": "MA(5)",
-      "ma10": "MA(10)",
+      "ma5": "MA(CLOSE, 5)",
+      "ma10": "MA(CLOSE, 10)",
       "rsi": "RSI(14)"
     }
     ```
@@ -267,8 +267,8 @@ const data = await response.json();
 
 ```json
 {
-    "entry_formula": "CROSS(MA(5), MA(10))",
-    "exit_formula": "CROSS(MA(10), MA(5))",
+    "entry_formula": "CROSS(MA(CLOSE, 5), MA(CLOSE, 10))",
+    "exit_formula": "CROSS(MA(CLOSE, 10), MA(CLOSE, 5))",
     "symbol": "000001",
     "start_date": "2024-01-01",
     "end_date": "2025-01-01"
@@ -324,8 +324,8 @@ RSI 超卖且价格在 20 日均线上方买入，RSI 超买或价格跌破均�
 
 ```json
 {
-    "entry_formula": "(RSI(14) < 30) & (CLOSE > MA(20))",
-    "exit_formula": "(RSI(14) > 70) | (CLOSE < MA(20))",
+    "entry_formula": "(RSI(14) < 30) & (CLOSE > MA(CLOSE, 20))",
+    "exit_formula": "(RSI(14) > 70) | (CLOSE < MA(CLOSE, 20))",
     "symbol": "600036",
     "start_date": "2024-01-01",
     "end_date": "2025-01-01",
@@ -340,14 +340,14 @@ RSI 超卖且价格在 20 日均线上方买入，RSI 超买或价格跌破均�
 
 ```json
 {
-    "entry_formula": "CROSS(MA(5), MA(10))",
-    "exit_formula": "CROSS(MA(10), MA(5))",
+    "entry_formula": "CROSS(MA(CLOSE, 5), MA(CLOSE, 10))",
+    "exit_formula": "CROSS(MA(CLOSE, 10), MA(CLOSE, 5))",
     "symbol": "000001",
     "start_date": "2024-01-01",
     "end_date": "2025-01-01",
     "labels": {
-        "ma5": "MA(5)",
-        "ma10": "MA(10)",
+        "ma5": "MA(CLOSE, 5)",
+        "ma10": "MA(CLOSE, 10)",
         "rsi": "RSI(14)",
         "macd_dif": "MACD().dif"
     }
