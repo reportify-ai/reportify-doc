@@ -275,6 +275,63 @@ print(df[["symbol", "date", "close", "volume"]])
 
 ---
 
+## 财务数据 (Financials)
+
+### financials()
+
+获取股票历史财务报表数据。
+
+```python
+df = client.quant.financials(
+    financial_type="income",  # 报表类型
+    symbol="000001",
+    market="cn",              # 可选
+    start_year=2020,          # 可选
+    end_year=2024             # 可选
+)
+
+print(df[["report_period", "revenue", "net_profit"]])
+```
+
+**参数：**
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `financial_type` | `str` | 是 | 报表类型（见下表） |
+| `symbol` | `str` | 是 | 股票代码 |
+| `market` | `str` | 否 | 市场，默认 cn |
+| `start_year` | `int` | 否 | 开始年份，默认 3 年前 |
+| `end_year` | `int` | 否 | 结束年份，默认当前年份 |
+
+**报表类型：**
+
+| 类型 | 说明 |
+|------|------|
+| `income` | 利润表（营收、利润等） |
+| `cashflow` | 现金流量表 |
+| `balancesheet` | 资产负债表 |
+| `equity` | 股东权益变动表 |
+
+**使用示例：**
+
+```python
+# 获取利润表
+df = client.quant.financials("income", "600519")
+for _, row in df.iterrows():
+    print(f"{row['report_period']}: 营收{row['revenue']/1e8:.2f}亿 净利润{row['net_profit']/1e8:.2f}亿")
+
+# 获取资产负债表
+df = client.quant.financials("balancesheet", "000001", start_year=2020, end_year=2024)
+
+# 获取港股现金流量表
+df = client.quant.financials("cashflow", "00700", market="hk")
+
+# 获取美股财务数据
+df = client.quant.financials("income", "AAPL", market="us")
+```
+
+---
+
 ## 回测 (Backtest)
 
 ### backtest()
@@ -314,7 +371,7 @@ result = client.quant.backtest(
 | `sizer_percent` | `int` | 否 | 99 | 仓位百分比 |
 | `auto_close` | `bool` | 否 | True | 是否自动平仓 |
 | `labels` | `dict[str, str]` | 否 | None | 标签字典，返回额外指标值 |
-
+`
 **返回结果：**
 
 ```python

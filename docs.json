@@ -183,6 +183,7 @@
               "apis/quant/factors_list",
               "apis/quant/factors_compute",
               "apis/quant/factors_screen",
+              "apis/quant/financials",
               "apis/quant/quotes_ohlcv",
               "apis/quant/quotes_ohlcv_batch",
               "apis/quant/backtest"

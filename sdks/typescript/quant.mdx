@@ -299,6 +299,90 @@ const data = await client.quant.ohlcvBatch({
 
 ---
 
+## 财务数据 (Financials)
+
+### financials()
+
+获取股票历史财务报表数据。
+
+```typescript
+const data = await client.quant.financials({
+  financialType: 'income',  // 报表类型
+  symbol: '000001',
+  market: 'cn',             // 可选
+  startYear: 2020,          // 可选
+  endYear: 2024             // 可选
+});
+
+data.forEach(d => {
+  console.log(`${d.report_period}: 营收${d.revenue} 净利润${d.net_profit}`);
+});
+```
+
+**参数：**
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `financialType` | `string` | 是 | 报表类型（见下表） |
+| `symbol` | `string` | 是 | 股票代码 |
+| `market` | `string` | 否 | 市场，默认 cn |
+| `startYear` | `number` | 否 | 开始年份，默认 3 年前 |
+| `endYear` | `number` | 否 | 结束年份，默认当前年份 |
+
+**报表类型：**
+
+| 类型 | 说明 |
+|------|------|
+| `income` | 利润表（营收、利润等） |
+| `cashflow` | 现金流量表 |
+| `balancesheet` | 资产负债表 |
+| `equity` | 股东权益变动表 |
+
+**返回类型：**
+
+```typescript
+interface FinancialData {
+  symbol: string;
+  report_period: string;
+  // 根据报表类型不同，包含不同的财务字段
+  [key: string]: unknown;
+}
+```
+
+**使用示例：**
+
+```typescript
+// 获取利润表
+const income = await client.quant.financials({
+  financialType: 'income',
+  symbol: '600519'
+});
+
+// 获取资产负债表
+const balance = await client.quant.financials({
+  financialType: 'balancesheet',
+  symbol: '000001',
+  startYear: 2020,
+  endYear: 2024
+});
+
+// 获取港股现金流量表
+const cashflow = await client.quant.financials({
+  financialType: 'cashflow',
+  symbol: '00700',
+  market: 'hk'
+});
+
+// 获取美股财务数据
+const usIncome = await client.quant.financials({
+  financialType: 'income',
+  symbol: 'AAPL',
+  market: 'us'
+});
+```
+
+---
+
 ## 回测 (Backtest)
 
 ### backtest()
