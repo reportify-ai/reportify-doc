@@ -965,34 +965,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
       - BearerAuth: []
-  /v1/stock/screener:
-    post:
-      tags:
-      - openapi-v2-stock
-      summary: Stock Screener
-      description: Screen stocks based on various criteria
-      operationId: stock_screener_reportify_api_v2_stock_screener_post
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/StockScreenerInput'
-        required: true
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/StockAPIResponse'
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-      security:
-      - BearerAuth: []
   /v1/stock/ipo-calendar-hk:
     post:
       tags:
@@ -4491,71 +4463,6 @@ components:
       - symbol
       title: StockRealtimeQuoteInput
       description: Input schema for stock realtime quote
-    StockScreenerInput:
-      properties:
-        market_cap_more_than:
-          type: number
-          title: Market Cap More Than
-          description: Market cap greater than
-        market_cap_lower_than:
-          type: number
-          title: Market Cap Lower Than
-          description: Market cap less than
-        price_more_than:
-          type: number
-          title: Price More Than
-          description: Stock price greater than
-        price_lower_than:
-          type: number
-          title: Price Lower Than
-          description: Stock price less than
-        change_percentage_more_than:
-          type: number
-          title: Change Percentage More Than
-          description: Change percentage greater than (e.g., 0.02 for 2%)
-        change_percentage_lower_than:
-          type: number
-          title: Change Percentage Lower Than
-          description: Change percentage less than (e.g., 0.04 for 4%)
-        volume_more_than:
-          type: integer
-          title: Volume More Than
-          description: Trading volume greater than
-        volume_lower_than:
-          type: integer
-          title: Volume Lower Than
-          description: Trading volume less than
-        country:
-          type: string
-          title: Country
-          description: Country code (e.g., US, CN, HK)
-        exchange:
-          type: string
-          title: Exchange
-          description: Exchange code (e.g., NASDAQ, NYSE, HKEX)
-        dividend_yield_more_than:
-          type: number
-          title: Dividend Yield More Than
-          description: Dividend yield greater than
-        dividend_yield_lower_than:
-          type: number
-          title: Dividend Yield Lower Than
-          description: Dividend yield less than
-        pe_ttm_more_than:
-          type: number
-          title: PE TTM More Than
-          description: PE TTM greater than
-        pe_ttm_lower_than:
-          type: number
-          title: PE TTM Lower Than
-          description: PE TTM less than
-        limit:
-          type: integer
-          title: Limit
-          description: Maximum number of results, default 100
-      type: object
-      title: StockScreenerInput
-      description: Input schema for stock screener
     IndexFundsInput:
       properties:
         symbol:
