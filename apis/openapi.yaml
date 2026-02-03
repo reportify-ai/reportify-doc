@@ -125,8 +125,7 @@ paths:
       tags:
       - openapi-docs
       summary: Get Doc Contents
-      description: Retrieve detailed content of the specified document, including
-        chunks.
+      description: Retrieve the full content of a document or a specific part of it
       operationId: get_doc_contents_reportify_api_v1_docs__doc_id__get
       parameters:
       - required: true
@@ -466,7 +465,7 @@ paths:
       tags:
       - openapi-v2-search
       summary: Search
-      description: General document search across all categories
+      description: Comprehensive search of financial and investment documents, covering various types
       operationId: search_reportify_api_v2_search_post
       requestBody:
         content:
@@ -494,7 +493,7 @@ paths:
       tags:
       - openapi-v2-search
       summary: Earnings Pack Search
-      description: Search earnings financial reports
+      description: Earnings pack documents search, covering all financial statements
       operationId: earnings_pack_search_reportify_api_v2_search_earnings_pack_post
       requestBody:
         content:
@@ -522,7 +521,7 @@ paths:
       tags:
       - openapi-v2-search
       summary: Conference Calls Search
-      description: Search earnings call transcripts and slides
+      description: Earnings call conference search, earnings calls conference transcript and conference slide content
       operationId: conference_calls_search_reportify_api_v2_search_conference_calls_post
       requestBody:
         content:
@@ -550,7 +549,7 @@ paths:
       tags:
       - openapi-v2-search
       summary: Minutes Search
-      description: Search conference calls and IR (Investor Relations) meetings
+      description: Various conference call materials search, covering industry conferences, and investor relations meetings
       operationId: minutes_search_reportify_api_v2_search_minutes_post
       requestBody:
         content:
@@ -578,7 +577,7 @@ paths:
       tags:
       - openapi-v2-search
       summary: Reports Search
-      description: Search research reports from various institutions
+      description: Institutional research reports search, covering company research, industry research, macroeconomic analysis, strategy reports and more
       operationId: reports_search_reportify_api_v2_search_reports_post
       requestBody:
         content:
@@ -606,7 +605,7 @@ paths:
       tags:
       - openapi-v2-search
       summary: Filings Search
-      description: Search company filings and official announcements
+      description: Company announcements search, covering major event disclosures, prospectuses, and other filings documents
       operationId: filings_search_reportify_api_v2_search_filings_post
       requestBody:
         content:
@@ -634,7 +633,7 @@ paths:
       tags:
       - openapi-v2-search
       summary: News Search
-      description: Search news articles and market updates
+      description: Financial and investment news search, covering various public media content
       operationId: news_search_reportify_api_v2_search_news_post
       requestBody:
         content:
@@ -662,7 +661,7 @@ paths:
       tags:
       - openapi-v2-search
       summary: Socials Search
-      description: Search social media content and market sentiment
+      description: Social media content search, covering X, Youtube, Wechat, Podcasts and more
       operationId: socials_search_reportify_api_v2_search_socials_post
       requestBody:
         content:
@@ -690,7 +689,7 @@ paths:
       tags:
       - openapi-v2-search
       summary: Webpages Search
-      description: Search webpage content
+      description: Retrieve the full content of a webpage
       operationId: webpages_search_reportify_api_v2_search_webpages_post
       requestBody:
         content:
@@ -718,7 +717,7 @@ paths:
       tags:
       - openapi-v2-stock
       summary: Company Overview
-      description: Get comprehensive company information including fundamentals and business overview
+      description: Comprehensive search of company information, covering fundamental details, business overview, executive profiles and more
       operationId: company_overview_reportify_api_v2_stock_company_overview_post
       requestBody:
         content:
@@ -746,7 +745,7 @@ paths:
       tags:
       - openapi-v2-stock
       summary: Company Shareholders
-      description: Get list of company shareholders
+      description: List of outstanding shareholders of the company
       operationId: company_shareholders_reportify_api_v2_stock_company_shareholders_post
       requestBody:
         content:
@@ -774,7 +773,7 @@ paths:
       tags:
       - openapi-v2-stock
       summary: Company Stock Prices
-      description: Get current and historical stock prices
+      description: Current and historical prices, trading volumes, market capitalizations, P/E ratios, and P/S ratios of stocks
       operationId: company_stock_prices_reportify_api_v2_stock_company_prices_post
       requestBody:
         content:
@@ -802,7 +801,7 @@ paths:
       tags:
       - openapi-v2-stock
       summary: Company Income Statement
-      description: Get company income statement
+      description: Current and historical income statements of publicly listed companies
       operationId: company_income_statement_reportify_api_v2_stock_company_income_statement_post
       requestBody:
         content:
@@ -830,7 +829,7 @@ paths:
       tags:
       - openapi-v2-stock
       summary: Company Balance Sheet
-      description: Get company balance sheet
+      description: Current and historical balance sheet of publicly listed companies
       operationId: company_balance_sheet_reportify_api_v2_stock_company_balance_sheet_post
       requestBody:
         content:
@@ -858,7 +857,7 @@ paths:
       tags:
       - openapi-v2-stock
       summary: Company Cashflow Statement
-      description: Get company cash flow statement
+      description: Current and historical cash flow statement of publicly listed companies
       operationId: company_cashflow_statement_reportify_api_v2_stock_company_cashflow_statement_post
       requestBody:
         content:
@@ -886,7 +885,7 @@ paths:
       tags:
       - openapi-v2-stock
       summary: Company Revenue Breakdown
-      description: Get company revenue breakdown
+      description: Revenue breakdown of the company, by business segment, by product, or by region
       operationId: company_revenue_breakdown_reportify_api_v2_stock_company_revenue_breakdown_post
       requestBody:
         content:
@@ -970,7 +969,7 @@ paths:
       tags:
       - openapi-stock-tools
       summary: Stock IPO Calendar HK
-      description: Query Hong Kong stock IPO calendar by status
+      description: Retrieve the latest Hong Kong IPO calendar, including subscription periods, listing dates, ipo names, temporary symbols, and current status
       operationId: stock_ipo_calendar_hk_reportify_api_v1_stock_ipo_calendar_hk_post
       requestBody:
         content:
@@ -1010,7 +1009,7 @@ paths:
       tags:
       - openapi-stock-tools
       summary: Index Tracking Funds
-      description: Query tracking funds of an index by symbol
+      description: Get list of funds that track a specific index. Returns fund names, short names, and fund codes for all tracking funds of the given index
       operationId: index_tracking_funds_reportify_api_v1_stock_index_tracking_funds_post
       requestBody:
         content:
@@ -1050,7 +1049,7 @@ paths:
       tags:
       - openapi-stock-tools
       summary: Index Constituents
-      description: Query constituent stocks of an index by symbol
+      description: Get list of stocks that are constituents of a specific index. Returns stock symbols and market areas for all constituent stocks of the given index
       operationId: index_constituents_reportify_api_v1_stock_index_constituents_post
       requestBody:
         content:
@@ -1090,7 +1089,7 @@ paths:
       tags:
       - openapi-stock-tools
       summary: Industry Constituents
-      description: Query constituent stocks of an industry by market and industry name
+      description: Get list of stocks belonging to a specific industry by industry name and market area (cn/hk/us). Returns stock symbols, names, and industry classification details
       operationId: industry_constituents_reportify_api_v1_stock_industry_constituents_post
       requestBody:
         content:
@@ -1130,7 +1129,7 @@ paths:
       tags:
       - openapi-stock-tools
       summary: Stock Earnings Calendar
-      description: Query stock earnings calendar by area and date range
+      description: Query stock earnings calendar by date range and market area (cn/hk/us). Returns fiscal year, quarter, and filing dates for earnings reports
       operationId: stock_earnings_calendar_reportify_api_v1_stock_earnings_calendar_post
       requestBody:
         content:
@@ -1198,7 +1197,7 @@ paths:
       tags:
       - openapi-concepts
       summary: Get Today Concepts
-      description: Get today's concept feeds with generation counts and related stocks
+      description: Get today's concept feeds with trending data and event counts. Returns concepts from 9:00 AM today until now, including generation counts, earliest/latest timestamps, and event frequencies
       operationId: get_today_concept_feeds_reportify_api_v1_concepts_today_get
       responses:
         '200':
@@ -1825,7 +1824,7 @@ paths:
       tags:
       - openapi-tools-kb
       summary: Search Knowledge Base
-      description: Search user's personal knowledge base including uploaded documents and folders
+      description: User knowledge base search, supporting all types of user uploaded files and allows searching within specified directories
       operationId: search_kb_reportify_api_v1_tools_kb_search_post
       requestBody:
         content:
@@ -1853,7 +1852,7 @@ paths:
       tags:
       - openapi-tools-timeline
       summary: Companies Timeline
-      description: Get timeline content for user's followed companies
+      description: Document feed for the companies I follow
       operationId: companies_timeline_reportify_api_v1_tools_timeline_companies_post
       requestBody:
         content:
@@ -1881,7 +1880,7 @@ paths:
       tags:
       - openapi-tools-timeline
       summary: Topics Timeline
-      description: Get timeline content for user's followed topics
+      description: Document feed for the topics I follow
       operationId: topics_timeline_reportify_api_v1_tools_timeline_topics_post
       requestBody:
         content:
@@ -1909,7 +1908,7 @@ paths:
       tags:
       - openapi-tools-timeline
       summary: Institutes Timeline
-      description: Get timeline content for user's followed professional institutes
+      description: Document feed for the institutes I follow
       operationId: institutes_timeline_reportify_api_v1_tools_timeline_institutes_post
       requestBody:
         content:
@@ -1937,7 +1936,7 @@ paths:
       tags:
       - openapi-tools-timeline
       summary: Public Media Timeline
-      description: Get timeline content for user's followed public media
+      description: Document feed for the public media I follow
       operationId: public_media_timeline_reportify_api_v1_tools_timeline_public_media_post
       requestBody:
         content:
@@ -1965,7 +1964,7 @@ paths:
       tags:
       - openapi-tools-timeline
       summary: Social Media Timeline
-      description: Get timeline content for user's followed social media
+      description: Document feed for the social media I follow
       operationId: social_media_timeline_reportify_api_v1_tools_timeline_social_media_post
       requestBody:
         content:
