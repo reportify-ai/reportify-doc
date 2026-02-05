@@ -35,7 +35,7 @@ for doc in docs:
 news = client.search.news("Apple iPhone", symbols=["US:AAPL"])
 
 # 获取股票财务数据（返回 pandas DataFrame）
-income = client.stock.income_statement("US:AAPL", period="quarterly")
+income = client.stock.income_statement("AAPL", period="quarterly")
 print(income.head())
 ```
 

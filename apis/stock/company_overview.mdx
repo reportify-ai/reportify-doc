@@ -12,7 +12,7 @@ openapi: 'POST /v1/stock/company-overview'
 ### 请求参数
 | 参数名  | 类型   | 必填 | 描述                                      |
 |---------|--------|------|-------------------------------------------|
-| symbols | str    | 否   | 股票代码，支持多个，用逗号分隔，如 `HK:00700,US:AAPL` |
+| symbols | str    | 否   | 股票代码，支持多个，用逗号分隔，如 `00700,AAPL` |
 | names   | str    | 否   | 股票名称，支持多个，用逗号分隔，如 `腾讯,苹果`       |
 
 <Note>
@@ -66,7 +66,7 @@ curl -X POST https://api.reportify.cn/v1/stock/company-overview \
 -H "Authorization: Bearer YOUR_API_KEY" \
 -H "Content-Type: application/json" \
 -d '{
-    "symbols": "HK:00700,US:AAPL"
+    "symbols": "00700,AAPL"
 }'
 ```
 
@@ -81,7 +81,7 @@ headers = {
 }
 
 # 通过股票代码查询
-data = {"symbols": "HK:00700,US:AAPL"}
+data = {"symbols": "00700,AAPL"}
 
 # 或者通过股票名称查询
 # data = {"names": "腾讯,苹果"}

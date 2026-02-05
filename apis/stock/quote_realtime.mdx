@@ -43,7 +43,7 @@ curl -X POST https://api.reportify.cn/v1/stock/quote-realtime \
 -H "Authorization: Bearer 447460****09c9" \
 -H "Content-Type: application/json" \
 -d '{
-    "symbol": "HK:00700"
+    "symbol": "00700"
 }'
 ```
 
@@ -57,7 +57,7 @@ headers = {
     "Content-Type": "application/json"
 }
 data = {
-    "symbol": "HK:00700"
+    "symbol": "00700"
 }
 
 response = requests.post(url, headers=headers, json=data)

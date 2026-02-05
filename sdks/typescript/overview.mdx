@@ -38,7 +38,7 @@ docs.forEach(doc => console.log(doc.title));
 const news = await client.search.news('Apple iPhone', { symbols: ['US:AAPL'] });
 
 // 获取股票财务数据
-const income = await client.stock.incomeStatement('US:AAPL', { period: 'quarterly' });
+const income = await client.stock.incomeStatement('AAPL', { period: 'quarterly' });
 console.log(income);
 ```
 

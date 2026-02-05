@@ -16,7 +16,7 @@ icon: 'chart-line'
 
 ```python
 # 通过股票代码查询（支持多个，逗号分隔）
-info = client.stock.overview(symbols="US:AAPL,HK:00700")
+info = client.stock.overview(symbols="AAPL,00700")
 print(info)
 
 # 通过股票名称查询（支持多个，逗号分隔）
@@ -25,7 +25,7 @@ print(info)
 ```
 
 <ParamField path="symbols" type="string">
-  股票代码，支持多个，用逗号分隔，如 `US:AAPL,HK:00700`
+  股票代码，支持多个，用逗号分隔，如 `AAPL,00700`
 </ParamField>
 
 <ParamField path="names" type="string">
@@ -43,7 +43,7 @@ print(info)
 获取主要股东列表。
 
 ```python
-shareholders = client.stock.shareholders("US:AAPL")
+shareholders = client.stock.shareholders("AAPL")
 for holder in shareholders:
     print(holder["name"], holder["percentage"])
 ```
@@ -66,7 +66,7 @@ for holder in shareholders:
 
 ```python
 income = client.stock.income_statement(
-    symbol="US:AAPL",
+    symbol="AAPL",
     period="quarterly",
     limit=8
 )
@@ -116,7 +116,7 @@ print(income[["revenue", "net_income", "eps"]].head())
 获取资产负债表数据。
 
 ```python
-balance = client.stock.balance_sheet("US:AAPL", period="annual")
+balance = client.stock.balance_sheet("AAPL", period="annual")
 print(balance[["total_assets", "total_liabilities", "total_equity"]].head())
 ```
 
@@ -163,7 +163,7 @@ print(balance[["total_assets", "total_liabilities", "total_equity"]].head())
 获取现金流量表数据。
 
 ```python
-cashflow = client.stock.cashflow_statement("US:AAPL")
+cashflow = client.stock.cashflow_statement("AAPL")
 print(cashflow[["operating_cashflow", "investing_cashflow", "financing_cashflow"]].head())
 ```
 
@@ -210,7 +210,7 @@ print(cashflow[["operating_cashflow", "investing_cashflow", "financing_cashflow"
 获取营收分解数据。
 
 ```python
-breakdown = client.stock.revenue_breakdown("US:AAPL", limit=6)
+breakdown = client.stock.revenue_breakdown("AAPL", limit=6)
 print(breakdown)
 ```
 
@@ -252,7 +252,7 @@ print(breakdown)
 
 ```python
 prices = client.stock.prices(
-    symbol="US:AAPL",
+    symbol="AAPL",
     start_date="2024-01-01",
     end_date="2024-06-30"
 )
@@ -282,7 +282,7 @@ print(prices[["close", "volume", "market_cap"]].tail())
 获取实时行情。
 
 ```python
-quote = client.stock.quote("US:AAPL")
+quote = client.stock.quote("AAPL")
 print(quote[["symbol", "price", "change_percent"]])
 ```
 

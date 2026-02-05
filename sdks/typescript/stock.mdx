@@ -12,7 +12,7 @@ icon: 'chart-line'
 
 ```typescript
 // 通过股票代码查询（支持多个，逗号分隔）
-const info = await client.stock.overview({ symbols: 'US:AAPL,HK:00700' });
+const info = await client.stock.overview({ symbols: 'AAPL,00700' });
 console.log(info);
 
 // 通过股票名称查询（支持多个，逗号分隔）
@@ -24,7 +24,7 @@ console.log(info2);
 
 | 参数 | 类型 | 必填 | 说明 |
 |------|------|------|------|
-| `options.symbols` | `string` | 否 | 股票代码，支持多个，用逗号分隔，如 `US:AAPL,HK:00700` |
+| `options.symbols` | `string` | 否 | 股票代码，支持多个，用逗号分隔，如 `AAPL,00700` |
 | `options.names` | `string` | 否 | 股票名称，支持多个，用逗号分隔，如 `腾讯,苹果` |
 
 **返回值：** `Promise<CompanyOverview>` - 公司信息
@@ -36,13 +36,13 @@ console.log(info2);
 获取主要股东列表。
 
 ```typescript
-const shareholders = await client.stock.shareholders('US:AAPL');
+const shareholders = await client.stock.shareholders('AAPL');
 shareholders.forEach(holder => {
   console.log(holder.name, holder.percentage);
 });
 
 // 获取流通股股东
-const outstandingShareholders = await client.stock.shareholders('US:AAPL', {
+const outstandingShareholders = await client.stock.shareholders('AAPL', {
   type: 'outstanding_shareholders',
   limit: 20
 });
@@ -67,7 +67,7 @@ const outstandingShareholders = await client.stock.shareholders('US:AAPL', {
 获取利润表数据。
 
 ```typescript
-const income = await client.stock.incomeStatement('US:AAPL', {
+const income = await client.stock.incomeStatement('AAPL', {
   period: 'quarterly',
   limit: 8
 });
@@ -96,7 +96,7 @@ console.log(income[0].revenue, income[0].netIncome);
 获取资产负债表数据。
 
 ```typescript
-const balance = await client.stock.balanceSheet('US:AAPL', { period: 'annual' });
+const balance = await client.stock.balanceSheet('AAPL', { period: 'annual' });
 console.log(balance[0].totalAssets, balance[0].totalLiabilities);
 ```
 
@@ -122,11 +122,11 @@ console.log(balance[0].totalAssets, balance[0].totalLiabilities);
 获取现金流量表数据。
 
 ```typescript
-const cashflow = await client.stock.cashflowStatement('US:AAPL');
+const cashflow = await client.stock.cashflowStatement('AAPL');
 console.log(cashflow[0].operatingCashflow);
 
 // 带参数查询
-const cashflow2 = await client.stock.cashflowStatement('US:AAPL', {
+const cashflow2 = await client.stock.cashflowStatement('AAPL', {
   period: 'quarterly',
   limit: 8,
   calendar: 'fiscal'
@@ -155,7 +155,7 @@ const cashflow2 = await client.stock.cashflowStatement('US:AAPL', {
 获取营收分解数据。
 
 ```typescript
-const breakdown = await client.stock.revenueBreakdown('US:AAPL', {
+const breakdown = await client.stock.revenueBreakdown('AAPL', {
   limit: 6
 });
 ```
@@ -182,7 +182,7 @@ const breakdown = await client.stock.revenueBreakdown('US:AAPL', {
 获取历史股价数据。
 
 ```typescript
-const prices = await client.stock.prices('US:AAPL', {
+const prices = await client.stock.prices('AAPL', {
   startDate: '2024-01-01',
   endDate: '2024-06-30'
 });
@@ -206,7 +206,7 @@ prices.forEach(p => console.log(p.date, p.close, p.volume));
 获取实时行情。
 
 ```typescript
-const quote = await client.stock.quote('US:AAPL');
+const quote = await client.stock.quote('AAPL');
 console.log(quote.symbol, quote.price, quote.changePercent);
 ```
 
@@ -384,7 +384,7 @@ const appleEarnings = await client.stock.earningsCalendar({
   market: 'us',
   startDate: '2024-01-01',
   endDate: '2024-12-31',
-  symbol: 'US:AAPL'
+  symbol: 'AAPL'
 });
 ```
 
@@ -395,7 +395,7 @@ const appleEarnings = await client.stock.earningsCalendar({
 | `options.market` | `string` | 是 | 股票市场：`cn`（中国）, `hk`（香港）, `us`（美国） |
 | `options.startDate` | `string` | 是 | 开始日期（YYYY-MM-DD） |
 | `options.endDate` | `string` | 是 | 结束日期（YYYY-MM-DD） |
-| `options.symbol` | `string` | 否 | 股票代码，如 `US:AAPL` |
+| `options.symbol` | `string` | 否 | 股票代码，如 `AAPL` |
 
 **返回值：** `Promise<EarningsEvent[]>` - 财报日历事件列表
 
