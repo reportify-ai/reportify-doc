@@ -301,53 +301,7 @@ const stocksSW = await client.stock.industryConstituents('cn', '军工', 'sw');
 
 ---
 
-## 选股和日历
-
-### screener()
-
-股票筛选器。
-
-```typescript
-const stocks = await client.stock.screener({
-  marketCapMoreThan: 10000000000,  // 100亿美元
-  peTtmLowerThan: 30,
-  country: 'US',
-  limit: 50
-});
-
-// 更多筛选条件
-const filtered = await client.stock.screener({
-  priceMoreThan: 10,
-  priceLowerThan: 100,
-  volumeMoreThan: 1000000,
-  dividendYieldMoreThan: 2,
-  exchange: 'NASDAQ'
-});
-```
-
-**参数：**
-
-| 参数 | 类型 | 必填 | 默认值 | 说明 |
-|------|------|------|--------|------|
-| `options.marketCapMoreThan` | `number` | 否 | - | 市值下限 |
-| `options.marketCapLowerThan` | `number` | 否 | - | 市值上限 |
-| `options.priceMoreThan` | `number` | 否 | - | 价格下限 |
-| `options.priceLowerThan` | `number` | 否 | - | 价格上限 |
-| `options.changePercentageMoreThan` | `number` | 否 | - | 涨跌幅下限（百分比） |
-| `options.changePercentageLowerThan` | `number` | 否 | - | 涨跌幅上限（百分比） |
-| `options.volumeMoreThan` | `number` | 否 | - | 成交量下限 |
-| `options.volumeLowerThan` | `number` | 否 | - | 成交量上限 |
-| `options.country` | `string` | 否 | - | 国家/地区，如 `US`, `CN`, `HK` |
-| `options.exchange` | `string` | 否 | - | 交易所，如 `NASDAQ`, `NYSE` |
-| `options.dividendYieldMoreThan` | `number` | 否 | - | 股息率下限（百分比） |
-| `options.dividendYieldLowerThan` | `number` | 否 | - | 股息率上限（百分比） |
-| `options.peTtmMoreThan` | `number` | 否 | - | TTM 市盈率下限 |
-| `options.peTtmLowerThan` | `number` | 否 | - | TTM 市盈率上限 |
-| `options.limit` | `number` | 否 | `100` | 返回结果数量 |
-
-**返回值：** `Promise<CompanyOverview[]>` - 筛选结果列表
-
----
+## 日历
 
 ### earningsCalendar()
 
@@ -451,15 +405,6 @@ interface PriceData {
   high: number;
   low: number;
   close: number;
-  volume: number;
-  marketCap?: number;
-}
-
-interface Quote {
-  symbol: string;
-  price: number;
-  change: number;
-  changePercent: number;
   volume: number;
   marketCap?: number;
 }

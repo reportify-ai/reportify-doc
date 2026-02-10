@@ -277,6 +277,41 @@ print(quote[["close", "volume", "market_cap"]].tail())
 
 ---
 
+### index_quote()
+
+获取指数行情数据。
+
+```python
+# 获取恒生指数行情
+index = client.stock.index_quote(
+    symbol="HSI",
+    start_date="2024-01-01",
+    end_date="2024-06-30"
+)
+print(index[["stock_price", "stock_change_percent"]].tail())
+
+# 获取标普500指数
+spx = client.stock.index_quote("SPX")
+```
+
+<ParamField path="symbol" type="string" required>
+  指数代码，如 `HSI`（恒生指数）, `SPX`（标普500）, `DJI`（道琼斯）
+</ParamField>
+
+<ParamField path="start_date" type="str">
+  开始日期，格式：`YYYY-MM-DD`
+</ParamField>
+
+<ParamField path="end_date" type="str">
+  结束日期，格式：`YYYY-MM-DD`
+</ParamField>
+
+<ResponseField name="返回值" type="DataFrame">
+  指数行情数据
+</ResponseField>
+
+---
+
 ## 指数和行业
 
 ### index_constituents()
@@ -359,82 +394,7 @@ stocks = client.stock.industry_constituents("cn", "军工", type="sw")
 
 ---
 
-## 选股和日历
-
-### screener()
-
-股票筛选器。
-
-```python
-stocks = client.stock.screener(
-    country="US",
-    market_cap_more_than=1e10,  # 100亿美元以上
-    pe_ttm_lower_than=30,
-    limit=50
-)
-```
-
-<ParamField path="market_cap_more_than" type="float">
-  市值大于
-</ParamField>
-
-<ParamField path="market_cap_lower_than" type="float">
-  市值小于
-</ParamField>
-
-<ParamField path="price_more_than" type="float">
-  股价大于
-</ParamField>
-
-<ParamField path="price_lower_than" type="float">
-  股价小于
-</ParamField>
-
-<ParamField path="change_percentage_more_than" type="float">
-  涨跌幅大于（如 0.02 表示 2%）
-</ParamField>
-
-<ParamField path="change_percentage_lower_than" type="float">
-  涨跌幅小于
-</ParamField>
-
-<ParamField path="volume_more_than" type="int">
-  成交量大于
-</ParamField>
-
-<ParamField path="volume_lower_than" type="int">
-  成交量小于
-</ParamField>
-
-<ParamField path="country" type="str">
-  国家代码：`US`, `CN`, `HK`
-</ParamField>
-
-<ParamField path="exchange" type="str">
-  交易所代码：`NASDAQ`, `NYSE`, `HKEX`
-</ParamField>
-
-<ParamField path="dividend_yield_more_than" type="float">
-  股息率大于
-</ParamField>
-
-<ParamField path="dividend_yield_lower_than" type="float">
-  股息率小于
-</ParamField>
-
-<ParamField path="pe_ttm_more_than" type="float">
-  市盈率（TTM）大于
-</ParamField>
-
-<ParamField path="pe_ttm_lower_than" type="float">
-  市盈率（TTM）小于
-</ParamField>
-
-<ParamField path="limit" type="int" default="100">
-  返回数量
-</ParamField>
-
----
+## 日历
 
 ### earnings_calendar()
 
