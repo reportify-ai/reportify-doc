@@ -1990,7 +1990,7 @@ paths:
         - `name`: Indicator name for use in formulas (call with parentheses)
         - `description`: Brief description
         - `fields`: Output field names (e.g., ["dif", "dea", "macd"] for MACD)
-      operationId: list_indicators
+      operationId: indicators
       responses:
         '200':
           description: Successful Response
@@ -2056,7 +2056,7 @@ paths:
         - KDJ: `k`, `d`, `j`
         - BOLL: `upper`, `middle`, `lower`
         - DMI: `pdi`, `mdi`, `adx`, `adxr`
-      operationId: indicator_compute
+      operationId: indicators_compute
       requestBody:
         content:
           application/json:
@@ -2111,7 +2111,7 @@ paths:
         - `level`: 0, 1, or 2
         - `description`: Brief description (Chinese)
         - `description_en`: English description (optional)
-      operationId: list_factors
+      operationId: factors
       parameters:
       - name: market
         in: query
@@ -2187,7 +2187,7 @@ paths:
         - Level 1: CROSS(), CROSSDOWN(), COUNT(), EVERY(), EXIST(), BARSLAST()...
         - Level 2 Technical: RSI(), MACD(), BOLL(), KDJ(), WR(), ATR(), CCI(), BIAS(), PSY()...
         - Level 2 Fundamental: PE(), PB(), PS(), ROE(), ROA(), EPS(), BPS(), CURRENT_RATIO()...
-      operationId: factor_compute
+      operationId: factors_compute
       requestBody:
         content:
           application/json:
@@ -2276,7 +2276,7 @@ paths:
         - Level 1: CROSS(), CROSSDOWN(), COUNT(), EVERY(), EXIST(), BARSLAST()...
         - Level 2 Technical: RSI(), MACD(), BOLL(), KDJ(), WR(), ATR(), CCI(), BIAS(), PSY()...
         - Level 2 Fundamental: PE(), PB(), PS(), ROE(), ROA(), EPS(), BPS(), CURRENT_RATIO()...
-      operationId: factor_screen
+      operationId: factors_screen
       requestBody:
         content:
           application/json:

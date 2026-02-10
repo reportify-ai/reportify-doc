@@ -18,10 +18,10 @@ from reportify_sdk import Reportify
 client = Reportify(api_key="your-api-key")
 
 # 计算 RSI 指标
-df = client.quant.compute_indicators(["000001"], "RSI(14)")
+df = client.quant.indicators_compute(["000001"], "RSI(14)")
 
 # 因子选股
-stocks = client.quant.screen(formula="RSI(14) < 30")
+stocks = client.quant.factors_screen(formula="RSI(14) < 30")
 
 # 获取 OHLCV 数据
 ohlcv = client.quant.ohlcv("000001")
@@ -39,12 +39,12 @@ result = client.quant.backtest(
 
 ## 指标 (Indicators)
 
-### list_indicators()
+### indicators()
 
 获取可用技术指标列表。
 
 ```python
-indicators = client.quant.list_indicators()
+indicators = client.quant.indicators()
 
 for ind in indicators:
     print(f"{ind['name']}: {ind['description']}")
@@ -58,12 +58,12 @@ for ind in indicators:
 
 ---
 
-### compute_indicators()
+### indicators_compute()
 
 计算技术指标值。
 
 ```python
-df = client.quant.compute_indicators(
+df = client.quant.indicators_compute(
     symbols=["000001", "600519"],
     formula="RSI(14)",
     market="cn",           # 可选，默认 "cn"
@@ -86,22 +86,22 @@ df = client.quant.compute_indicators(
 
 ```python
 # RSI 指标
-df = client.quant.compute_indicators(["000001"], "RSI(14)")
+df = client.quant.indicators_compute(["000001"], "RSI(14)")
 print(df[["symbol", "date", "rsi"]])
 
 # MACD 指标（默认参数）
-df = client.quant.compute_indicators(["000001"], "MACD()")
+df = client.quant.indicators_compute(["000001"], "MACD()")
 print(df[["symbol", "date", "dif", "dea", "macd"]])
 
 # MACD 指标（自定义参数）
-df = client.quant.compute_indicators(["000001"], "MACD(12, 26, 9)")
+df = client.quant.indicators_compute(["000001"], "MACD(12, 26, 9)")
 
 # KDJ 指标
-df = client.quant.compute_indicators(["000001"], "KDJ(9, 3, 3)")
+df = client.quant.indicators_compute(["000001"], "KDJ(9, 3, 3)")
 print(df[["symbol", "date", "k", "d", "j"]])
 
 # 布林带
-df = client.quant.compute_indicators(["000001"], "BOLL(20, 2)")
+df = client.quant.indicators_compute(["000001"], "BOLL(20, 2)")
 print(df[["symbol", "date", "upper", "mid", "lower"]])
 ```
 
@@ -109,12 +109,12 @@ print(df[["symbol", "date", "upper", "mid", "lower"]])
 
 ## 因子 (Factors)
 
-### list_factors()
+### factors()
 
 获取可用因子列表（变量和函数）。
 
 ```python
-factors = client.quant.list_factors()
+factors = client.quant.factors()
 
 for f in factors:
     print(f"{f['name']} ({f['type']}, level {f['level']}): {f['description']}")
@@ -128,12 +128,12 @@ for f in factors:
 
 ---
 
-### compute_factors()
+### factors_compute()
 
 计算因子值，使用 Mai-language 语法。
 
 ```python
-df = client.quant.compute_factors(
+df = client.quant.factors_compute(
     symbols=["000001"],
     formula="RSI(14)",
     market="cn",
@@ -146,19 +146,19 @@ df = client.quant.compute_factors(
 
 ```python
 # 简单指标
-df = client.quant.compute_factors(["000001"], "RSI(14)")
+df = client.quant.factors_compute(["000001"], "RSI(14)")
 
 # 获取 MACD 的 DIF 线
-df = client.quant.compute_factors(["000001"], "MACD().dif")
+df = client.quant.factors_compute(["000001"], "MACD().dif")
 
 # 收盘价是否高于 20 日均线（布尔值）
-df = client.quant.compute_factors(["000001"], "CLOSE > MA(CLOSE, 20)")
+df = client.quant.factors_compute(["000001"], "CLOSE > MA(CLOSE, 20)")
 
 # MA20 偏离度（百分比）
-df = client.quant.compute_factors(["000001"], "(CLOSE - MA(CLOSE, 20)) / MA(CLOSE, 20) * 100")
+df = client.quant.factors_compute(["000001"], "(CLOSE - MA(CLOSE, 20)) / MA(CLOSE, 20) * 100")
 
 # 复合条件
-df = client.quant.compute_factors(["000001"], "(CLOSE > MA(CLOSE, 20)) & (MA(CLOSE, 20) > MA(CLOSE, 60))")
+df = client.quant.factors_compute(["000001"], "(CLOSE > MA(CLOSE, 20)) & (MA(CLOSE, 20) > MA(CLOSE, 60))")
 ```
 
 **支持的运算符：**
@@ -183,12 +183,12 @@ df = client.quant.compute_factors(["000001"], "(CLOSE > MA(CLOSE, 20)) & (MA(CLO
 
 ---
 
-### screen()
+### factors_screen()
 
 因子选股，筛选满足条件的股票。
 
 ```python
-stocks = client.quant.screen(
+stocks = client.quant.factors_screen(
     formula="RSI(14) < 30",
     market="cn",            # 可选
     check_date="2024-06-01",  # 可选，默认最新交易日
@@ -209,19 +209,19 @@ stocks = client.quant.screen(
 
 ```python
 # RSI 超卖
-stocks = client.quant.screen(formula="RSI(14) < 30")
+stocks = client.quant.factors_screen(formula="RSI(14) < 30")
 
 # 金叉
-stocks = client.quant.screen(formula="CROSS(MA(CLOSE, 5), MA(CLOSE, 10))")
+stocks = client.quant.factors_screen(formula="CROSS(MA(CLOSE, 5), MA(CLOSE, 10))")
 
 # 上升趋势
-stocks = client.quant.screen(formula="(CLOSE > MA(CLOSE, 20)) & (MA(CLOSE, 20) > MA(CLOSE, 60))")
+stocks = client.quant.factors_screen(formula="(CLOSE > MA(CLOSE, 20)) & (MA(CLOSE, 20) > MA(CLOSE, 60))")
 
 # 突破布林带上轨
-stocks = client.quant.screen(formula="CLOSE > BOLL(20, 2).upper")
+stocks = client.quant.factors_screen(formula="CLOSE > BOLL(20, 2).upper")
 
 # 在指定股票池中筛选
-stocks = client.quant.screen(
+stocks = client.quant.factors_screen(
     formula="RSI(14) < 30",
     symbols=["000001", "600519", "000002"]
 )
@@ -399,9 +399,9 @@ client = Reportify(api_key="your-api-key")
 df = client.quant.ohlcv("000001", start_date="2024-01-01")
 
 # 2. 计算多个指标
-rsi = client.quant.compute_indicators(["000001"], "RSI(14)")
-macd = client.quant.compute_indicators(["000001"], "MACD()")
-boll = client.quant.compute_indicators(["000001"], "BOLL(20, 2)")
+rsi = client.quant.indicators_compute(["000001"], "RSI(14)")
+macd = client.quant.indicators_compute(["000001"], "MACD()")
+boll = client.quant.indicators_compute(["000001"], "BOLL(20, 2)")
 
 # 3. 合并数据
 import pandas as pd
@@ -416,7 +416,7 @@ print(data.tail())
 
 ```python
 # 1. 选股：RSI 超卖
-oversold_stocks = client.quant.screen(formula="RSI(14) < 30")
+oversold_stocks = client.quant.factors_screen(formula="RSI(14) < 30")
 print(f"发现 {len(oversold_stocks)} 只超卖股票")
 
 # 2. 对每只股票进行回测

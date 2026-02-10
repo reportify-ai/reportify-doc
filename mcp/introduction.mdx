@@ -275,10 +275,10 @@ Authorization: Bearer YOUR_API_KEY
   | 工具名 | 功能描述 |
   |--------|----------|
   | `indicators` | 获取可用技术指标列表 |
-  | `indicator_compute` | 计算技术指标（RSI, MACD, KDJ, BOLL, ATR 等） |
+  | `indicators_compute` | 计算技术指标（RSI, MACD, KDJ, BOLL, ATR 等） |
   | `factors` | 获取可用因子列表（技术因子 + 基本面因子） |
-  | `factor_compute` | 计算因子值（支持技术和基本面因子） |
-  | `factor_screen` | 因子筛选选股 |
+  | `factors_compute` | 计算因子值（支持技术和基本面因子） |
+  | `factors_screen` | 因子筛选选股 |
   | `ohlcv` | 获取单只股票 OHLCV 数据 |
   | `ohlcv_batch` | 批量获取多只股票 OHLCV 数据 |
   | `backtest` | 策略回测 |
@@ -415,7 +415,7 @@ Agent 对话相关工具。
 
     ```json
     {
-      "tool": "factor_screen",
+      "tool": "factors_screen",
       "parameters": {
         "market": "cn",
         "formula": "(PE() < 20) & (ROE() > 0.15)"
@@ -429,7 +429,7 @@ Agent 对话相关工具。
 
     ```json
     {
-      "tool": "indicator_compute",
+      "tool": "indicators_compute",
       "parameters": {
         "market": "cn",
         "symbols": ["000001", "600519"],
