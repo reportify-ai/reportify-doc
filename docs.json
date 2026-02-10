@@ -127,9 +127,8 @@
             "group": "行情数据",
             "icon": "chart-candlestick",
             "pages": [
-              "apis/stock/company_prices",
-              "apis/stock/quote_realtime",
-              "apis/stock/index_prices"
+              "apis/stock/stock_quote",
+              "apis/stock/index_quote"
             ]
           },
           {

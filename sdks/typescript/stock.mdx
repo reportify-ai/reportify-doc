@@ -177,16 +177,16 @@ const breakdown = await client.stock.revenueBreakdown('AAPL', {
 
 ## 行情数据
 
-### prices()
+### quote()
 
-获取历史股价数据。
+获取股票行情数据（当前和历史价格）。
 
 ```typescript
-const prices = await client.stock.prices('AAPL', {
+const quote = await client.stock.quote('AAPL', {
   startDate: '2024-01-01',
   endDate: '2024-06-30'
 });
-prices.forEach(p => console.log(p.date, p.close, p.volume));
+quote.forEach(p => console.log(p.date, p.close, p.volume));
 ```
 
 **参数：**
@@ -197,42 +197,23 @@ prices.forEach(p => console.log(p.date, p.close, p.volume));
 | `options.startDate` | `string` | 否 | 开始日期，格式：`YYYY-MM-DD` |
 | `options.endDate` | `string` | 否 | 结束日期，格式：`YYYY-MM-DD` |
 
-**返回值：** `Promise<PriceData[]>` - 股价数据数组
+**返回值：** `Promise<PriceData[]>` - 股票行情数据数组
 
 ---
 
-### quote()
+### indexQuote()
 
-获取实时行情。
-
-```typescript
-const quote = await client.stock.quote('AAPL');
-console.log(quote.symbol, quote.price, quote.changePercent);
-```
-
-**参数：**
-
-| 参数 | 类型 | 必填 | 说明 |
-|------|------|------|------|
-| `symbol` | `string` | 是 | 股票代码 |
-
-**返回值：** `Promise<Quote>` - 实时行情数据
-
----
-
-### indexPrices()
-
-获取指数历史价格数据。
+获取指数行情数据。
 
 ```typescript
-const prices = await client.stock.indexPrices('HSI', {
+const prices = await client.stock.indexQuote('HSI', {
   startDate: '2024-01-01',
   endDate: '2024-06-30'
 });
 prices.forEach(p => console.log(p.date, p.close));
 
 // 获取标普500指数
-const spx = await client.stock.indexPrices('SPX');
+const spx = await client.stock.indexQuote('SPX');
 ```
 
 **参数：**

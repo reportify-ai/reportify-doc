@@ -1,13 +1,13 @@
 ---
-title: 'Company Stock Prices'
-openapi: 'POST /v1/stock/company-prices'
+title: 'Stock Quote'
+openapi: 'POST /v1/stock/stock-quote'
 ---
 
-## 股票价格
+## 股票行情
 
-**URL**: `/v1/stock/company-prices`
+**URL**: `/v1/stock/stock-quote`
 **方法**: `POST`  
-**描述**: 获取当前和历史股票价格数据。
+**描述**: 获取当前和历史股票行情数据。
 
 ### 请求参数
 | 参数名      | 类型   | 必填 | 描述                                      |
@@ -44,7 +44,7 @@ openapi: 'POST /v1/stock/company-prices'
 
 **cURL**
 ```bash
-curl -X POST https://api.reportify.cn/v1/stock/company-prices \
+curl -X POST https://api.reportify.cn/v1/stock/stock-quote \
 -H "Authorization: Bearer 447460****09c9" \
 -H "Content-Type: application/json" \
 -d '{
@@ -58,7 +58,7 @@ curl -X POST https://api.reportify.cn/v1/stock/company-prices \
 ```python
 import requests
 
-url = "https://api.reportify.cn/v1/stock/company-prices"
+url = "https://api.reportify.cn/v1/stock/stock-quote"
 headers = {
     "Authorization": "Bearer 447460****09c9",
     "Content-Type": "application/json"

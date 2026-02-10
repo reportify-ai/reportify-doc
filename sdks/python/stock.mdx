@@ -246,17 +246,17 @@ print(breakdown)
 
 ## 行情数据
 
-### prices()
+### quote()
 
-获取历史股价数据。
+获取股票行情数据（当前和历史价格）。
 
 ```python
-prices = client.stock.prices(
+quote = client.stock.quote(
     symbol="AAPL",
     start_date="2024-01-01",
     end_date="2024-06-30"
 )
-print(prices[["close", "volume", "market_cap"]].tail())
+print(quote[["close", "volume", "market_cap"]].tail())
 ```
 
 <ParamField path="symbol" type="string" required>
@@ -272,26 +272,7 @@ print(prices[["close", "volume", "market_cap"]].tail())
 </ParamField>
 
 <ResponseField name="返回值" type="DataFrame">
-  股价数据，包含 `close`, `volume`, `market_cap`, `pe`, `ps` 等
-</ResponseField>
-
----
-
-### quote()
-
-获取实时行情。
-
-```python
-quote = client.stock.quote("AAPL")
-print(quote[["symbol", "price", "change_percent"]])
-```
-
-<ParamField path="symbol" type="str" required>
-  股票代码
-</ParamField>
-
-<ResponseField name="返回值" type="DataFrame">
-  实时行情数据
+  股票行情数据，包含 `close`, `volume`, `market_cap`, `pe`, `ps` 等
 </ResponseField>
 
 ---

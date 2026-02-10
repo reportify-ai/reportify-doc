@@ -231,7 +231,7 @@ Authorization: Bearer YOUR_API_KEY
   |--------|----------|
   | `company_overview` | 获取公司基本面信息 |
   | `company_shareholders` | 获取股东信息 |
-  | `stock_prices` | 获取历史股价数据 |
+  | `stock_quote` | 获取股票行情 |
   | `income_statement` | 获取利润表 |
   | `balance_sheet` | 获取资产负债表 |
   | `cashflow_statement` | 获取现金流量表 |
@@ -251,8 +251,8 @@ Authorization: Bearer YOUR_API_KEY
   
   | 工具名 | 功能描述 |
   |--------|----------|
-  | `realtime_quote` | 获取实时行情 |
-  | `index_prices` | 获取指数价格 |
+  | `stock_quote` | 获取股票行情 |
+  | `index_quote` | 获取指数行情 |
   | `stock_screener` | 股票筛选器 |
   | `earnings_calendar` | 财报日历 |
   | `ipo_calendar_hk` | 港股 IPO 日历 |
@@ -384,12 +384,12 @@ Agent 对话相关工具。
     ```
   </Tab>
 
-  <Tab title="获取实时行情">
-    使用 Stock MCP 获取实时报价：
+  <Tab title="获取股票行情">
+    使用 Stock MCP 获取股票行情：
 
     ```json
     {
-      "tool": "realtime_quote",
+      "tool": "stock_quote",
       "parameters": {
         "symbol": "AAPL"
       }

@@ -768,18 +768,18 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
       - BearerAuth: []
-  /v1/stock/company-prices:
+  /v1/stock/stock-quote:
     post:
       tags:
       - openapi-v2-stock
-      summary: Company Stock Prices
+      summary: Stock Quote
       description: Current and historical prices, trading volumes, market capitalizations, P/E ratios, and P/S ratios of stocks
-      operationId: company_stock_prices_reportify_api_v2_stock_company_prices_post
+      operationId: stock_quote_reportify_api_v2_stock_company_prices_post
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CompanyStockPricesInput'
+              $ref: '#/components/schemas/StockQuoteInput'
         required: true
       responses:
         '200':
@@ -908,46 +908,18 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
       - BearerAuth: []
-  /v1/stock/index-prices:
+  /v1/stock/index-quote:
     post:
       tags:
       - openapi-v2-stock
-      summary: Stock Index Prices
-      description: Get stock index prices
-      operationId: index_prices_reportify_api_v2_stock_index_prices_post
+      summary: Index Quote
+      description: Get stock index quote
+      operationId: index_quote_reportify_api_v2_stock_index_prices_post
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/StockIndexPricesInput'
-        required: true
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/StockAPIResponse'
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-      security:
-      - BearerAuth: []
-  /v1/stock/quote-realtime:
-    post:
-      tags:
-      - openapi-v2-stock
-      summary: Stock Realtime Quote
-      description: Get real-time stock quote
-      operationId: stock_realtime_quote_reportify_api_v2_stock_quote_realtime_post
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/StockRealtimeQuoteInput'
+              $ref: '#/components/schemas/IndexQuoteInput'
         required: true
       responses:
         '200':
@@ -2200,8 +2172,7 @@ paths:
 
         **Supported Operators:**
         - Comparison: `>`, `<`, `>=`, `<=`, `==`, `!=`
-        - Logical AND: `&` (NOT `AND`)
-        - Logical OR: `|` (NOT `OR`)
+        - Logical: `&` or `AND`, `|` or `OR`, `~` or `NOT` (case-insensitive)
         - Arithmetic: `+`, `-`, `*`, `/`
 
         **Supported Variables (no parentheses):**
@@ -2290,8 +2261,7 @@ paths:
 
         **Supported Operators:**
         - Comparison: `>`, `<`, `>=`, `<=`, `==`, `!=`
-        - Logical AND: `&` (NOT `AND`)
-        - Logical OR: `|` (NOT `OR`)
+        - Logical: `&` or `AND`, `|` or `OR`, `~` or `NOT` (case-insensitive)
         - Arithmetic: `+`, `-`, `*`, `/`
 
         **Supported Variables (no parentheses):**
@@ -2416,84 +2386,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BatchOHLCVOutput'
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-      security:
-      - BearerAuth: []
-  /v1/quant/financials/{financial_type}:
-    get:
-      tags:
-      - openapi-quant
-      summary: Get financial history for a symbol
-      description: |
-        Get historical financial data for a single symbol.
-
-        **Financial Types:**
-        - `income` - Income statement (营收、利润等)
-        - `cashflow` - Cash flow statement (现金流量表)
-        - `balancesheet` - Balance sheet (资产负债表)
-        - `equity` - Equity statement (股东权益变动表)
-
-        **Parameters:**
-        - `financial_type`: Type of financial statement (required)
-        - `symbol`: Stock code (required)
-        - `market`: Stock market (cn, hk, us), default: cn
-        - `start_year`: Start year (optional, default: 3 years ago)
-        - `end_year`: End year (optional, default: current year)
-
-        **Response:**
-        Returns historical financial data sorted by report period.
-      operationId: financials_history
-      parameters:
-      - name: financial_type
-        in: path
-        required: true
-        schema:
-          $ref: '#/components/schemas/FinancialType'
-        description: Type of financial statement
-      - name: symbol
-        in: query
-        required: true
-        schema:
-          type: string
-          title: Symbol
-        description: Stock code
-      - name: market
-        in: query
-        required: false
-        schema:
-          $ref: '#/components/schemas/StockMarket'
-          default: cn
-        description: Stock market (cn, hk, us)
-      - name: start_year
-        in: query
-        required: false
-        schema:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: Start Year
-        description: Start year (default 3 years ago)
-      - name: end_year
-        in: query
-        required: false
-        schema:
-          anyOf:
-          - type: integer
-          - type: 'null'
-          title: End Year
-        description: End year (default current year)
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/DataOutput'
         '422':
           description: Validation Error
           content:
@@ -4265,7 +4157,7 @@ components:
       - symbol
       title: CompanyShareholdersInput
       description: Input schema for company shareholders
-    CompanyStockPricesInput:
+    StockQuoteInput:
       properties:
         symbol:
           type: string
@@ -4282,8 +4174,8 @@ components:
       type: object
       required:
       - symbol
-      title: CompanyStockPricesInput
-      description: Input schema for company stock prices
+      title: StockQuoteInput
+      description: Input schema for stock quote
     CompanyIncomeStatementInput:
       properties:
         symbol:
@@ -4432,7 +4324,7 @@ components:
       - symbol
       title: CompanyRevenueBreakdownInput
       description: Input schema for company revenue breakdown
-    StockIndexPricesInput:
+    IndexQuoteInput:
       properties:
         symbol:
           type: string
@@ -4449,19 +4341,8 @@ components:
       type: object
       required:
       - symbol
-      title: StockIndexPricesInput
-      description: Input schema for stock index prices
-    StockRealtimeQuoteInput:
-      properties:
-        symbol:
-          type: string
-          title: Symbol
-          description: Stock symbol
-      type: object
-      required:
-      - symbol
-      title: StockRealtimeQuoteInput
-      description: Input schema for stock realtime quote
+      title: IndexQuoteInput
+      description: Input schema for index quote
     IndexFundsInput:
       properties:
         symbol:
@@ -5814,40 +5695,6 @@ components:
       - us
       title: StockMarket
       description: Stock market identifier
-    FinancialType:
-      type: string
-      enum:
-      - income
-      - cashflow
-      - balancesheet
-      - equity
-      title: FinancialType
-      description: |
-        Financial statement type:
-        - income: Income statement (利润表)
-        - cashflow: Cash flow statement (现金流量表)
-        - balancesheet: Balance sheet (资产负债表)
-        - equity: Equity statement (股东权益变动表)
-    DataOutput:
-      type: object
-      required:
-      - metadata
-      properties:
-        datas:
-          type: array
-          title: Datas
-          description: Data list sorted by date
-          items:
-            type: object
-            additionalProperties: true
-          default: []
-        metadata:
-          type: object
-          title: Metadata
-          description: Query metadata
-          additionalProperties: true
-      title: DataOutput
-      description: Generic data response with metadata.
     FollowedCompanyItem:
       properties:
         symbol:
