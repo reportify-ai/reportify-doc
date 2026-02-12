@@ -116,13 +116,20 @@ const filings = await client.search.filings('10-K annual report', ['US:AAPL'], {
 
 ## search.conferenceCalls()
 
-搜索财报电话会议记录和演示文稿。
+Search for earnings-related conference call transcripts and presentation slides. Query is optional - if not provided, returns documents in reverse chronological order; if provided, sorts by relevance (note sort_by parameter).
 
 ```typescript
-const calls = await client.search.conferenceCalls('AI strategy', ['US:AAPL', 'US:MSFT'], {
+// With query - results sorted by relevance
+const calls = await client.search.conferenceCalls(['US:AAPL', 'US:MSFT'], {
+  query: 'AI strategy',
   num: 10,
   fiscalYear: '2025',
   fiscalQuarter: 'Q4'
+});
+
+// Without query - results sorted by date descending
+const latestCalls = await client.search.conferenceCalls(['US:AAPL', 'US:MSFT'], {
+  fiscalYear: '2025'
 });
 ```
 
@@ -130,13 +137,14 @@ const calls = await client.search.conferenceCalls('AI strategy', ['US:AAPL', 'US
 
 | 参数 | 类型 | 必填 | 默认值 | 说明 |
 |------|------|------|--------|------|
-| `query` | `string` | 是 | - | 搜索关键词 |
+| `query` | `string` | 否 | - | 搜索关键词（可选）。不提供时按时间倒序返回；提供时默认按相关性排序。 |
 | `symbols` | `string[]` | 是 | - | 股票代码列表 |
 | `options.num` | `number` | 否 | `10` | 返回结果数量 |
 | `options.startDatetime` | `string` | 否 | - | 开始时间（YYYY-MM-DD 或 YYYY-MM-DD HH:MM:SS） |
 | `options.endDatetime` | `string` | 否 | - | 结束时间（YYYY-MM-DD 或 YYYY-MM-DD HH:MM:SS） |
 | `options.fiscalYear` | `string` | 否 | - | 财年筛选，如 `2025`、`2026` |
 | `options.fiscalQuarter` | `string` | 否 | - | 财季筛选，如 `Q1`、`Q2`、`Q3`、`Q4` |
+| `options.sortBy` | `string` | 否 | `date_desc` | 排序方式：`date_desc`（时间倒序）、`relevance`（相关性排序）、`date_asc`（时间正序） |
 
 **返回值：** `Promise<Document[]>` - 电话会议记录列表
 
@@ -144,13 +152,20 @@ const calls = await client.search.conferenceCalls('AI strategy', ['US:AAPL', 'US
 
 ## search.earningsPack()
 
-搜索财报文档。
+Search for earnings-related documents submitted to exchanges, including quarterly reports, semi-annual reports, and annual reports. Query is optional - if not provided, returns documents in reverse chronological order; if provided, sorts by relevance (note sort_by parameter).
 
 ```typescript
-const docs = await client.search.earningsPack('revenue growth', ['US:AAPL', 'US:TSLA'], {
+// With query - results sorted by relevance
+const docs = await client.search.earningsPack(['US:AAPL', 'US:TSLA'], {
+  query: 'revenue growth',
   num: 10,
   fiscalYear: '2025',
   fiscalQuarter: 'Q4'
+});
+
+// Without query - results sorted by date descending
+const latestDocs = await client.search.earningsPack(['US:AAPL', 'US:TSLA'], {
+  fiscalYear: '2025'
 });
 ```
 
@@ -158,13 +173,14 @@ const docs = await client.search.earningsPack('revenue growth', ['US:AAPL', 'US:
 
 | 参数 | 类型 | 必填 | 默认值 | 说明 |
 |------|------|------|--------|------|
-| `query` | `string` | 是 | - | 搜索关键词 |
+| `query` | `string` | 否 | - | 搜索关键词（可选）。不提供时按时间倒序返回；提供时默认按相关性排序。 |
 | `symbols` | `string[]` | 是 | - | 股票代码列表 |
 | `options.num` | `number` | 否 | `10` | 返回结果数量 |
 | `options.startDatetime` | `string` | 否 | - | 开始时间（YYYY-MM-DD 或 YYYY-MM-DD HH:MM:SS） |
 | `options.endDatetime` | `string` | 否 | - | 结束时间（YYYY-MM-DD 或 YYYY-MM-DD HH:MM:SS） |
 | `options.fiscalYear` | `string` | 否 | - | 财年筛选，如 `2025`、`2026` |
 | `options.fiscalQuarter` | `string` | 否 | - | 财季筛选，如 `Q1`、`Q2`、`Q3`、`Q4` |
+| `options.sortBy` | `string` | 否 | `date_desc` | 排序方式：`date_desc`（时间倒序）、`relevance`（相关性排序）、`date_asc`（时间正序） |
 
 **返回值：** `Promise<Document[]>` - 财报相关文档列表
 

@@ -7,18 +7,19 @@ openapi: 'POST /v2/search/conference-calls'
 
 **URL**: `/v2/search/conference-calls`  
 **方法**: `POST`  
-**描述**: 搜索财报电话会议记录和演示文稿。
+**描述**: Search for earnings-related conference call transcripts and presentation slides. Query is optional - if not provided, returns documents in reverse chronological order; if provided, sorts by relevance (note sort_by parameter).
 
 ### 请求参数
 | 参数名           | 类型         | 必填 | 描述                                                                 |
 |------------------|--------------|------|----------------------------------------------------------------------|
-| query            | str          | 是   | 搜索关键词。                                                         |
+| query            | str          | 否   | 搜索关键词（可选）。不提供时按时间倒序返回文档列表；提供时默认按相关性排序。 |
 | symbols          | array[str]   | 是   | 股票代码列表，格式为 market:ticker（如 `US:AAPL`、`HK:00700`、`SH:600519`、`SZ:000001`）。|
 | num              | int          | 否   | 返回的结果数量，默认值为 `10`，最大值为 `100`。                      |
 | start_datetime   | str          | 否   | 开始时间，格式为 `YYYY-MM-DD` 或 `YYYY-MM-DD HH:MM:SS`。             |
 | end_datetime     | str          | 否   | 结束时间，格式为 `YYYY-MM-DD` 或 `YYYY-MM-DD HH:MM:SS`。             |
 | fiscal_year      | str          | 否   | 财年筛选，如 `2025`、`2026`。                                        |
 | fiscal_quarter   | str          | 否   | 财季筛选，如 `Q1`、`Q2`、`Q3`、`Q4`。                                |
+| sort_by          | str          | 否   | 排序方式：`date_desc`（时间倒序，无 query 时默认）、`relevance`（相关性排序，有 query 时推荐）、`date_asc`（时间正序）。默认 `date_desc`。 |
 
 ### 响应参数
 | 参数名              | 类型    | 描述                                                   |

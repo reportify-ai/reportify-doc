@@ -493,7 +493,7 @@ paths:
       tags:
       - openapi-v2-search
       summary: Earnings Pack Search
-      description: Earnings pack documents search, covering all financial statements
+      description: Search for earnings-related documents submitted to exchanges, including quarterly reports, semi-annual reports, and annual reports. Query is optional - if not provided, returns documents in reverse chronological order; if provided, sorts by relevance (note sort_by parameter).
       operationId: earnings_pack_search_reportify_api_v2_search_earnings_pack_post
       requestBody:
         content:
@@ -521,7 +521,7 @@ paths:
       tags:
       - openapi-v2-search
       summary: Conference Calls Search
-      description: Earnings call conference search, earnings calls conference transcript and conference slide content
+      description: Search for earnings-related conference call transcripts and presentation slides. Query is optional - if not provided, returns documents in reverse chronological order; if provided, sorts by relevance (note sort_by parameter).
       operationId: conference_calls_search_reportify_api_v2_search_conference_calls_post
       requestBody:
         content:
@@ -3725,7 +3725,7 @@ components:
         query:
           type: string
           title: Query
-          description: Search query
+          description: Search query (optional). If not provided, returns documents sorted by date descending; if provided, results are sorted by relevance by default.
         num:
           type: integer
           maximum: 100
@@ -3755,18 +3755,26 @@ components:
           type: string
           title: Fiscal Quarter
           description: Fiscal quarter filter (e.g., 'Q1', 'Q2', 'Q3', 'Q4')
+        sort_by:
+          type: string
+          title: Sort By
+          description: "Sort order: 'date_desc' (newest first, default when no query), 'relevance' (by semantic relevance, recommended when query is provided), 'date_asc' (oldest first)"
+          default: date_desc
+          enum:
+          - relevance
+          - date_desc
+          - date_asc
       type: object
       required:
-      - query
       - symbols
       title: SearchToolsEarningsPackRequest
-      description: Request model for earnings financial reports search
+      description: Request model for earnings-related documents search (quarterly/semi-annual/annual reports). Query is optional - if not provided, returns documents sorted by date desc.
     SearchToolsConferenceCallsRequest:
       properties:
         query:
           type: string
           title: Query
-          description: Search query
+          description: Search query (optional). If not provided, returns documents sorted by date descending; if provided, results are sorted by relevance by default.
         num:
           type: integer
           maximum: 100
@@ -3796,12 +3804,20 @@ components:
           type: string
           title: Fiscal Quarter
           description: Fiscal quarter filter (e.g., 'Q1', 'Q2', 'Q3', 'Q4')
+        sort_by:
+          type: string
+          title: Sort By
+          description: "Sort order: 'date_desc' (newest first, default when no query), 'relevance' (by semantic relevance, recommended when query is provided), 'date_asc' (oldest first)"
+          default: date_desc
+          enum:
+          - relevance
+          - date_desc
+          - date_asc
       type: object
       required:
-      - query
       - symbols
       title: SearchToolsConferenceCallsRequest
-      description: Request model for earnings call transcripts and slides search
+      description: Request model for earnings-related conference call transcripts and presentation slides search. Query is optional - if not provided, returns documents sorted by date desc.
     SearchToolsMinutesRequest:
       properties:
         query:

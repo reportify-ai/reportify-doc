@@ -171,19 +171,26 @@ filings = client.search.filings(
 
 ## search.conference_calls()
 
-搜索财报电话会议记录和演示文稿。
+Search for earnings-related conference call transcripts and presentation slides. Query is optional - if not provided, returns documents in reverse chronological order; if provided, sorts by relevance (note sort_by parameter).
 
 ```python
+# With query - results sorted by relevance
 calls = client.search.conference_calls(
+    ["US:AAPL", "US:MSFT"],
     query="AI strategy",
-    symbols=["US:AAPL", "US:MSFT"],
     fiscal_year="2025",
     fiscal_quarter="Q4"
 )
+
+# Without query - results sorted by date descending
+calls = client.search.conference_calls(
+    ["US:AAPL", "US:MSFT"],
+    fiscal_year="2025"
+)
 ```
 
-<ParamField path="query" type="string" required>
-  搜索关键词
+<ParamField path="query" type="string">
+  搜索关键词（可选）。不提供时按时间倒序返回文档列表；提供时默认按相关性排序。
 </ParamField>
 
 <ParamField path="symbols" type="list[str]" required>
@@ -208,25 +215,36 @@ calls = client.search.conference_calls(
 
 <ParamField path="fiscal_quarter" type="str">
   财季筛选，如 `Q1`、`Q2`、`Q3`、`Q4`
+</ParamField>
+
+<ParamField path="sort_by" type="str" default="date_desc">
+  排序方式：`date_desc`（时间倒序，无 query 时默认）、`relevance`（相关性排序，有 query 时推荐）、`date_asc`（时间正序）
 </ParamField>
 
 ---
 
 ## search.earnings_pack()
 
-搜索财报文档。
+Search for earnings-related documents submitted to exchanges, including quarterly reports, semi-annual reports, and annual reports. Query is optional - if not provided, returns documents in reverse chronological order; if provided, sorts by relevance (note sort_by parameter).
 
 ```python
+# With query - results sorted by relevance
 docs = client.search.earnings_pack(
+    ["US:AAPL", "US:TSLA"],
     query="revenue growth",
-    symbols=["US:AAPL", "US:TSLA"],
     fiscal_year="2025",
     fiscal_quarter="Q4"
 )
+
+# Without query - results sorted by date descending
+docs = client.search.earnings_pack(
+    ["US:AAPL", "US:TSLA"],
+    fiscal_year="2025"
+)
 ```
 
-<ParamField path="query" type="string" required>
-  搜索关键词
+<ParamField path="query" type="string">
+  搜索关键词（可选）。不提供时按时间倒序返回文档列表；提供时默认按相关性排序。
 </ParamField>
 
 <ParamField path="symbols" type="list[str]" required>
@@ -251,6 +269,10 @@ docs = client.search.earnings_pack(
 
 <ParamField path="fiscal_quarter" type="str">
   财季筛选，如 `Q1`、`Q2`、`Q3`、`Q4`
+</ParamField>
+
+<ParamField path="sort_by" type="str" default="date_desc">
+  排序方式：`date_desc`（时间倒序，无 query 时默认）、`relevance`（相关性排序，有 query 时推荐）、`date_asc`（时间正序）
 </ParamField>
 
 ---
