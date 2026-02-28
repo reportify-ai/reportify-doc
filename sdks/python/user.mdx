@@ -1,12 +1,12 @@
 ---
 title: '用户数据'
-description: 'Python SDK 用户数据模块 - 获取用户关注的公司等信息'
+description: 'Python SDK 用户数据模块 - 管理用户关注的公司等信息'
 icon: 'user'
 ---
 
 ## 概述
 
-用户数据模块提供用户个人数据的访问，包括关注的公司列表等。
+用户数据模块提供用户个人数据的访问，包括关注的公司列表、关注和取消关注公司等。
 
 ## followed_companies()
 
@@ -20,6 +20,48 @@ for company in companies:
 
 <ResponseField name="返回值" type="list[dict]">
   关注公司列表，每条包含 `symbol`, `ticker`, `market`, `name`, `chinese_name`, `english_name`, `logo`, `followed_at`
+</ResponseField>
+
+---
+
+## follow_company()
+
+关注一家公司，将其添加到用户的关注列表中。
+
+```python
+result = client.user.follow_company("US:AAPL")
+print(f"已关注: {result['name']} ({result['symbol']})")
+```
+
+**参数：**
+
+| 参数名 | 类型   | 必填 | 描述                                    |
+|--------|--------|------|-----------------------------------------|
+| symbol | string | 是   | 股票代码，格式为 `市场:代码`（如 `US:AAPL`、`HK:00700`、`SH:600519`、`SZ:000001`） |
+
+<ResponseField name="返回值" type="dict">
+  关注公司信息，包含 `symbol`, `ticker`, `market`, `name`, `chinese_name`, `english_name`, `logo`, `followed_at`
+</ResponseField>
+
+---
+
+## unfollow_company()
+
+取消关注一家公司，将其从用户的关注列表中移除。
+
+```python
+result = client.user.unfollow_company("US:AAPL")
+print(f"已取消关注: {result['symbol']}")
+```
+
+**参数：**
+
+| 参数名 | 类型   | 必填 | 描述                                    |
+|--------|--------|------|-----------------------------------------|
+| symbol | string | 是   | 股票代码，格式为 `市场:代码`（如 `US:AAPL`、`HK:00700`） |
+
+<ResponseField name="返回值" type="dict">
+  包含 `symbol` 和 `success` 字段
 </ResponseField>
 
 ---
@@ -42,15 +84,22 @@ for company in companies:
 ## 使用场景
 
 ```python
+# 关注一家公司
+client.user.follow_company("US:AAPL")
+
 # 获取关注公司并查询其最新动态
 companies = client.user.followed_companies()
 print(f"共关注 {len(companies)} 家公司")
 
 for company in companies[:5]:
     print(f"- {company['name']} ({company['symbol']})")
-    
+
+# 取消关注
+client.user.unfollow_company("US:AAPL")
+
 # 结合时间线使用
 timeline = client.timeline.companies(num=10)
 for item in timeline:
     print(f"- {item['title']}")
 ```
+

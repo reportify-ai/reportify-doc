@@ -1,0 +1,92 @@
+---
+title: 'Unfollow Company'
+openapi: 'POST /v1/tools/user/unfollow-company'
+---
+
+## 取消关注公司
+
+**URL**: `/v1/tools/user/unfollow-company`  
+**方法**: `POST`  
+**描述**: 取消关注一家公司，将其从用户的关注列表中移除。
+
+### 请求参数
+
+| 参数名   | 类型   | 必填 | 描述                                    |
+|----------|--------|------|-----------------------------------------|
+| symbol   | string | 是   | 股票代码，格式为 `市场:代码`（如 `US:AAPL`、`HK:00700`） |
+
+### 响应参数
+
+| 参数名   | 类型   | 描述                           |
+|----------|--------|--------------------------------|
+| symbol   | string | 已取消关注的股票代码           |
+| success  | bool   | 操作是否成功                   |
+
+### 请求示例
+
+**cURL**
+```bash
+curl -X POST "https://api.reportify.cn/v1/tools/user/unfollow-company" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"symbol": "US:AAPL"}'
+```
+
+**Python**
+```python
+import requests
+
+url = "https://api.reportify.cn/v1/tools/user/unfollow-company"
+headers = {
+    "Authorization": "Bearer YOUR_API_KEY",
+    "Content-Type": "application/json"
+}
+
+response = requests.post(url, headers=headers, json={"symbol": "US:AAPL"})
+data = response.json()
+
+print(f"已取消关注: {data['symbol']}")
+```
+
+**TypeScript**
+```typescript
+const response = await fetch(
+  'https://api.reportify.cn/v1/tools/user/unfollow-company',
+  {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer YOUR_API_KEY',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ symbol: 'US:AAPL' })
+  }
+);
+
+const data = await response.json();
+console.log(`已取消关注: ${data.symbol}`);
+```
+
+### 响应示例
+
+```json
+{
+  "symbol": "US:AAPL",
+  "success": true
+}
+```
+
+### 错误响应
+
+| 状态码 | 描述                     |
+|--------|--------------------------|
+| 400    | symbol 参数缺失或格式错误 |
+| 422    | 请求参数验证失败         |
+
+### 使用场景
+
+1. **管理关注列表**
+   - 用户取消对不再感兴趣的公司的关注
+   - 清理和优化个人关注列表
+
+2. **与关注接口配合使用**
+   - 配合 `follow_company` 和 `followed_companies` 管理完整的关注列表
