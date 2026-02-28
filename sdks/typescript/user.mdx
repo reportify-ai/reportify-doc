@@ -1,12 +1,12 @@
 ---
 title: '用户数据'
-description: 'TypeScript SDK 用户数据模块 - 获取用户关注的公司等信息'
+description: 'TypeScript SDK 用户数据模块 - 管理用户关注的公司等信息'
 icon: 'user'
 ---
 
 ## 概述
 
-用户数据模块提供用户个人数据的访问，包括关注的公司列表等。
+用户数据模块提供用户个人数据的访问，包括关注的公司列表、关注和取消关注公司等。
 
 ## followedCompanies()
 
@@ -20,6 +20,44 @@ companies.forEach(company => {
 ```
 
 **返回值：** `Promise<FollowedCompany[]>` - 关注公司列表
+
+---
+
+## followCompany()
+
+关注一家公司，将其添加到用户的关注列表中。
+
+```typescript
+const result = await client.user.followCompany('US:AAPL');
+console.log(`已关注: ${result.name} (${result.symbol})`);
+```
+
+**参数：**
+
+| 参数名 | 类型   | 必填 | 描述                                    |
+|--------|--------|------|-----------------------------------------|
+| symbol | string | 是   | 股票代码，格式为 `市场:代码`（如 `US:AAPL`、`HK:00700`、`SH:600519`、`SZ:000001`） |
+
+**返回值：** `Promise<FollowedCompany>` - 关注的公司信息
+
+---
+
+## unfollowCompany()
+
+取消关注一家公司，将其从用户的关注列表中移除。
+
+```typescript
+const result = await client.user.unfollowCompany('US:AAPL');
+console.log(`已取消关注: ${result.symbol}`);
+```
+
+**参数：**
+
+| 参数名 | 类型   | 必填 | 描述                                    |
+|--------|--------|------|-----------------------------------------|
+| symbol | string | 是   | 股票代码，格式为 `市场:代码`（如 `US:AAPL`、`HK:00700`） |
+
+**返回值：** `Promise<{ symbol: string; success: boolean }>` - 操作结果
 
 ---
 
@@ -41,6 +79,9 @@ interface FollowedCompany {
 ## 使用场景
 
 ```typescript
+// 关注一家公司
+await client.user.followCompany('US:AAPL');
+
 // 获取关注公司并查询其最新动态
 const companies = await client.user.followedCompanies();
 console.log(`共关注 ${companies.length} 家公司`);
@@ -49,9 +90,13 @@ companies.slice(0, 5).forEach(company => {
   console.log(`- ${company.name} (${company.symbol})`);
 });
 
+// 取消关注
+await client.user.unfollowCompany('US:AAPL');
+
 // 结合时间线使用
 const timeline = await client.timeline.companies({ num: 10 });
 timeline.forEach(item => {
   console.log(`- ${item.title}`);
 });
 ```
+
