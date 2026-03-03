@@ -1,0 +1,127 @@
+---
+title: 'Crawl'
+openapi: 'POST /v2/search/crawl'
+---
+
+## 网页爬取
+
+**URL**: `/v2/search/crawl`  
+**方法**: `POST`  
+**描述**: 通过 Exa API 爬取指定 URL 的网页内容，支持文本提取、高亮、摘要和子页面爬取。
+
+### 请求参数
+| 参数名                    | 类型         | 必填 | 默认值 | 描述                                                       |
+|--------------------------|--------------|------|--------|------------------------------------------------------------|
+| ids                      | list[str]    | 是   | -      | 要爬取的 URL 列表。                                         |
+| text                     | bool/object  | 否   | true   | 提取文本内容，传 `true` 使用默认值，或传对象配置高级选项。       |
+| text.maxCharacters       | int          | 否   | 4000   | 每页最大返回字符数。                                         |
+| text.includeHtmlTags     | bool         | 否   | false  | 是否保留 HTML 标签。                                         |
+| text.verbosity           | string       | 否   | "full" | 内容详细度：`compact`（去除样板内容）或 `full`（完整内容）。     |
+| highlights               | object       | 否   | -      | 提取与查询相关的高亮片段。                                    |
+| highlights.query         | string       | 否   | -      | 用于提取相关高亮的查询。                                      |
+| highlights.maxCharacters | int          | 否   | -      | 每个高亮的最大字符数。                                        |
+| highlights.numSentences  | int          | 否   | 5      | 每个高亮的句子数。                                            |
+| highlights.highlightsPerUrl | int       | 否   | 1      | 每个 URL 的高亮数量。                                         |
+| summary                  | object       | 否   | -      | LLM 生成的摘要选项。                                          |
+| summary.query            | string       | 否   | -      | 摘要的查询指令。                                              |
+| subpages                 | int          | 否   | -      | 每个 URL 最大爬取子页面数（如 5-15）。                         |
+| subpageTarget            | list[str]    | 否   | -      | 选择子页面时优先匹配的关键词（如 `["api", "guide"]`）。         |
+
+### 响应参数
+| 参数名              | 类型    | 描述                                                 |
+|---------------------|---------|------------------------------------------------------|
+| results             | array   | 爬取结果数组，每个结果包含以下字段：                    |
+| &nbsp;&nbsp;url     | str     | 爬取的页面 URL。                                      |
+| &nbsp;&nbsp;title   | str     | 页面标题。                                            |
+| &nbsp;&nbsp;text    | str     | 提取的文本内容。                                      |
+| &nbsp;&nbsp;publishedDate | str | 发布日期。                                        |
+| &nbsp;&nbsp;highlights | array | 与查询相关的高亮文本片段。                            |
+| &nbsp;&nbsp;summary | str    | LLM 生成的摘要。                                      |
+| total_count         | int     | 成功爬取的页面数。                                    |
+| took_ms             | int     | 执行时间（毫秒）。                                    |
+
+### 请求示例
+
+**cURL**
+```bash
+curl -X POST https://api.reportify.cn/v2/search/crawl \
+-H "Authorization: Bearer 447460****09c9" \
+-H "Content-Type: application/json" \
+-d '{
+    "ids": ["https://example.com/article"],
+    "text": {"maxCharacters": 4000, "verbosity": "full"},
+    "highlights": {"query": "核心观点", "numSentences": 3},
+    "summary": {"query": "总结要点"}
+}'
+```
+
+**Python SDK**
+```python
+from reportify_sdk import Reportify
+
+client = Reportify(api_key="447460****09c9")
+
+# 基础爬取
+result = client.search.crawl(["https://example.com/article"])
+
+# 带高级选项
+result = client.search.crawl(
+    ["https://example.com/article"],
+    text={"maxCharacters": 4000, "verbosity": "full"},
+    highlights={"query": "核心观点", "numSentences": 3},
+    summary={"query": "总结要点"},
+)
+```
+
+**TypeScript SDK**
+```typescript
+import Reportify from 'reportify-sdk';
+
+const client = new Reportify({ apiKey: '447460****09c9' });
+
+// 基础爬取
+const result = await client.search.crawl(['https://example.com/article']);
+
+// 带高级选项
+const result = await client.search.crawl(['https://example.com/article'], {
+  text: { maxCharacters: 4000, verbosity: 'full' },
+  highlights: { query: '核心观点', numSentences: 3 },
+  summary: { query: '总结要点' },
+});
+```
+
+**CLI**
+```bash
+reportify-cli search crawl --input '{"urls": ["https://example.com/article"]}'
+
+# 带高级选项
+reportify-cli search crawl --input '{
+  "urls": ["https://example.com/article"],
+  "text": {"maxCharacters": 4000, "verbosity": "full"},
+  "highlights": {"query": "核心观点"}
+}'
+```
+
+### 响应示例
+```json
+{
+  "results": [
+    {
+      "url": "https://example.com/article",
+      "title": "2024年人工智能投资趋势分析",
+      "text": "近年来，人工智能领域的投资持续增长...",
+      "publishedDate": "2024-11-01",
+      "highlights": ["AI 领域投资在2024年增长了40%", "大模型成为主要投资方向"],
+      "summary": "本文分析了2024年AI投资趋势，重点包括大模型投资增长和生成式AI的广泛应用。"
+    }
+  ],
+  "total_count": 1,
+  "took_ms": 1250
+}
+```
+
+### 错误响应
+| HTTP 状态码 | 描述                     |
+|-------------|--------------------------|
+| 422         | 请求参数验证错误         |
+| 429         | 请求频率超限             |

@@ -63,7 +63,8 @@
                   "apis/search/filings",
                   "apis/search/news",
                   "apis/search/socials",
-                  "apis/search/webpages"
+                  "apis/search/webpages",
+                  "apis/search/crawl"
                 ]
               }
             ]
@@ -231,7 +232,8 @@
               "sdks/python/timeline",
               "sdks/python/stock",
               "sdks/python/concepts",
-              "sdks/python/quant"
+              "sdks/python/quant",
+              "sdks/python/common"
             ]
           },
           {
@@ -246,7 +248,8 @@
               "sdks/typescript/timeline",
               "sdks/typescript/stock",
               "sdks/typescript/concepts",
-              "sdks/typescript/quant"
+              "sdks/typescript/quant",
+              "sdks/typescript/common"
             ]
           }
         ]
