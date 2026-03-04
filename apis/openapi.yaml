@@ -36,6 +36,297 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
       - BearerAuth: []
+  /v1/tools/user/follow-groups:
+    post:
+      tags:
+      - openapi-tools-user
+      summary: Create Follow Group
+      description: Create a new follow group
+      operationId: create_follow_group
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FollowGroupCreateRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FollowGroupResult'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+    get:
+      tags:
+      - openapi-tools-user
+      summary: Get Follow Groups
+      description: Get all follow groups for authenticated user
+      operationId: get_follow_groups
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FollowGroupsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v1/tools/user/follow-groups/{group_id}:
+    get:
+      tags:
+      - openapi-tools-user
+      summary: Get Follow Group by ID
+      description: Get a follow group by ID
+      operationId: get_follow_group
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Group Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FollowGroupResultWithValues'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+    post:
+      tags:
+      - openapi-tools-user
+      summary: Update Follow Group
+      description: Update a follow group
+      operationId: update_follow_group
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Group Id
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FollowGroupUpdateRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FollowGroupResult'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+    delete:
+      tags:
+      - openapi-tools-user
+      summary: Delete Follow Group
+      description: Delete a follow group
+      operationId: delete_follow_group
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Group Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusMessage'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v1/tools/user/follow-groups/{group_id}/follows:
+    post:
+      tags:
+      - openapi-tools-user
+      summary: Add Follows to Group
+      description: Add follows to a group
+      operationId: add_follows_to_group
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Group Id
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FollowGroupMemberUpdateRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusMessage'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+    delete:
+      tags:
+      - openapi-tools-user
+      summary: Remove Follows from Group
+      description: Remove follows from a group
+      operationId: remove_follows_from_group
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Group Id
+      - name: follow_values
+        in: query
+        required: true
+        schema:
+          type: array
+          items:
+            type: string
+          title: Follow Values
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusMessage'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+    put:
+      tags:
+      - openapi-tools-user
+      summary: Set Follows for Group
+      description: Set follows for a group (replace all)
+      operationId: set_follows_for_group
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Group Id
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FollowGroupMemberUpdateRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusMessage'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v1/tools/user/follow-groups/{group_id}/reports:
+    get:
+      tags:
+      - openapi-tools-user
+      summary: Get Follow Group Reports
+      description: Get reports for a follow group
+      operationId: get_follow_group_reports
+      parameters:
+      - name: group_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Group Id
+      - name: page_num
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 1
+          minimum: 1
+          title: Page Num
+      - name: page_size
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 10
+          minimum: 1
+          maximum: 100
+          title: Page Size
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FollowGroupReportResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
   /v1/docs:
     post:
       tags:
@@ -2388,6 +2679,146 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BatchOHLCVOutput'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v1/quant/quotes/1mkline:
+    post:
+      tags:
+      - openapi-quant
+      summary: Get 1-minute kline data
+      description: |
+        Get 1-minute kline data for a single symbol.
+
+        - **symbol**: Stock code (required)
+        - **start_datetime**: Start datetime (required, format: YYYY-MM-DD HH:MM:SS)
+        - **end_datetime**: End datetime (required, format: YYYY-MM-DD HH:MM:SS)
+        - **market**: Stock market (cn, hk, us), default: cn
+      operationId: quote_1mkline
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MinuteKlineInput'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MinuteKlineOutput'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v1/quant/quotes/1mkline/batch:
+    post:
+      tags:
+      - openapi-quant
+      summary: Get batch 1-minute kline data for multiple symbols
+      description: |
+        Get 1-minute kline data for multiple symbols.
+
+        - **symbols**: List of stock code (required)
+        - **start_datetime**: Start datetime (required, format: YYYY-MM-DD HH:MM:SS)
+        - **end_datetime**: End datetime (required, format: YYYY-MM-DD HH:MM:SS)
+        - **market**: Stock market (cn, hk, us), default: cn
+
+        Returns data sorted by date (ascending), then by symbol.
+      operationId: quote_1mkline_batch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchMinuteKlineInput'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchMinuteKlineOutput'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v1/quant/quotes/minute:
+    post:
+      tags:
+      - openapi-quant
+      summary: Get minute data
+      description: |
+        Get minute data for a single symbol.
+
+        - **symbol**: Stock code (required)
+        - **start_datetime**: Start datetime (required, format: YYYY-MM-DD HH:MM:SS)
+        - **end_datetime**: End datetime (required, format: YYYY-MM-DD HH:MM:SS)
+        - **market**: Stock market (cn, hk, us), default: cn
+      operationId: quote_minute
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MinuteInput'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MinuteOutput'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v1/quant/quotes/minute/batch:
+    post:
+      tags:
+      - openapi-quant
+      summary: Get batch minute data for multiple symbols
+      description: |
+        Get minute data for multiple symbols.
+
+        - **symbols**: List of stock code (required)
+        - **start_datetime**: Start datetime (required, format: YYYY-MM-DD HH:MM:SS)
+        - **end_datetime**: End datetime (required, format: YYYY-MM-DD HH:MM:SS)
+        - **market**: Stock market (cn, hk, us), default: cn
+
+        Returns data sorted by date (ascending), then by symbol.
+      operationId: quote_minute_batch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchMinuteInput'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BatchMinuteOutput'
         '422':
           description: Validation Error
           content:
@@ -5452,6 +5883,192 @@ components:
           additionalProperties: true
       title: BatchOHLCVOutput
       description: Batch OHLCV data response.
+    MinuteKlineInput:
+      type: object
+      required:
+      - symbol
+      - start_datetime
+      - end_datetime
+      properties:
+        symbol:
+          type: string
+          title: Symbol
+          description: Stock code (required)
+        start_datetime:
+          type: string
+          title: Start Datetime
+          description: Start datetime (YYYY-MM-DD HH:MM:SS) (required)
+        end_datetime:
+          type: string
+          title: End Datetime
+          description: End datetime (YYYY-MM-DD HH:MM:SS) (required)
+        market:
+          $ref: '#/components/schemas/StockMarket'
+          description: Stock market
+          default: cn
+      title: MinuteKlineInput
+      description: Input for 1-minute kline data request.
+    MinuteKlineOutput:
+      type: object
+      required:
+      - datas
+      - metadata
+      properties:
+        datas:
+          type: array
+          title: Datas
+          description: 1-minute kline data list
+          items:
+            type: object
+            additionalProperties: true
+        metadata:
+          type: object
+          title: Metadata
+          description: Query metadata
+          additionalProperties: true
+      title: MinuteKlineOutput
+      description: 1-minute kline data response.
+    BatchMinuteKlineInput:
+      type: object
+      required:
+      - symbols
+      - start_datetime
+      - end_datetime
+      properties:
+        symbols:
+          type: array
+          title: Symbols
+          description: List of stock codes (required)
+          minItems: 1
+          items:
+            type: string
+        start_datetime:
+          type: string
+          title: Start Datetime
+          description: Start datetime (YYYY-MM-DD HH:MM:SS) (required)
+        end_datetime:
+          type: string
+          title: End Datetime
+          description: End datetime (YYYY-MM-DD HH:MM:SS) (required)
+        market:
+          $ref: '#/components/schemas/StockMarket'
+          description: Stock market
+          default: cn
+      title: BatchMinuteKlineInput
+      description: Input for batch 1-minute kline data request.
+    BatchMinuteKlineOutput:
+      type: object
+      required:
+      - datas
+      - metadata
+      properties:
+        datas:
+          type: array
+          title: Datas
+          description: 1-minute kline data list sorted by date (ascending), then by symbol
+          items:
+            type: object
+            additionalProperties: true
+        metadata:
+          type: object
+          title: Metadata
+          description: Query metadata
+          additionalProperties: true
+      title: BatchMinuteKlineOutput
+      description: Batch 1-minute kline data response.
+    MinuteInput:
+      type: object
+      required:
+      - symbol
+      - start_datetime
+      - end_datetime
+      properties:
+        symbol:
+          type: string
+          title: Symbol
+          description: Stock code (required)
+        start_datetime:
+          type: string
+          title: Start Datetime
+          description: Start datetime (YYYY-MM-DD HH:MM:SS) (required)
+        end_datetime:
+          type: string
+          title: End Datetime
+          description: End datetime (YYYY-MM-DD HH:MM:SS) (required)
+        market:
+          $ref: '#/components/schemas/StockMarket'
+          description: Stock market
+          default: cn
+      title: MinuteInput
+      description: Input for minute data request.
+    MinuteOutput:
+      type: object
+      required:
+      - datas
+      - metadata
+      properties:
+        datas:
+          type: array
+          title: Datas
+          description: Minute data list
+          items:
+            type: object
+            additionalProperties: true
+        metadata:
+          type: object
+          title: Metadata
+          description: Query metadata
+          additionalProperties: true
+      title: MinuteOutput
+      description: Minute data response.
+    BatchMinuteInput:
+      type: object
+      required:
+      - symbols
+      - start_datetime
+      - end_datetime
+      properties:
+        symbols:
+          type: array
+          title: Symbols
+          description: List of stock codes (required)
+          minItems: 1
+          items:
+            type: string
+        start_datetime:
+          type: string
+          title: Start Datetime
+          description: Start datetime (YYYY-MM-DD HH:MM:SS) (required)
+        end_datetime:
+          type: string
+          title: End Datetime
+          description: End datetime (YYYY-MM-DD HH:MM:SS) (required)
+        market:
+          $ref: '#/components/schemas/StockMarket'
+          description: Stock market
+          default: cn
+      title: BatchMinuteInput
+      description: Input for batch minute data request.
+    BatchMinuteOutput:
+      type: object
+      required:
+      - datas
+      - metadata
+      properties:
+        datas:
+          type: array
+          title: Datas
+          description: Minute data list sorted by date (ascending), then by symbol
+          items:
+            type: object
+            additionalProperties: true
+        metadata:
+          type: object
+          title: Metadata
+          description: Query metadata
+          additionalProperties: true
+      title: BatchMinuteOutput
+      description: Batch minute data response.
     BacktestInput:
       properties:
         start_date:
@@ -5769,6 +6386,153 @@ components:
       type: object
       title: FollowedCompaniesResponse
       description: Response containing followed companies
+    FollowGroupCreateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          title: Name
+          description: Follow group name
+        follow_values:
+          type: array
+          items:
+            $ref: '#/components/schemas/FollowValue'
+          title: Follow Values
+          description: List of follow values
+          default: []
+      required:
+      - name
+      title: FollowGroupCreateRequest
+      description: Request to create a follow group
+    FollowGroupUpdateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          title: Name
+          description: Follow group name
+      title: FollowGroupUpdateRequest
+      description: Request to update a follow group
+    FollowGroupMemberUpdateRequest:
+      type: object
+      properties:
+        follow_values:
+          type: array
+          items:
+            $ref: '#/components/schemas/FollowValue'
+          title: Follow Values
+          description: List of follow values
+      required:
+      - follow_values
+      title: FollowGroupMemberUpdateRequest
+      description: Request to update follow group members
+    FollowValue:
+      type: object
+      properties:
+        follow_type:
+          type: integer
+          title: Follow Type
+          description: Follow type (1=company, 2=channel)
+        follow_value:
+          type: string
+          title: Follow Value
+          description: Follow value (e.g., US:AAPL, HK:00700)
+      required:
+      - follow_type
+      - follow_value
+      title: FollowValue
+      description: Follow value definition
+    FollowGroupResult:
+      type: object
+      properties:
+        group_id:
+          type: string
+          title: Group Id
+          description: Group ID
+        name:
+          type: string
+          title: Name
+          description: Group name
+        count:
+          type: integer
+          title: Count
+          description: Number of members
+      required:
+      - group_id
+      - name
+      - count
+      title: FollowGroupResult
+      description: Follow group result
+    FollowGroupResultWithValues:
+      type: object
+      properties:
+        group_id:
+          type: string
+          title: Group Id
+          description: Group ID
+        name:
+          type: string
+          title: Name
+          description: Group name
+        count:
+          type: integer
+          title: Count
+          description: Number of members
+        follow_values:
+          type: array
+          items:
+            $ref: '#/components/schemas/FollowValue'
+          title: Follow Values
+          description: List of follow values
+      required:
+      - group_id
+      - name
+      - count
+      - follow_values
+      title: FollowGroupResultWithValues
+      description: Follow group result with follow values
+    FollowGroupsResponse:
+      type: object
+      properties:
+        groups:
+          type: array
+          items:
+            $ref: '#/components/schemas/FollowGroupResult'
+          title: Groups
+          description: List of follow groups
+      required:
+      - groups
+      title: FollowGroupsResponse
+      description: Response containing follow groups
+    FollowGroupReportResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            additionalProperties: true
+            type: object
+          title: Items
+          description: List of reports
+        total_count:
+          type: integer
+          title: Total Count
+          description: Total number of reports
+        page_num:
+          type: integer
+          title: Page Num
+          description: Page number
+        page_size:
+          type: integer
+          title: Page Size
+          description: Page size
+      required:
+      - items
+      - total_count
+      - page_num
+      - page_size
+      title: FollowGroupReportResponse
+      description: Response containing follow group reports
     OAIKBSearchRequest:
       properties:
         query:

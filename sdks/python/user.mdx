@@ -54,3 +54,238 @@ timeline = client.timeline.companies(num=10)
 for item in timeline:
     print(f"- {item['title']}")
 ```
+
+---
+
+## create_follow_group()
+
+创建一个新的关注组。
+
+```python
+# 创建关注组并添加关注项
+result = client.user.create_follow_group(
+    name="我的自选股",
+    follow_values=[
+        {"follow_type": 1, "follow_value": "US:AAPL"},
+        {"follow_type": 1, "follow_value": "HK:00700"}
+    ]
+)
+print(f"创建成功: {result['group_id']}")
+```
+
+**参数：**
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `name` | `str` | 是 | 关注组名称 |
+| `follow_values` | `list[dict]` | 否 | 关注项列表，每项包含 `follow_type` 和 `follow_value` |
+
+**返回值：**
+
+```python
+{
+    "group_id": "group_123",
+    "name": "我的自选股",
+    "count": 2
+}
+```
+
+---
+
+## get_follow_groups()
+
+获取用户的所有关注组列表。
+
+```python
+groups = client.user.get_follow_groups()
+for group in groups:
+    print(f"{group['name']}: {group['count']} 个关注项")
+```
+
+**返回值：**
+
+```python
+[
+    {
+        "group_id": "group_123",
+        "name": "我的自选股",
+        "count": 5
+    },
+    {
+        "group_id": "group_456",
+        "name": "科技股",
+        "count": 3
+    }
+]
+```
+
+---
+
+## get_follow_group()
+
+获取单个关注组的详细信息，包括关注项列表。
+
+```python
+group = client.user.get_follow_group("group_123")
+print(f"{group['name']}: {group['count']} 个关注项")
+
+for fv in group.get('follow_values', []):
+    print(f"  - 类型 {fv['follow_type']}: {fv['follow_value']}")
+```
+
+**参数：**
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `group_id` | `str` | 是 | 关注组 ID |
+
+**返回值：**
+
+```python
+{
+    "group_id": "group_123",
+    "name": "我的自选股",
+    "count": 3,
+    "follow_values": [
+        {"follow_type": 1, "follow_value": "US:AAPL"},
+        {"follow_type": 1, "follow_value": "HK:00700"},
+        {"follow_type": 2, "follow_value": "channel_123"}
+    ]
+}
+```
+
+---
+
+## update_follow_group()
+
+更新关注组的名称。
+
+```python
+result = client.user.update_follow_group("group_123", name="科技精选")
+print(f"更新成功: {result['name']}")
+```
+
+**参数：**
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `group_id` | `str` | 是 | 关注组 ID |
+| `name` | `str` | 否 | 新的组名称 |
+
+---
+
+## delete_follow_group()
+
+删除一个关注组。
+
+```python
+client.user.delete_follow_group("group_123")
+print("删除成功")
+```
+
+**参数：**
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `group_id` | `str` | 是 | 关注组 ID |
+
+---
+
+## add_follows_to_group()
+
+向关注组添加关注项。
+
+```python
+result = client.user.add_follows_to_group(
+    group_id="group_123",
+    follow_values=[
+        {"follow_type": 1, "follow_value": "US:TSLA"}
+    ]
+)
+print("添加成功")
+```
+
+**参数：**
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `group_id` | `str` | 是 | 关注组 ID |
+| `follow_values` | `list[dict]` | 是 | 要添加的关注项列表 |
+
+---
+
+## remove_follows_from_group()
+
+从关注组删除关注项（通过 follow_value）。
+
+```python
+result = client.user.remove_follows_from_group(
+    group_id="group_123",
+    follow_values=["US:AAPL", "HK:00700"]
+)
+print("删除成功")
+```
+
+**参数：**
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `group_id` | `str` | 是 | 关注组 ID |
+| `follow_values` | `list[str]` | 是 | 要删除的关注值列表（如股票代码、频道 ID） |
+
+---
+
+## set_group_follows()
+
+设置关注组的所有关注项（替换所有现有项）。
+
+```python
+result = client.user.set_group_follows(
+    group_id="group_123",
+    follow_values=[
+        {"follow_type": 1, "follow_value": "US:AAPL"},
+        {"follow_type": 1, "follow_value": "HK:00700"}
+    ]
+)
+print("设置成功")
+```
+
+**参数：**
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `group_id` | `str` | 是 | 关注组 ID |
+| `follow_values` | `list[dict]` | 是 | 新的关注项列表 |
+
+---
+
+## get_follow_group_reports()
+
+获取关注组的报告列表。
+
+```python
+result = client.user.get_follow_group_reports("group_123", page_num=1, page_size=20)
+print(f"共 {result['total_count']} 条报告")
+
+for report in result['items']:
+    print(f"- {report.get('title', '未命名')}")
+```
+
+**参数：**
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `group_id` | `str` | 是 | 关注组 ID |
+| `page_num` | `int` | 否 | 页码，默认 1 |
+| `page_size` | `int` | 否 | 每页数量，默认 10 |
+
+**返回值：**
+
+```python
+{
+    "items": [...],
+    "total_count": 50,
+    "page_num": 1,
+    "page_size": 20
+}
+```

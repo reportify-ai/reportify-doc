@@ -300,6 +300,124 @@ const data = await client.quant.ohlcvBatch({
 
 ---
 
+### kline1m()
+
+获取单个股票的 1 分钟 K 线数据。
+
+```typescript
+const data = await client.quant.kline1m({
+  symbol: '000001',
+  startDateTime: '2024-01-01 09:30:00',
+  endDateTime: '2024-01-01 15:00:00',
+  market: 'cn'
+});
+
+data.forEach(d => {
+  console.log(`${d.datetime}: O=${d.open} H=${d.high} L=${d.low} C=${d.close} V=${d.volume}`);
+});
+```
+
+**参数：**
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `symbol` | `string` | 是 | 股票代码 |
+| `startDateTime` | `string` | 是 | 开始时间（YYYY-MM-DD HH:MM:SS） |
+| `endDateTime` | `string` | 是 | 结束时间（YYYY-MM-DD HH:MM:SS） |
+| `market` | `string` | 否 | 市场，默认 cn |
+
+**返回类型：**
+
+```typescript
+interface OHLCVData {
+  symbol: string;
+  datetime: string;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+}
+```
+
+---
+
+### kline1mBatch()
+
+批量获取多个股票的 1 分钟 K 线数据。
+
+```typescript
+const data = await client.quant.kline1mBatch({
+  symbols: ['000001', '600519', '000002'],
+  startDateTime: '2024-01-01 09:30:00',
+  endDateTime: '2024-01-01 15:00:00',
+  market: 'cn'
+});
+```
+
+数据按日期（升序）、股票代码排序。
+
+---
+
+### minute()
+
+获取单个股票的分钟数据。
+
+```typescript
+const data = await client.quant.minute({
+  symbol: '000001',
+  startDateTime: '2024-01-01 09:30:00',
+  endDateTime: '2024-01-01 15:00:00',
+  market: 'cn'
+});
+
+data.forEach(d => {
+  console.log(`${d.datetime}: O=${d.open} H=${d.high} L=${d.low} C=${d.close} V=${d.volume}`);
+});
+```
+
+**参数：**
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `symbol` | `string` | 是 | 股票代码 |
+| `startDateTime` | `string` | 是 | 开始时间（YYYY-MM-DD HH:MM:SS） |
+| `endDateTime` | `string` | 是 | 结束时间（YYYY-MM-DD HH:MM:SS） |
+| `market` | `string` | 否 | 市场，默认 cn |
+
+**返回类型：**
+
+```typescript
+interface OHLCVData {
+  symbol: string;
+  datetime: string;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+}
+```
+
+---
+
+### minuteBatch()
+
+批量获取多个股票的分钟数据。
+
+```typescript
+const data = await client.quant.minuteBatch({
+  symbols: ['000001', '600519', '000002'],
+  startDateTime: '2024-01-01 09:30:00',
+  endDateTime: '2024-01-01 15:00:00',
+  market: 'cn'
+});
+```
+
+数据按日期（升序）、股票代码排序。
+
+---
+
 ## 回测 (Backtest)
 
 ### backtest()
