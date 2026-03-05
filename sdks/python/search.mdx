@@ -376,6 +376,56 @@ pages = client.search.webpages(
 
 ---
 
+## search.crawl()
+
+使用爬虫工具从指定的 URL 列表中提取网页正文、高亮片段或摘要内容。
+
+```python
+response = client.search.crawl(
+    urls=["https://example.com/article"],
+    text={"maxCharacters": 2000, "includeHtmlTags": False},
+    summary={"query": "核心观点"}
+)
+```
+
+<ParamField path="urls" type="list[str]" required>
+  需要爬取的 URL 列表。
+</ParamField>
+
+<ParamField path="text" type="bool | dict" default="True">
+  是否提取网页纯文本。可以为布尔值或字典（支持配置 `maxCharacters` 等）。
+</ParamField>
+
+<ParamField path="highlights" type="dict">
+  提取的高亮片段配置，支持传入查询语句及长度限制，例如 `{"query": "财务数据", "maxCharacters": 500}`。
+</ParamField>
+
+<ParamField path="summary" type="dict">
+  提取的网页摘要配置，支持传入查询语句 `query`。
+</ParamField>
+
+<ParamField path="subpages" type="int">
+  额外爬取的子页面数量，默认为 0。
+</ParamField>
+
+<ParamField path="subpage_target" type="list[str]">
+  子页面筛选关键词，例如 `["about", "pricing"]`。
+</ParamField>
+
+<ParamField path="max_age_hours" type="int">
+  允许的缓存最高小时数。
+</ParamField>
+
+<ParamField path="livecrawl_timeout" type="int">
+  实时抓取超时时间 (ms)。
+</ParamField>
+
+<ResponseField name="返回值" type="dict">
+  包含 `results` 数组和 `statuses` 数组，详情请参阅 API 参考。
+</ResponseField>
+
+---
+
 ## 返回数据结构
 
 ```python

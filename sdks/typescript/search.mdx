@@ -261,6 +261,37 @@ const pages = await client.search.webpages('AI technology', {
 
 ---
 
+## search.crawl()
+
+使用爬虫工具从指定的 URL 列表中提取网页正文、高亮片段或摘要内容。
+
+```typescript
+const response = await client.search.crawl(
+    ["https://example.com/article"],
+    {
+        text: { maxCharacters: 2000, includeHtmlTags: false },
+        summary: { query: "核心观点" }
+    }
+);
+```
+
+**参数：**
+
+| 参数 | 类型 | 必填 | 默认值 | 说明 |
+|------|------|------|--------|------|
+| `urls` | `string[]` | 是 | - | 需要爬取的 URL 列表 |
+| `options.text` | `boolean \| object` | 否 | `true` | 是否提取网页纯文本，可以为布尔值或对象（支持配置 `maxCharacters` 等） |
+| `options.highlights` | `object` | 否 | - | 提取的高亮片段配置，如 `{ query: "财务数据", maxCharacters: 500 }` |
+| `options.summary` | `object` | 否 | - | 提取的网页摘要配置，支持传入 `query` |
+| `options.subpages` | `number` | 否 | `0` | 额外爬取的子页面数量 |
+| `options.subpageTarget` | `string[]` | 否 | - | 子页面筛选关键词，如 `["about", "pricing"]` |
+| `options.maxAgeHours` | `number` | 否 | - | 允许的缓存最高小时数 |
+| `options.livecrawlTimeout` | `number` | 否 | - | 实时抓取超时时间 (ms) |
+
+**返回值：** `Promise<any>` - 包含 `results` 数组和 `statuses` 数组，详情请参阅 API 参考。
+
+---
+
 ## 类型定义
 
 ```typescript
