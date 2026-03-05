@@ -1,0 +1,105 @@
+---
+title: 'Follow Company'
+openapi: 'POST /v1/tools/user/follow-company'
+---
+
+## 关注公司
+
+**URL**: `/v1/tools/user/follow-company`  
+**方法**: `POST`  
+**描述**: 关注一家公司，将其添加到用户的关注列表中。
+
+### 请求参数
+
+| 参数名   | 类型   | 必填 | 描述                                    |
+|----------|--------|------|-----------------------------------------|
+| symbol   | string | 是   | 股票代码，格式为 `市场:代码`（如 `US:AAPL`、`HK:00700`、`SH:600519`、`SZ:000001`） |
+
+### 响应参数
+
+| 参数名              | 类型    | 描述                           |
+|---------------------|---------|--------------------------------|
+| symbol              | string  | 股票代码（如 `US:AAPL`）       |
+| ticker              | string  | 股票简码（如 `AAPL`）          |
+| market              | string  | 市场（如 `US`, `HK`, `CN`）    |
+| name                | string  | 公司名称                       |
+| chinese_name        | string  | 中文名称                       |
+| english_name        | string  | 英文名称                       |
+| logo                | string  | 公司 Logo URL                  |
+| followed_at         | integer | 关注时间戳（毫秒）             |
+
+### 请求示例
+
+**cURL**
+```bash
+curl -X POST "https://api.reportify.cn/v1/tools/user/follow-company" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"symbol": "US:AAPL"}'
+```
+
+**Python**
+```python
+import requests
+
+url = "https://api.reportify.cn/v1/tools/user/follow-company"
+headers = {
+    "Authorization": "Bearer YOUR_API_KEY",
+    "Content-Type": "application/json"
+}
+
+response = requests.post(url, headers=headers, json={"symbol": "US:AAPL"})
+data = response.json()
+
+print(f"已关注: {data['name']} ({data['symbol']})")
+```
+
+**TypeScript**
+```typescript
+const response = await fetch(
+  'https://api.reportify.cn/v1/tools/user/follow-company',
+  {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Bearer YOUR_API_KEY',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ symbol: 'US:AAPL' })
+  }
+);
+
+const data = await response.json();
+console.log(`已关注: ${data.name} (${data.symbol})`);
+```
+
+### 响应示例
+
+```json
+{
+  "symbol": "US:AAPL",
+  "ticker": "AAPL",
+  "market": "US",
+  "name": "Apple Inc.",
+  "chinese_name": "苹果公司",
+  "english_name": "Apple Inc.",
+  "logo": "https://example.com/logos/aapl.png",
+  "followed_at": 1704067200000
+}
+```
+
+### 错误响应
+
+| 状态码 | 描述                     |
+|--------|--------------------------|
+| 400    | symbol 参数缺失或格式错误 |
+| 422    | 请求参数验证失败         |
+
+### 使用场景
+
+1. **添加公司到关注列表**
+   - 用户在浏览公司信息时一键关注
+   - 构建个性化投资组合
+
+2. **与获取关注列表和时间线配合使用**
+   - 关注公司后，通过 `followed_companies` 获取完整列表
+   - 通过时间线接口获取关注公司的最新动态

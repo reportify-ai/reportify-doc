@@ -1,0 +1,59 @@
+---
+title: 'Macro'
+---
+
+## 宏观数据模块
+
+宏观数据模块提供大宗商品价格等宏观经济数据的查询功能。
+
+### 初始化
+
+```python
+from reportify_sdk import Reportify
+
+client = Reportify(api_key="your-api-key")
+```
+
+### 大宗商品价格
+
+获取大宗商品价格数据，支持原油、黄金、天然气、白银、铂金。
+
+```python
+# 获取原油价格
+oil = client.macro.commodities("oil", start_date="2026-02-01", end_date="2026-02-09")
+print(oil[["wti_co_sp", "brent_co_sp"]])
+
+# 获取黄金价格
+gold = client.macro.commodities("gold", start_date="2026-02-01", end_date="2026-02-09")
+print(gold[["lbma_pm_usd", "sge_pm_cny"]])
+
+# 获取天然气价格
+gas = client.macro.commodities("gas", start_date="2026-02-01", end_date="2026-02-09")
+print(gas[["hh_ng_sp"]])
+
+# 获取白银价格
+silver = client.macro.commodities("silver", start_date="2026-02-01", end_date="2026-02-09")
+
+# 获取铂金价格
+platinum = client.macro.commodities("platinum", start_date="2026-02-01", end_date="2026-02-09")
+```
+
+### 参数说明
+
+| 参数名     | 类型   | 必填 | 描述                                                  |
+|------------|--------|------|-------------------------------------------------------|
+| type       | string | 是   | 商品类型：oil, gold, gas, silver, platinum             |
+| start_date | string | 是   | 开始日期（YYYY-MM-DD）                                |
+| end_date   | string | 是   | 结束日期（YYYY-MM-DD），起止间隔不超过 10 年           |
+
+### 返回类型
+
+返回 `pd.DataFrame`，以 `date` 为索引。不同 type 返回的列不同：
+
+| type     | 列                            | 描述                                  |
+|----------|-------------------------------|---------------------------------------|
+| oil      | wti_co_sp, brent_co_sp        | WTI/布伦特原油现货价（美元/桶）        |
+| gold     | lbma_pm_usd, sge_pm_cny       | 伦敦金（美元/盎司）/上海金（人民币）    |
+| gas      | hh_ng_sp                      | 亨利港天然气（美元/百万英热单位）       |
+| silver   | si_eur                        | 伦敦银（美元/盎司）                    |
+| platinum | pl_usd                        | 伦敦铂金（美元/盎司）                  |

@@ -1,0 +1,160 @@
+---
+title: 'Commodities'
+openapi: 'POST /v1/stock/macro-commodities'
+---
+
+## 大宗商品数据
+
+**URL**: `/v1/stock/macro-commodities`
+**方法**: `POST`  
+**描述**: 获取大宗商品价格数据，支持原油、黄金、天然气、白银、铂金。
+
+### 请求参数
+| 参数名      | 类型   | 必填 | 描述                                                                 |
+|-------------|--------|------|----------------------------------------------------------------------|
+| type        | string | 是   | 商品类型：`oil`（原油）、`gold`（黄金）、`gas`（天然气）、`silver`（白银）、`platinum`（铂金）。 |
+| start_date  | string | 是   | 开始日期（YYYY-MM-DD）。                                             |
+| end_date    | string | 是   | 结束日期（YYYY-MM-DD）。起止时间间隔不超过 10 年。                   |
+
+### 响应参数
+
+**通用字段：**
+| 参数名 | 类型   | 描述               |
+|--------|--------|--------------------|
+| status | int    | HTTP 状态码。       |
+| code   | int    | 响应代码（0 成功）。|
+| message| string | 响应消息。          |
+| data   | object | 数据。             |
+| &nbsp;&nbsp;items | array | 价格列表。    |
+| &nbsp;&nbsp;&nbsp;&nbsp;date | string | 日期。 |
+
+**type=oil 返回字段：**
+| 参数名       | 类型   | 描述                                         |
+|--------------|--------|----------------------------------------------|
+| wti_co_sp    | double | WTI 原油现货价格（美元/桶）。                 |
+| brent_co_sp  | double | 布伦特原油现货价格（美元/桶）。               |
+
+**type=gold 返回字段：**
+| 参数名       | 类型   | 描述                                         |
+|--------------|--------|----------------------------------------------|
+| lbma_pm_usd  | double | 伦敦金价格，LBMA 下午定盘价（美元/盎司）。    |
+| sge_pm_cny   | double | 上海金价格（人民币）。                        |
+
+**type=gas 返回字段：**
+| 参数名   | 类型   | 描述                                             |
+|----------|--------|--------------------------------------------------|
+| hh_ng_sp | double | 亨利港天然气现货价格（美元/百万英热单位）。        |
+
+**type=silver 返回字段：**
+| 参数名 | 类型   | 描述                           |
+|--------|--------|--------------------------------|
+| si_eur | double | 伦敦银价格（美元/盎司）。       |
+
+**type=platinum 返回字段：**
+| 参数名 | 类型   | 描述                           |
+|--------|--------|--------------------------------|
+| pl_usd | double | 伦敦铂金价格（美元/盎司）。     |
+
+### 请求示例
+
+**cURL**
+```bash
+curl -X POST https://api.reportify.cn/v1/stock/macro-commodities \
+-H "Authorization: Bearer 447460****09c9" \
+-H "Content-Type: application/json" \
+-d '{
+    "type": "oil",
+    "start_date": "2026-02-01",
+    "end_date": "2026-02-09"
+}'
+```
+
+**Python**
+```python
+import requests
+
+url = "https://api.reportify.cn/v1/stock/macro-commodities"
+headers = {
+    "Authorization": "Bearer 447460****09c9",
+    "Content-Type": "application/json"
+}
+data = {
+    "type": "oil",
+    "start_date": "2026-02-01",
+    "end_date": "2026-02-09"
+}
+
+response = requests.post(url, headers=headers, json=data)
+print(response.json())
+```
+
+**TypeScript**
+```typescript
+const response = await fetch('https://api.reportify.cn/v1/stock/macro-commodities', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer 447460****09c9',
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    type: 'oil',
+    start_date: '2026-02-01',
+    end_date: '2026-02-09',
+  }),
+});
+const data = await response.json();
+console.log(data);
+```
+
+### 响应示例
+
+**type=oil**
+```json
+{
+  "status": 200,
+  "code": 0,
+  "message": "",
+  "data": {
+    "items": [
+      {
+        "date": "2026-02-06T00:00:00+08:00",
+        "wti_co_sp": 63.77,
+        "brent_co_sp": 70.45
+      },
+      {
+        "date": "2026-02-05T00:00:00+08:00",
+        "wti_co_sp": 62.9,
+        "brent_co_sp": 69.87
+      }
+    ]
+  }
+}
+```
+
+**type=gold**
+```json
+{
+  "status": 200,
+  "code": 0,
+  "message": "",
+  "data": {
+    "items": [
+      {
+        "date": "2026-02-06T00:00:00+08:00",
+        "lbma_pm_usd": 4948,
+        "sge_pm_cny": 1085.72
+      },
+      {
+        "date": "2026-02-05T00:00:00+08:00",
+        "lbma_pm_usd": 4847.25,
+        "sge_pm_cny": 1102.14
+      }
+    ]
+  }
+}
+```
+
+### 错误响应
+| 状态码 | 描述                     |
+|--------|--------------------------|
+| 422    | 请求参数验证失败。       |
