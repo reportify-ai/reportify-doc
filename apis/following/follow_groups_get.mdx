@@ -1,0 +1,30 @@
+---
+title: 'Get Follow Group'
+openapi: 'GET /v1/following/groups/{group_id}'
+---
+
+## 获取关注组详情
+
+**URL**: `/v1/following/groups/{group_id}`  
+**方法**: `GET`  
+**描述**: 根据获取关注组的详细信息
+
+### 请求参数
+| 参数名         | 类型   | 描述       |
+|----------------|--------|-----------|
+| group_id       | str    | 关注组 ID   |
+
+### 响应参数
+| 参数名            | 类型    | 描述                 |
+|----------------|-------|----------------------|
+| group_id       | str   | 关注组 ID             |
+| name           | str   | 组名称                 |
+| count          | int   | 关注项数量               |
+| follow_values  | list  | 关注项列表             |
+
+每个关注项包含：
+
+| 参数名            | 类型    | 描述                 |
+|----------------|-------|----------------------|
+| follow_type    | int   | 关注类型：1=公司，3=频道 |
+| follow_value   | str   | 关注值               |

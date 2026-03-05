@@ -1,0 +1,20 @@
+---
+title: 'Delete Follow Group'
+openapi: 'DELETE /v1/following/groups/{group_id}'
+---
+
+## 删除关注组
+
+**URL**: `/v1/following/groups/{group_id}`  
+**方法**: `DELETE`  
+**描述**: 删除一个关注组
+
+### 请求参数
+| 参数名         | 类型   | 描述       |
+|----------------|--------|-----------|
+| group_id       | str    | 关注组 ID   |
+
+### 响应参数
+| 参数名            | 类型    | 描述                 |
+|----------------|-------|----------------------|
+| message        | str   | 操作结果消息             |
