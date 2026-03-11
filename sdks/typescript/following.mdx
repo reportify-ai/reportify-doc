@@ -1,0 +1,239 @@
+---
+title: '关注组'
+description: 'TypeScript SDK Following 模块 - 关注组管理'
+icon: 'users'
+---
+
+## 概述
+
+Following 模块提供关注组的管理功能，包括创建、查询、更新和删除关注组，以及管理组内的关注项。
+
+## createFollowGroup()
+
+创建一个新的关注组。
+
+```typescript
+const result = await client.following.createFollowGroup(
+  'My Stocks',
+  [
+    { follow_type: 1, follow_value: 'US:AAPL' },
+    { follow_type: 1, follow_value: 'HK:00700' }
+  ]
+);
+console.log(`Created group: ${result.group_id}`);
+```
+
+<ResponseField name="name" type="string">
+  组名称
+</ResponseField>
+
+<ResponseField name="followValues" type="Array<{ follow_type: number; follow_value: string }>">
+  关注项列表，每个元素包含 `follow_type`（number）和 `follow_value`（string）
+</ResponseField>
+
+<ResponseField name="返回值" type="Promise<{ group_id: string; name: string; count: number }>">
+  包含 group_id, name, count 的对象
+</ResponseField>
+
+**API 路径**：`POST /v1/following/groups`
+
+---
+
+## getFollowGroups()
+
+获取当前用户的所有关注组。
+
+```typescript
+const groups = await client.following.getFollowGroups();
+groups.forEach(group => {
+  console.log(`${group.name}: ${group.count} items`);
+});
+```
+
+<ResponseField name="返回值" type="Promise<Array<{ group_id: string; name: string; count: number }>>">
+  关注组列表，每个元素包含 group_id, name, count
+</ResponseField>
+
+**API 路径**：`GET /v1/following/groups`
+
+---
+
+## getFollowGroup()
+
+根据 ID 获取一个关注组的详细信息。
+
+```typescript
+const group = await client.following.getFollowGroup('group_123');
+console.log(`${group.name}: ${group.count} items`);
+group.follow_values.forEach(fv => {
+  console.log(`  - Type ${fv.follow_type}: ${fv.follow_value}`);
+});
+```
+
+<ResponseField name="groupId" type="string">
+  关注组 ID
+</ResponseField>
+
+<ResponseField name="返回值" type="Promise<{ group_id: string; name: string; count: number; follow_values: Array<{ follow_type: number; follow_value: string }> }>">
+  包含 group_id, name, count, follow_values 的对象
+</ResponseField>
+
+**API 路径**：`GET /v1/following/groups/{group_id}`
+
+---
+
+## updateFollowGroup()
+
+更新一个关注组的名称。
+
+```typescript
+const result = await client.following.updateFollowGroup('group_123', 'New Name');
+console.log(`Updated: ${result.name}`);
+```
+
+<ResponseField name="groupId" type="string">
+  关注组 ID
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  新的组名称
+</ResponseField>
+
+<ResponseField name="返回值" type="Promise<{ group_id: string; name: string; count: number }>">
+  包含 group_id, name, count 的对象
+</ResponseField>
+
+**API 路径**：`POST /v1/following/groups/{group_id}`
+
+---
+
+## deleteFollowGroup()
+
+删除一个关注组。
+
+```typescript
+await client.following.deleteFollowGroup('group_123');
+console.log('Deleted');
+```
+
+<ResponseField name="groupId" type="string">
+  关注组 ID
+</ResponseField>
+
+<ResponseField name="返回值" type="Promise<void>">
+  无返回值
+</ResponseField>
+
+**API 路径**：`DELETE /v1/following/groups/{group_id}`
+
+---
+
+## addFollowsToGroup()
+
+向关注组添加关注项。
+
+```typescript
+await client.following.addFollowsToGroup('group_123', [
+  { follow_type: 1, follow_value: 'US:TSLA' }
+]);
+console.log('Added');
+```
+
+<ResponseField name="groupId" type="string">
+  关注组 ID
+</ResponseField>
+
+<ResponseField name="followValues" type="Array<{ follow_type: number; follow_value: string }>">
+  要添加的关注项列表
+</ResponseField>
+
+<ResponseField name="返回值" type="Promise<void>">
+  无返回值
+</ResponseField>
+
+**API 路径**：`POST /v1/following/groups/{group_id}/follows`
+
+---
+
+## removeFollowsFromGroup()
+
+从关注组中移除关注项。
+
+```typescript
+await client.following.removeFollowsFromGroup('group_123', ['AAPL', 'MSFT']);
+console.log('Removed');
+```
+
+<ResponseField name="groupId" type="string">
+  关注组 ID
+</ResponseField>
+
+<ResponseField name="followValues" type="string[]">
+  要删除的关注值列表（如股票代码、频道 ID）
+</ResponseField>
+
+<ResponseField name="返回值" type="Promise<void>">
+  无返回值
+</ResponseField>
+
+**API 路径**：`DELETE /v1/following/groups/{group_id}/follows`
+
+---
+
+## setGroupFollows()
+
+设置关注组的关注项（替换所有现有关注项）。
+
+```typescript
+await client.following.setGroupFollows('group_123', [
+  { follow_type: 1, follow_value: 'US:AAPL' },
+  { follow_type: 1, follow_value: 'HK:00700' }
+]);
+console.log('Set');
+```
+
+<ResponseField name="groupId" type="string">
+  关注组 ID
+</ResponseField>
+
+<ResponseField name="followValues" type="Array<{ follow_type: number; follow_value: string }>">
+  新的关注项列表
+</ResponseField>
+
+<ResponseField name="返回值" type="Promise<void>">
+  无返回值
+</ResponseField>
+
+**API 路径**：`PUT /v1/following/groups/{group_id}/follows`
+
+---
+
+## getFollowGroupDocs()
+
+获取关注组的文档列表。
+
+```typescript
+const result = await client.following.getFollowGroupDocs('group_123', 1, 20);
+console.log(`Total: ${result.total_count}`);
+result.items.forEach(doc => {
+  console.log(`  - ${doc.title || 'Untitled'}`);
+});
+```
+
+<ResponseField name="groupId" type="string">
+  关注组 ID
+</ResponseField>
+
+<ResponseField name="pageNum" type="number">
+  页码，默认值为 `1`
+</ResponseField>
+
+<ResponseField name="pageSize" type="number">
+  每页条目数，默认值为 `10`
+</ResponseField>
+
+<ResponseField name="返回值" type="Promise<{ items: any[]; total_count: number; page_num: number; page_size: number }>">
+  包含 items, total_count, page_num, page_size 的对象
+</ResponseField>
+
+**API 路径**：`GET /v1/following/groups/{group_id}/docs`

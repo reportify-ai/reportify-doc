@@ -109,6 +109,21 @@
               "apis/channels/channels_follow",
               "apis/channels/channels_unfollow"
             ]
+          },
+          {
+            "group": "关注组",
+            "icon": "users",
+            "pages": [
+              "apis/following/follow_groups_create",
+              "apis/following/follow_groups_list",
+              "apis/following/follow_groups_get",
+              "apis/following/follow_groups_update",
+              "apis/following/follow_groups_delete",
+              "apis/following/follow_groups_add_follows",
+              "apis/following/follow_groups_remove_follows",
+              "apis/following/follow_groups_set_follows",
+              "apis/following/follow_groups_docs"
+            ]
           }
         ]
       },
@@ -153,13 +168,6 @@
             ]
           },
           {
-            "group": "选股器",
-            "icon": "filter",
-            "pages": [
-              "apis/stock/screener"
-            ]
-          },
-          {
             "group": "日历数据",
             "icon": "calendar",
             "pages": [
@@ -184,6 +192,10 @@
               "apis/quant/factors_screen",
               "apis/quant/quotes_ohlcv",
               "apis/quant/quotes_ohlcv_batch",
+              "apis/quant/quotes_1mkline",
+              "apis/quant/quotes_1mkline_batch",
+              "apis/quant/quotes_minute",
+              "apis/quant/quotes_minute_batch",
               "apis/quant/backtest"
             ]
           }
@@ -225,6 +237,8 @@
               "sdks/python/search",
               "sdks/python/docs",
               "sdks/python/kb",
+              "sdks/python/channels",
+              "sdks/python/following",
               "sdks/python/user",
               "sdks/python/timeline",
               "sdks/python/stock",
@@ -240,6 +254,8 @@
               "sdks/typescript/search",
               "sdks/typescript/docs",
               "sdks/typescript/kb",
+              "sdks/typescript/channels",
+              "sdks/typescript/following",
               "sdks/typescript/user",
               "sdks/typescript/timeline",
               "sdks/typescript/stock",

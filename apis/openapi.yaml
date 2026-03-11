@@ -36,10 +36,10 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
       - BearerAuth: []
-  /v1/tools/user/follow-groups:
+  /v1/following/groups:
     post:
       tags:
-      - openapi-tools-user
+      - openapi-following-group
       summary: Create Follow Group
       description: Create a new follow group
       operationId: create_follow_group
@@ -66,7 +66,7 @@ paths:
       - BearerAuth: []
     get:
       tags:
-      - openapi-tools-user
+      - openapi-following-group
       summary: Get Follow Groups
       description: Get all follow groups for authenticated user
       operationId: get_follow_groups
@@ -85,10 +85,10 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
       - BearerAuth: []
-  /v1/tools/user/follow-groups/{group_id}:
+  /v1/following/groups/{group_id}:
     get:
       tags:
-      - openapi-tools-user
+      - openapi-following-group
       summary: Get Follow Group by ID
       description: Get a follow group by ID
       operationId: get_follow_group
@@ -176,10 +176,10 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
       - BearerAuth: []
-  /v1/tools/user/follow-groups/{group_id}/follows:
+  /v1/following/groups/{group_id}/follows:
     post:
       tags:
-      - openapi-tools-user
+      - openapi-following-group
       summary: Add Follows to Group
       description: Add follows to a group
       operationId: add_follows_to_group
@@ -213,7 +213,7 @@ paths:
       - BearerAuth: []
     delete:
       tags:
-      - openapi-tools-user
+      - openapi-following-group
       summary: Remove Follows from Group
       description: Remove follows from a group
       operationId: remove_follows_from_group
@@ -249,7 +249,7 @@ paths:
       - BearerAuth: []
     put:
       tags:
-      - openapi-tools-user
+      - openapi-following-group
       summary: Set Follows for Group
       description: Set follows for a group (replace all)
       operationId: set_follows_for_group
@@ -281,13 +281,13 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
       - BearerAuth: []
-  /v1/tools/user/follow-groups/{group_id}/reports:
+  /v1/following/groups/{group_id}/docs:
     get:
       tags:
-      - openapi-tools-user
-      summary: Get Follow Group Reports
-      description: Get reports for a follow group
-      operationId: get_follow_group_reports
+      - openapi-following-group
+      summary: Get Follow Group Docs
+      description: Get Docs for a follow group
+      operationId: get_follow_group_docs
       parameters:
       - name: group_id
         in: path
