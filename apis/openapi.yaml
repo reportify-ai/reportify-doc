@@ -4918,7 +4918,7 @@ components:
         agent_id:
           type: integer
           title: Agent Id
-          description: 智能体 ID
+          description: 智能体 ID（可选，不传则使用系统默认智能体）
           example: 11887655289749510
         title:
           type: string
@@ -4926,8 +4926,6 @@ components:
           description: 对话标题
           example: "nvidia 最新业绩分析"
       type: object
-      required:
-      - agent_id
       title: OAIAgentConversationCreateRequest
       description: 创建 agent 对话请求
       example:
