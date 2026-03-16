@@ -27,6 +27,7 @@ mode: 'show'
 | type         | string  | 对话类型       |
 | title        | string  | 对话标题       |
 | status       | string  | 对话状态       |
+| url          | string  | 对话页面链接   |
 | created_at   | integer | 创建时间戳（毫秒） |
 | updated_at   | integer | 更新时间戳（毫秒） |
 
@@ -72,6 +73,7 @@ print(response.json())
   "type": "agent_chat",
   "title": "nvidia 最新业绩分析",
   "status": "active",
+  "url": "https://reportify.cn/agents/11887655289749510/chat/123456789",
   "created_at": 1765851195760,
   "updated_at": 1765851195768
 }
