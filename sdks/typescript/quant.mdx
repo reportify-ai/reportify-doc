@@ -145,6 +145,19 @@ factors.forEach(f => {
 
 ---
 
+**市场状态函数：**
+
+| 函数 | 说明 |
+|------|------|
+| `IS_LIMIT_UP()` | 是否一字涨停（一字板封涨停） |
+| `IS_LIMIT_DOWN()` | 是否一字跌停（一字板封跌停） |
+| `IS_ST()` | 是否为 ST 股票 |
+| `IS_CHAIN_MAIN()` | 是否为中国主板股票（60/000开头） |
+| `IS_CHAIN_STAR()` | 是否为科创板股票（68开头） |
+| `IS_CHAIN_CHINEXT()` | 是否为创业板股票（30开头） |
+
+---
+
 ### factorsCompute()
 
 计算因子值，使用 Mai-language 语法。
