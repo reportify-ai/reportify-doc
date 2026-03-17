@@ -1,0 +1,135 @@
+---
+title: '账号关注'
+description: 'Python SDK Channels 模块 - 账号关注'
+icon: 'user-plus'
+---
+
+## 概述
+
+Channels 模块提供账号功能，包括搜索账号、关注/取消关注账号。
+
+## search()
+
+根据条件搜索账号。
+
+```python
+result = client.channels.search(query="Goldman Sachs")
+for channel in result.get('channels', []):
+    print(f"{channel['name']}: {channel['description']}")
+```
+
+<ResponseField name="query" type="str">
+  搜索账号名关键词或者账号链接（现在支持公众号文章链接）
+</ResponseField>
+
+<ResponseField name="page_num" type="int">
+  当前页码，默认值为 `1`
+</ResponseField>
+
+<ResponseField name="page_size" type="int">
+  每页条目数，默认值为 `10`
+</ResponseField>
+
+<ResponseField name="返回值" type="dict">
+  包含 `page_num`, `page_size`, `total_page`, `total_count`, `channels` 的字典
+</ResponseField>
+
+**API 路径**：`POST /v1/channels/search`
+
+---
+
+## followings()
+
+获取当前用户关注的账号列表。
+
+```python
+result = client.channels.followings()
+for channel in result.get('channels', []):
+    print(f"{channel['name']} - {channel['id']}")
+```
+
+<ResponseField name="page_num" type="int">
+  当前页码，默认值为 `1`
+</ResponseField>
+
+<ResponseField name="page_size" type="int">
+  每页条目数，默认值为 `10`
+</ResponseField>
+
+<ResponseField name="返回值" type="dict">
+  包含 `page_num`, `page_size`, `total_page`, `total_count`, `channels` 的字典
+</ResponseField>
+
+**API 路径**：`GET /v1/channels/followings`
+
+---
+
+## follow()
+
+关注一个账号。
+
+```python
+result = client.channels.follow(channel_id="channel_123")
+print(f"关注成功: {result}")
+```
+
+<ResponseField name="channel_id" type="str">
+  账号 ID
+</ResponseField>
+
+<ResponseField name="返回值" type="dict">
+  操作结果
+</ResponseField>
+
+**API 路径**：`POST /v1/channels/follow`
+
+---
+
+## unfollow()
+
+取消关注一个账号。
+
+```python
+result = client.channels.unfollow(channel_id="channel_123")
+print(f"取消关注成功: {result}")
+```
+
+<ResponseField name="channel_id" type="str">
+  账号 ID
+</ResponseField>
+
+<ResponseField name="返回值" type="dict">
+  操作结果
+</ResponseField>
+
+**API 路径**：`POST /v1/channels/unfollow`
+
+---
+
+## get_docs()
+
+获取关注账号的文档列表。
+
+```python
+result = client.channels.get_docs(channel_ids="channel_1,channel_2")
+for doc in result.get('docs', []):
+    print(f"{doc['title']}: {doc['url']}")
+```
+
+<ResponseField name="channel_ids" type="str">
+  账号 ID 列表，用逗号分隔
+</ResponseField>
+
+<ResponseField name="page_num" type="int">
+  当前页码，默认值为 `1`
+</ResponseField>
+
+<ResponseField name="page_size" type="int">
+  每页条目数，默认值为 `10`
+</ResponseField>
+
+<ResponseField name="返回值" type="dict">
+  包含 `page_num`, `page_size`, `total_page`, `total_count`, `docs` 的字典
+</ResponseField>
+
+**API 路径**：`GET /v1/channels/docs`

@@ -1,0 +1,226 @@
+---
+title: '账号关注'
+description: 'Python SDK Channels 模块 - 账号关注'
+icon: 'user-plus'
+---
+
+## 概述
+
+Channels 模块提供账号功能，包括搜索账号、关注/取消关注账号。
+
+## search()
+
+根据条件搜索账号。
+
+```typescript
+const result = await client.channels.search({ query: 'Goldman Sachs' });
+result.channels?.forEach(channel => {
+  console.log(`${channel.name}: ${channel.description}`);
+});
+```
+
+<ResponseField name="query" type="string">
+  搜索账号名关键词或者账号链接（现在支持公众号文章链接）
+</ResponseField>
+
+<ResponseField name="pageNum" type="number">
+  当前页码，默认值为 `1`
+</ResponseField>
+
+<ResponseField name="pageSize" type="number">
+  每页条目数，默认值为 `10`
+</ResponseField>
+
+<ResponseField name="返回值" type="Promise<SearchResponse>">
+  包含 `page_num`, `page_size`, `total_page`, `total_count`, `channels` 的对象
+</ResponseField>
+
+**API 路径**：`POST /v1/channels/search`
+
+---
+
+## followings()
+
+获取当前用户关注的账号列表。
+
+```typescript
+const result = await client.channels.followings();
+result.channels?.forEach(channel => {
+  console.log(`${channel.name} - ${channel.id}`);
+});
+```
+
+<ResponseField name="pageNum" type="number">
+  当前页码，默认值为 `1`
+</ResponseField>
+
+<ResponseField name="pageSize" type="number">
+  每页条目数，默认值为 `10`
+</ResponseField>
+
+<ResponseField name="返回值" type="Promise<FollowingsResponse>">
+  包含 `page_num`, `page_size`, `total_page`, `total_count`, `channels` 的对象
+</ResponseField>
+
+**API 路径**：`GET /v1/channels/followings`
+
+---
+
+## follow()
+
+关注一个账号。
+
+```typescript
+const result = await client.channels.follow('channel_123');
+console.log(`关注成功: ${result}`);
+```
+
+<ResponseField name="channelId" type="string">
+  账号 ID
+</ResponseField>
+
+<ResponseField name="返回值" type="Promise<StatusResponse>">
+  操作结果
+</ResponseField>
+
+**API 路径**：`POST /v1/channels/follow`
+
+---
+
+## unfollow()
+
+取消关注一个账号。
+
+```typescript
+const result = await client.channels.unfollow('channel_123');
+console.log(`取消关注成功: ${result}`);
+```
+
+<ResponseField name="channelId" type="string">
+  账号 ID
+</ResponseField>
+
+<ResponseField name="返回值" type="Promise<StatusResponse>">
+  操作结果
+</ResponseField>
+
+**API 路径**：`POST /v1/channels/unfollow`
+
+---
+
+## getDocs()
+
+获取关注账号的文档列表。
+
+```typescript
+const result = await client.channels.getDocs({ channelIds: 'channel_1,channel_2' });
+result.docs?.forEach(doc => {
+  console.log(`${doc.title}: ${doc.url}`);
+});
+```
+
+<ResponseField name="channelIds" type="string">
+  账号 ID 列表，用逗号分隔
+</ResponseField>
+
+<ResponseField name="pageNum" type="number">
+  当前页码，默认值为 `1`
+</ResponseField>
+
+<ResponseField name="pageSize" type="number">
+  每页条目数，默认值为 `10`
+</ResponseField>
+
+<ResponseField name="返回值" type="Promise<DocsResponse>">
+  包含 `page_num`, `page_size`, `total_page`, `total_count`, `docs` 的对象
+</ResponseField>
+
+**API 路径**：`GET /v1/channels/docs`
+
+---
+
+## createFollowGroup()
+
+创建一个新的关注组。
+
+```typescript
+const result = await client.channels.createFollowGroup('My Stocks', [
+  { follow_type: 1, follow_value: 'US:AAPL' },
+  { follow_type: 1, follow_value: 'HK:00700' }
+]);
+console.log(`创建成功: ${result.group_id}`);
+```
+
+<ResponseField name="name" type="string">
+  组名称
+</ResponseField>
+
+<ResponseField name="followValues" type="Array<{ follow_type: number; follow_value: string }>">
+  关注项列表，每个元素包含 `follow_type` 和 `follow_value`
+</ResponseField>
+
+<ResponseField name="返回值" type="Promise<{ group_id: string; name: string; count: number }>" />
+
+**API 路径**：`POST /v1/channels/follow-groups`
+
+---
+
+## getFollowGroups()
+
+获取当前用户的所有关注组。
+
+```typescript
+const groups = await client.channels.getFollowGroups();
+groups.forEach(group => {
+  console.log(`${group.name}: ${group.count} items`);
+});
+```
+
+<ResponseField name="返回值" type="Promise<Array<{ group_id: string; name: string; count: number }>>" />
+
+**API 路径**：`GET /v1/channels/follow-groups`
+
+---
+
+## getFollowGroup()
+
+根据 ID 获取一个关注组的详细信息。
+
+```typescript
+const group = await client.channels.getFollowGroup('group_123');
+console.log(`${group.name}: ${group.count} items`);
+group.follow_values.forEach(fv => {
+  console.log(`  - Type ${fv.follow_type}: ${fv.follow_value}`);
+});
+```
+
+<ResponseField name="groupId" type="string">
+  关注组 ID
+</ResponseField>
+
+<ResponseField name="返回值" type="Promise<{ group_id: string; name: string; count: number; follow_values: Array<{ follow_type: number; follow_value: string }> }>" />
+
+**API 路径**：`GET /v1/channels/follow-groups/{groupId}`
+
+---
+
+## updateFollowGroup()
+
+更新一个关注组的名称。
+
+```typescript
+const result = await client.channels.updateFollowGroup('group_123', 'New Name');
+console.log(`更新成功: ${result.name}`);
+```
+
+<ResponseField name="groupId" type="string">
+  关注组 ID
+</ResponseField>
+
+<ResponseField name="name" type="string">
+  新的组名称
+</ResponseField>
+
+<ResponseField name="返回值" type="Promise<{ group_id: string; name: string; count: number }>" />
+
+**API 路径**：`POST /v1/channels/follow-groups/{groupId}`
