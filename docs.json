@@ -63,7 +63,8 @@
                   "apis/search/filings",
                   "apis/search/news",
                   "apis/search/socials",
-                  "apis/search/webpages"
+                  "apis/search/webpages",
+                  "apis/search/crawl"
                 ]
               }
             ]
@@ -98,11 +99,13 @@
             "icon": "user-plus",
             "pages": [
               "apis/tools/user/followed_companies",
+              "apis/tools/user/follow_company",
+              "apis/tools/user/unfollow_company",
               "apis/tools/timeline/companies",
               "apis/tools/timeline/topics",
               "apis/tools/timeline/institutes",
               "apis/tools/timeline/public_media",
-              "apis/tools/timeline/social_media",              
+              "apis/tools/timeline/social_media",
               "apis/channels/channels_search",
               "apis/channels/channels_followings",
               "apis/channels/channels_followings_docs",
@@ -174,6 +177,13 @@
               "apis/stock/ipo_calendar_hk",
               "apis/stock/earnings_calendar"
             ]
+          },
+          {
+            "group": "宏观数据",
+            "icon": "chart-line",
+            "pages": [
+              "apis/stock/commodities"
+            ]
           }
         ]
       },
@@ -243,7 +253,8 @@
               "sdks/python/timeline",
               "sdks/python/stock",
               "sdks/python/concepts",
-              "sdks/python/quant"
+              "sdks/python/quant",
+              "sdks/python/macro"
             ]
           },
           {
@@ -260,7 +271,8 @@
               "sdks/typescript/timeline",
               "sdks/typescript/stock",
               "sdks/typescript/concepts",
-              "sdks/typescript/quant"
+              "sdks/typescript/quant",
+              "sdks/typescript/macro"
             ]
           }
         ]
