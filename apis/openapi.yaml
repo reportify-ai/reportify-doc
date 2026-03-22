@@ -2688,7 +2688,7 @@ paths:
       security:
       - BearerAuth: []
   /v1/quant/quotes/1mkline:
-    post:
+    get:
       tags:
       - openapi-quant
       summary: Get 1-minute kline data
@@ -2700,19 +2700,47 @@ paths:
         - **end_datetime**: End datetime (required, format: YYYY-MM-DD HH:MM:SS)
         - **market**: Stock market (cn, hk, us), default: cn
       operationId: quote_1mkline
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/MinuteKlineInput'
+      parameters:
+      - name: symbol
+        in: query
         required: true
+        schema:
+          type: string
+          title: Symbol
+        description: Stock code
+      - name: start_datetime
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Start Datetime
+        description: Start datetime
+      - name: end_datetime
+        in: query
+        required: true
+        schema:
+          type: string
+          title: End Datetime
+        description: End datetime
+      - name: market
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - cn
+          - hk
+          - us
+          default: cn
+          title: Market
+        description: Stock market
       responses:
         '200':
           description: Successful Response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MinuteKlineOutput'
+                $ref: '#/components/schemas/KlineOutput'
         '422':
           description: Validation Error
           content:
@@ -2740,7 +2768,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BatchMinuteKlineInput'
+              $ref: '#/components/schemas/Batch1mklineInput'
         required: true
       responses:
         '200':
@@ -2748,7 +2776,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BatchMinuteKlineOutput'
+                $ref: '#/components/schemas/KlineOutput'
         '422':
           description: Validation Error
           content:
@@ -2758,7 +2786,7 @@ paths:
       security:
       - BearerAuth: []
   /v1/quant/quotes/minute:
-    post:
+    get:
       tags:
       - openapi-quant
       summary: Get minute data
@@ -2770,12 +2798,40 @@ paths:
         - **end_datetime**: End datetime (required, format: YYYY-MM-DD HH:MM:SS)
         - **market**: Stock market (cn, hk, us), default: cn
       operationId: quote_minute
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/MinuteInput'
+      parameters:
+      - name: symbol
+        in: query
         required: true
+        schema:
+          type: string
+          title: Symbol
+        description: Stock code
+      - name: start_datetime
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Start Datetime
+        description: Start datetime
+      - name: end_datetime
+        in: query
+        required: true
+        schema:
+          type: string
+          title: End Datetime
+        description: End datetime
+      - name: market
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - cn
+          - hk
+          - us
+          default: cn
+          title: Market
+        description: Stock market
       responses:
         '200':
           description: Successful Response
@@ -2810,7 +2866,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BatchMinuteInput'
+              $ref: '#/components/schemas/BatchIntradayInput'
         required: true
       responses:
         '200':
@@ -2818,7 +2874,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BatchMinuteOutput'
+                $ref: '#/components/schemas/MinuteOutput'
         '422':
           description: Validation Error
           content:
@@ -2843,15 +2899,19 @@ paths:
         - `start_date`: Backtest start date (required)
         - `end_date`: Backtest end date (required)
         - `market`: Stock market (cn, hk, us), default: cn
-        - `symbol`: Stock code (required)
-        - `entry_formula`: Buy/entry formula, triggers buy when result > 0 (required)
+        - `symbols`: List of stock codes (optional if filter_formula is provided)
+        - `filter_formula`: Pre-filter formula, e.g., 'NOT(IS_ST)'
+        - `entry_formula`: Buy/entry formula, triggers buy when result > 0 (required if strategy_code is not provided)
         - `exit_formula`: Sell/exit formula, triggers sell when result > 0 (optional)
+        - `strategy_code`: Custom backtest strategy Python code (optional)
         - `initial_cash`: Initial capital, default: 100000.0
         - `commission`: Commission rate, default: 0.0
         - `stop_loss`: Stop loss percentage, default: 0.0 (disabled)
-        - `sizer_percent`: Position size percentage, default: 99%
+        - `position_size`: Max position size ratio per stock, default: 0.2
+        - `max_positions`: Max number of holding stocks, default: 5
+        - `min_volume`: Minimum trading volume, default: 100
         - `auto_close`: Auto close position at end, default: true
-        - `labels`: Label dictionary for returning additional indicator values in daily data
+        - `indicator`: Indicator dictionary for custom strategy pre-computation or returning values
 
         **Formula Examples:**
         - `CROSS(MA(CLOSE, 5), MA(CLOSE, 20))` - Golden cross signal
@@ -2864,7 +2924,7 @@ paths:
         Returns backtest results including:
         - Performance metrics (return, drawdown, win rate, etc.)
         - Trade list with entry/exit details
-        - Daily data with OHLC and label values
+        - Daily portfolio values
       operationId: quant_backtest
       requestBody:
         content:
@@ -2890,6 +2950,129 @@ paths:
 
 components:
   schemas:
+    Batch1mklineInput:
+      type: object
+      required:
+      - symbols
+      - start_datetime
+      - end_datetime
+      properties:
+        market:
+          $ref: '#/components/schemas/StockMarket'
+          description: Stock market
+          default: cn
+        symbols:
+          type: array
+          title: Symbols
+          description: List of stock codes
+          minItems: 1
+          items:
+            type: string
+        start_datetime:
+          type: string
+          title: Start Datetime
+          description: Start datetime format YYYY-MM-DD HH:MM:SS
+        end_datetime:
+          type: string
+          title: End Datetime
+          description: End datetime format YYYY-MM-DD HH:MM:SS
+      title: Batch1mklineInput
+      description: Batch 1-minute kline request input.
+    BatchIntradayInput:
+      type: object
+      required:
+      - symbols
+      - start_datetime
+      - end_datetime
+      properties:
+        market:
+          $ref: '#/components/schemas/StockMarket'
+          description: Stock market
+          default: cn
+        symbols:
+          type: array
+          title: Symbols
+          description: List of stock codes
+          minItems: 1
+          items:
+            type: string
+        start_datetime:
+          type: string
+          title: Start Datetime
+          description: Start datetime format YYYY-MM-DD HH:MM:SS
+        end_datetime:
+          type: string
+          title: End Datetime
+          description: End datetime format YYYY-MM-DD HH:MM:SS
+      title: BatchIntradayInput
+      description: Batch intraday request input.
+    KlineOutput:
+      type: object
+      required:
+      - datas
+      - metadata
+      properties:
+        datas:
+          type: array
+          title: Datas
+          description: Kline data list
+          items:
+            type: object
+            additionalProperties: true
+            description: |
+              Items contain:
+              - market (string)
+              - date (string, YYYY-MM-DD HH:MM:SS)
+              - symbol (string)
+              - open (number)
+              - high (number)
+              - low (number)
+              - close (number)
+              - volume (integer)
+              - amount (number)
+              - chg_percent (number)
+              - chg (number)
+              - turnover_rate (number)
+        metadata:
+          type: object
+          title: Metadata
+          description: Query metadata
+          additionalProperties: true
+      title: KlineOutput
+      description: Kline data response.
+    MinuteOutput:
+      type: object
+      required:
+      - datas
+      - metadata
+      properties:
+        datas:
+          type: array
+          title: Datas
+          description: Minute data list
+          items:
+            type: object
+            additionalProperties: true
+            description: |
+              Items contain:
+              - market (string)
+              - date (string, YYYY-MM-DD HH:MM:SS)
+              - symbol (string)
+              - current (number)
+              - high (number)
+              - low (number)
+              - avg (number)
+              - volume (integer)
+              - amount (number)
+              - chg_percent (number)
+              - chg (number)
+        metadata:
+          type: object
+          title: Metadata
+          description: Query metadata
+          additionalProperties: true
+      title: MinuteOutput
+      description: Minute data response.
     Body_create_token_reportify_api_v1_oauth_token_post:
       properties:
         grant_type:
@@ -5883,192 +6066,6 @@ components:
           additionalProperties: true
       title: BatchOHLCVOutput
       description: Batch OHLCV data response.
-    MinuteKlineInput:
-      type: object
-      required:
-      - symbol
-      - start_datetime
-      - end_datetime
-      properties:
-        symbol:
-          type: string
-          title: Symbol
-          description: Stock code (required)
-        start_datetime:
-          type: string
-          title: Start Datetime
-          description: Start datetime (YYYY-MM-DD HH:MM:SS) (required)
-        end_datetime:
-          type: string
-          title: End Datetime
-          description: End datetime (YYYY-MM-DD HH:MM:SS) (required)
-        market:
-          $ref: '#/components/schemas/StockMarket'
-          description: Stock market
-          default: cn
-      title: MinuteKlineInput
-      description: Input for 1-minute kline data request.
-    MinuteKlineOutput:
-      type: object
-      required:
-      - datas
-      - metadata
-      properties:
-        datas:
-          type: array
-          title: Datas
-          description: 1-minute kline data list
-          items:
-            type: object
-            additionalProperties: true
-        metadata:
-          type: object
-          title: Metadata
-          description: Query metadata
-          additionalProperties: true
-      title: MinuteKlineOutput
-      description: 1-minute kline data response.
-    BatchMinuteKlineInput:
-      type: object
-      required:
-      - symbols
-      - start_datetime
-      - end_datetime
-      properties:
-        symbols:
-          type: array
-          title: Symbols
-          description: List of stock codes (required)
-          minItems: 1
-          items:
-            type: string
-        start_datetime:
-          type: string
-          title: Start Datetime
-          description: Start datetime (YYYY-MM-DD HH:MM:SS) (required)
-        end_datetime:
-          type: string
-          title: End Datetime
-          description: End datetime (YYYY-MM-DD HH:MM:SS) (required)
-        market:
-          $ref: '#/components/schemas/StockMarket'
-          description: Stock market
-          default: cn
-      title: BatchMinuteKlineInput
-      description: Input for batch 1-minute kline data request.
-    BatchMinuteKlineOutput:
-      type: object
-      required:
-      - datas
-      - metadata
-      properties:
-        datas:
-          type: array
-          title: Datas
-          description: 1-minute kline data list sorted by date (ascending), then by symbol
-          items:
-            type: object
-            additionalProperties: true
-        metadata:
-          type: object
-          title: Metadata
-          description: Query metadata
-          additionalProperties: true
-      title: BatchMinuteKlineOutput
-      description: Batch 1-minute kline data response.
-    MinuteInput:
-      type: object
-      required:
-      - symbol
-      - start_datetime
-      - end_datetime
-      properties:
-        symbol:
-          type: string
-          title: Symbol
-          description: Stock code (required)
-        start_datetime:
-          type: string
-          title: Start Datetime
-          description: Start datetime (YYYY-MM-DD HH:MM:SS) (required)
-        end_datetime:
-          type: string
-          title: End Datetime
-          description: End datetime (YYYY-MM-DD HH:MM:SS) (required)
-        market:
-          $ref: '#/components/schemas/StockMarket'
-          description: Stock market
-          default: cn
-      title: MinuteInput
-      description: Input for minute data request.
-    MinuteOutput:
-      type: object
-      required:
-      - datas
-      - metadata
-      properties:
-        datas:
-          type: array
-          title: Datas
-          description: Minute data list
-          items:
-            type: object
-            additionalProperties: true
-        metadata:
-          type: object
-          title: Metadata
-          description: Query metadata
-          additionalProperties: true
-      title: MinuteOutput
-      description: Minute data response.
-    BatchMinuteInput:
-      type: object
-      required:
-      - symbols
-      - start_datetime
-      - end_datetime
-      properties:
-        symbols:
-          type: array
-          title: Symbols
-          description: List of stock codes (required)
-          minItems: 1
-          items:
-            type: string
-        start_datetime:
-          type: string
-          title: Start Datetime
-          description: Start datetime (YYYY-MM-DD HH:MM:SS) (required)
-        end_datetime:
-          type: string
-          title: End Datetime
-          description: End datetime (YYYY-MM-DD HH:MM:SS) (required)
-        market:
-          $ref: '#/components/schemas/StockMarket'
-          description: Stock market
-          default: cn
-      title: BatchMinuteInput
-      description: Input for batch minute data request.
-    BatchMinuteOutput:
-      type: object
-      required:
-      - datas
-      - metadata
-      properties:
-        datas:
-          type: array
-          title: Datas
-          description: Minute data list sorted by date (ascending), then by symbol
-          items:
-            type: object
-            additionalProperties: true
-        metadata:
-          type: object
-          title: Metadata
-          description: Query metadata
-          additionalProperties: true
-      title: BatchMinuteOutput
-      description: Batch minute data response.
     BacktestInput:
       properties:
         start_date:
@@ -6085,20 +6082,38 @@ components:
           $ref: '#/components/schemas/StockMarket'
           description: Stock market (cn, hk, us), default cn
           default: cn
-        symbol:
-          type: string
-          title: Symbol
-          description: Stock code (e.g., 600519, 00700, AAPL)
+        symbols:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Symbols
+          description: List of stock codes. If empty, defaults to full market (must provide filter_formula)
+        filter_formula:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Filter Formula
+          description: Pre-filter formula, e.g., 'NOT(IS_ST)'
         entry_formula:
-          type: string
+          anyOf:
+          - type: string
+          - type: 'null'
           title: Entry Formula
-          description: Buy/entry formula, triggers buy when result > 0 (required)
+          description: Buy/entry formula, triggers buy when result > 0
         exit_formula:
           anyOf:
           - type: string
           - type: 'null'
           title: Exit Formula
           description: Sell/exit formula, triggers sell when result > 0 (optional)
+        strategy_code:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Strategy Code
+          description: Backtest strategy python code
         initial_cash:
           type: number
           title: Initial Cash
@@ -6114,29 +6129,37 @@ components:
           title: Stop Loss
           description: Stop loss percentage, default 0.0 (disabled)
           default: 0.0
-        sizer_percent:
-          type: integer
-          title: Sizer Percent
-          description: Position size percentage, default 99%
-          default: 99
         auto_close:
           type: boolean
           title: Auto Close
           description: Auto close position at end, default true
           default: true
-        labels:
+        indicator:
           anyOf:
           - additionalProperties: true
             type: object
           - type: 'null'
-          title: Labels
-          description: 'Label dictionary for additional indicators, e.g., {"up": "CROSS(MA(CLOSE, 20), MA(CLOSE, 60))"}'
+          title: Indicator
+          description: 'Indicator dictionary for custom strategy pre-computation or returning values'
+        position_size:
+          type: number
+          title: Position Size
+          description: Max position size ratio per stock, default 0.2
+          default: 0.2
+        max_positions:
+          type: integer
+          title: Max Positions
+          description: Max number of holding stocks, default 5
+          default: 5
+        min_volume:
+          type: integer
+          title: Min Volume
+          description: Minimum trading volume (e.g., 100 for A-shares), default 100
+          default: 100
       type: object
       required:
       - start_date
       - end_date
-      - symbol
-      - entry_formula
       title: BacktestInput
       description: Backtest input parameters for strategy execution.
     BacktestOutput:
@@ -6209,14 +6232,13 @@ components:
           items:
             $ref: '#/components/schemas/TradeItem'
           default: []
-        daily_data:
-          type: array
-          title: Daily Data
-          description: Daily data list with OHLC and label values
-          items:
-            type: object
-            additionalProperties: true
-          default: []
+        portfolio_value:
+          type: object
+          additionalProperties:
+            type: number
+          title: Portfolio Value
+          description: Daily portfolio values (for equity curve)
+          default: {}
         error_msg:
           anyOf:
           - type: string
@@ -6243,6 +6265,12 @@ components:
           type: integer
           title: Id
           description: Trade ID
+        symbol:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Symbol
+          description: Stock code (optional for multi-symbol backtest)
         type:
           type: string
           title: Type
@@ -6270,11 +6298,11 @@ components:
         net_pnl:
           type: number
           title: Net Pnl
-          description: Net profit/loss after commission
+          description: Net profit/loss
         return_pct:
           type: number
           title: Return Pct
-          description: Return percentage for this trade
+          description: Return percentage
         cumulative_pnl:
           type: number
           title: Cumulative Pnl
