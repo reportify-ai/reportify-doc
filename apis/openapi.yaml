@@ -6134,13 +6134,13 @@ components:
           title: Auto Close
           description: Auto close position at end, default true
           default: true
-        indicator:
+        signal_factors:
           anyOf:
           - additionalProperties: true
             type: object
           - type: 'null'
-          title: Indicator
-          description: 'Indicator dictionary for custom strategy pre-computation or returning values'
+          title: Signal Factors
+          description: 'Signal factors dictionary for custom strategy pre-computation'
         position_size:
           type: number
           title: Position Size

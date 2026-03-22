@@ -221,7 +221,7 @@ const stocks = await client.quant.factorsScreen({
   formula: 'RSI(14) < 30',
   market: 'cn',             // 可选
   checkDate: '2024-06-01',  // 可选，默认最新交易日
-  symbols: undefined        // 可选，undefined 表示全市场
+  symbols: undefined        // 可选，undefined 表示当前市场
 });
 ```
 
@@ -232,7 +232,7 @@ const stocks = await client.quant.factorsScreen({
 | `formula` | `string` | 是 | 选股公式 |
 | `market` | `string` | 否 | 市场，默认 cn |
 | `checkDate` | `string` | 否 | 检查日期，默认最新交易日 |
-| `symbols` | `string[]` | 否 | 股票池，undefined 表示全市场 |
+| `symbols` | `string[]` | 否 | 股票池，undefined 表示当前市场 |
 
 **选股示例：**
 
@@ -465,16 +465,16 @@ const result = await client.quant.backtest({
 | `filterFormula` | `string` | 否 | - | 前置过滤公式 |
 | `market` | `string` | 否 | cn | 市场（cn/hk/us） |
 | `entryFormula` | `string` | 否 | - | 买入/开仓公式（不传则需传 strategyCode） |
-| `strategyCode` | `string` | 否 | - | 自定义策略代码 |
+| `strategyCode` | `string` | 否 | - | 自定义回测策略 Python 源码代码。代码中必须定义 `handle_data(context, datas)` 函数。 |
 | `exitFormula` | `string` | 否 | - | 卖出/平仓公式（结果 > 0 触发卖出） |
-| `initialCash` | `number` | 否 | 100000 | 初始资金 |
-| `commission` | `number` | 否 | 0 | 佣金费率 |
-| `stopLoss` | `number` | 否 | 0 | 止损比例（0 表示不设置） |
-| `positionSize` | `number` | 否 | 0.2 | 单只股票最大仓位比例（占总资产） |
+| `initialCash` | `number` | 否 | 100000 | 初始资金（元） |
+| `commission` | `number` | 否 | 0 | 佣金费率（如 0.0003 表示万三） |
+| `stopLoss` | `number` | 否 | 0 | 止损比例（如 0.1 表示 10% 止损） |
+| `positionSize` | `number` | 否 | 0.2 | 单只股票最大仓位比例 |
 | `maxPositions` | `number` | 否 | 5 | 最大持仓股票数量 |
-| `minVolume` | `number` | 否 | 100 | 最小买入股数（如A股1手） |
-| `autoClose` | `boolean` | 否 | true | 是否自动平仓 |
-| `indicator` | `Record<string, string>` | 否 | - | 指标字典，用于策略计算或返回 |
+| `minVolume` | `number` | 否 | 100 | 最小买入股数 |
+| `autoClose` | `boolean` | 否 | true | 是否在回测结束时自动平仓 |
+| `signalFactors` | `Record<string, string>` | 否 | - | 指标与因子字典，用于策略计算或返回 |
 
 **返回类型：**
 
@@ -545,19 +545,40 @@ const result3 = await client.quant.backtest({
   exitFormula: 'RSI(14) > 70'     // RSI 高于 70 卖出
 });
 
-// 4. 使用 indicator 记录额外指标
-const result4 = await client.quant.backtest({
+// 4. 使用 signalFactors 记录额外指标
+const resultIndicator = await client.quant.backtest({
   startDate: '2023-01-01',
   endDate: '2024-01-01',
   symbols: ['000001'],
-  entryFormula: 'CROSS(RSI(14), 30)',
-  indicator: {
-    rsi: 'RSI(14)',
-    ma20: 'MA(CLOSE, 20)',
-    ma60: 'MA(CLOSE, 60)'
+  entryFormula: 'CROSS(MA(CLOSE, 5), MA(CLOSE, 10))',
+  exitFormula: 'CROSS(MA(CLOSE, 10), MA(CLOSE, 5))',
+  signalFactors: {
+    ma5: 'MA(CLOSE, 5)',
+    ma10: 'MA(CLOSE, 10)'
   }
 });
-// 每日数据中会包含 rsi、ma20、ma60 的值
+
+// 5. 自定义策略
+const customCode = `
+def handle_data(context, datas):
+    for data in datas:
+        symbol = data.name
+        position = context.portfolio.get_position(symbol)
+        
+        if position is None:
+            if data.close > data.open:  # 阳线买入
+                context.order_target_percent(symbol, 0.2)
+        else:
+            if data.close < data.open:  # 阴线卖出
+                context.order_target_percent(symbol, 0)
+`;
+
+const resultCustom = await client.quant.backtest({
+  startDate: '2023-01-01',
+  endDate: '2024-01-01',
+  symbols: ['000001'],
+  strategyCode: customCode
+});
 ```
 
 ---

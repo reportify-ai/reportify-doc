@@ -201,9 +201,9 @@ df = client.quant.factors_compute(["000001"], "(CLOSE > MA(CLOSE, 20)) & (MA(CLO
 ```python
 stocks = client.quant.factors_screen(
     formula="RSI(14) < 30",
-    market="cn",            # 可选
+    market="cn",              # 可选
     check_date="2024-06-01",  # 可选，默认最新交易日
-    symbols=None              # 可选，None 表示全市场
+    symbols=None              # 可选，None 表示当前市场
 )
 ```
 
@@ -214,7 +214,7 @@ stocks = client.quant.factors_screen(
 | `formula` | `str` | 是 | 选股公式 |
 | `market` | `str` | 否 | 市场，默认 cn |
 | `check_date` | `str` | 否 | 检查日期，默认最新交易日 |
-| `symbols` | `list[str]` | 否 | 股票池，None 表示全市场 |
+| `symbols` | `list[str]` | 否 | 股票池，None 表示当前市场 |
 
 **选股示例：**
 
@@ -411,16 +411,16 @@ result = client.quant.backtest(
 | `filter_formula` | `str` | 否 | None | 前置过滤公式 |
 | `market` | `str` | 否 | cn | 市场（cn/hk/us） |
 | `entry_formula` | `str` | 否 | None | 买入/开仓公式（不传则需传 strategy_code） |
-| `strategy_code` | `str` | 否 | None | 自定义策略代码 |
+| `strategy_code` | `str` | 否 | None | 自定义回测策略 Python 源码代码。代码中必须定义 `handle_data(context, datas)` 函数。 |
 | `exit_formula` | `str` | 否 | None | 卖出/平仓公式（结果 > 0 触发卖出） |
-| `initial_cash` | `float` | 否 | 100000 | 初始资金 |
-| `commission` | `float` | 否 | 0 | 佣金费率 |
-| `stop_loss` | `float` | 否 | 0 | 止损比例（0 表示不设置） |
-| `position_size` | `float` | 否 | 0.2 | 单只股票最大仓位比例（占总资产） |
+| `initial_cash` | `float` | 否 | 100000 | 初始资金（元） |
+| `commission` | `float` | 否 | 0 | 佣金费率（如 0.0003 表示万三） |
+| `stop_loss` | `float` | 否 | 0 | 止损比例（如 0.1 表示 10% 止损） |
+| `position_size` | `float` | 否 | 0.2 | 单只股票最大仓位比例 |
 | `max_positions` | `int` | 否 | 5 | 最大持仓股票数量 |
-| `min_volume` | `int` | 否 | 100 | 最小买入股数（如A股1手） |
-| `auto_close` | `bool` | 否 | True | 是否自动平仓 |
-| `indicator` | `dict[str, str]` | 否 | None | 指标字典，用于策略计算或返回 |
+| `min_volume` | `int` | 否 | 100 | 最小买入股数 |
+| `auto_close` | `bool` | 否 | True | 是否在回测结束时自动平仓 |
+| `signal_factors` | `dict[str, str]` | 否 | None | 指标字典，用于策略计算或返回 |
 
 **返回结果：**
 
@@ -478,19 +478,40 @@ result = client.quant.backtest(
     exit_formula="RSI(14) > 70"     # RSI 高于 70 卖出
 )
 
-# 4. 使用 indicator 记录额外指标
-result = client.quant.backtest(
+# 4. 使用 signal_factors 记录额外指标
+result_indicator = client.quant.backtest(
     start_date="2023-01-01",
     end_date="2024-01-01",
     symbols=["000001"],
-    entry_formula="CROSS(RSI(14), 30)",
-    indicator={
-        "rsi": "RSI(14)",
-        "ma20": "MA(CLOSE, 20)",
-        "ma60": "MA(CLOSE, 60)"
+    entry_formula="CROSS(MA(CLOSE, 5), MA(CLOSE, 10))",
+    exit_formula="CROSS(MA(CLOSE, 10), MA(CLOSE, 5))",
+    signal_factors={
+        "ma5": "MA(CLOSE, 5)",
+        "ma10": "MA(CLOSE, 10)"
     }
 )
-# 每日数据中会包含 rsi、ma20、ma60 的值
+
+# 5. 自定义策略
+custom_code = """
+def handle_data(context, datas):
+    for data in datas:
+        symbol = data.name
+        position = context.portfolio.get_position(symbol)
+        
+        if position is None:
+            if data.close > data.open:  # 阳线买入
+                context.order_target_percent(symbol, 0.2)
+        else:
+            if data.close < data.open:  # 阴线卖出
+                context.order_target_percent(symbol, 0)
+"""
+
+result_custom = client.quant.backtest(
+    start_date="2023-01-01",
+    end_date="2024-01-01",
+    symbols=["000001"],
+    strategy_code=custom_code
+)
 ```
 
 ---
