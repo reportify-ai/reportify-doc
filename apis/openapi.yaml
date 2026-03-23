@@ -1707,6 +1707,7 @@ paths:
                 title: "nvidia 最新业绩分析"
                 status: "active"
                 url: "https://reportify.cn/agents/11887655289749510/chat/123456789"
+                shared_url: "https://reportify.cn/share/chat/11887655289749510-123456789"
                 created_at: 1765851195760
                 updated_at: 1765851195768
         '422':
@@ -4926,12 +4927,22 @@ components:
           title: Title
           description: 对话标题
           example: "nvidia 最新业绩分析"
+        conversation_type:
+          type: string
+          title: Conversation Type
+          description: 对话类型（agent_chat, task_chat, debug_chat, bot_chat）
+          example: "bot_chat"
+        meta:
+          type: object
+          title: Meta
+          description: 元数据
       type: object
       title: OAIAgentConversationCreateRequest
       description: 创建 agent 对话请求
       example:
         agent_id: 11887655289749510
         title: "nvidia 最新业绩分析"
+        conversation_type: "bot_chat"
     OAIAgentConversationCreateResponse:
       properties:
         id:
@@ -4969,6 +4980,11 @@ components:
           title: Url
           description: 对话页面链接
           example: "https://reportify.cn/agents/11887655289749510/chat/123456789"
+        shared_url:
+          type: string
+          title: Shared Url
+          description: 对话分享链接
+          example: "https://reportify.cn/share/chat/11887655289749510-123456789"
         created_at:
           type: integer
           title: Created At
@@ -4998,6 +5014,7 @@ components:
         title: "nvidia 最新业绩分析"
         status: "active"
         url: "https://reportify.cn/agents/11887655289749510/chat/123456789"
+        shared_url: "https://reportify.cn/share/chat/11887655289749510-123456789"
         created_at: 1765851195760
         updated_at: 1765851195768
     OAIAgentConversationMessageRead:

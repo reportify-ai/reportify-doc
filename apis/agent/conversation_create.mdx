@@ -6,16 +6,18 @@ mode: 'show'
 
 ## 创建智能体对话
 
-**URL**: `/v1/agent/conversations`  
-**方法**: `POST`  
+**URL**: `/v1/agent/conversations`
+**方法**: `POST`
 **描述**: 创建一个新的智能体对话会话
 
 ### 请求参数
 
-| 参数名    | 类型    | 必填 | 描述           |
-|-----------|---------|------|----------------|
-| agent_id  | integer | 否   | 智能体 ID（不传则使用系统默认智能体） |
-| title     | string  | 否   | 对话标题       |
+| 参数名              | 类型    | 必填 | 描述           |
+|---------------------|---------|------|----------------|
+| agent_id            | integer | 否   | 智能体 ID（不传则使用系统默认智能体） |
+| title               | string  | 否   | 对话标题       |
+| conversation_type   | string  | 否   | 对话类型（agent_chat, task_chat, debug_chat, bot_chat） |
+| meta                | object  | 否   | 元数据         |
 
 ### 响应参数
 
@@ -28,6 +30,7 @@ mode: 'show'
 | title        | string  | 对话标题       |
 | status       | string  | 对话状态       |
 | url          | string  | 对话页面链接   |
+| shared_url   | string  | 对话分享链接   |
 | created_at   | integer | 创建时间戳（毫秒） |
 | updated_at   | integer | 更新时间戳（毫秒） |
 
@@ -41,7 +44,8 @@ curl --request POST \
   --header 'Content-Type: application/json' \
   --data '{
   "agent_id": 11887655289749510,
-  "title": "nvidia 最新业绩分析"
+  "title": "nvidia 最新业绩分析",
+  "conversation_type": "bot_chat"
 }'
 ```
 
@@ -56,7 +60,8 @@ headers = {
 }
 payload = {
     "agent_id": 11887655289749510,
-    "title": "nvidia 最新业绩分析"
+    "title": "nvidia 最新业绩分析",
+    "conversation_type": "bot_chat"
 }
 
 response = requests.post(url, headers=headers, json=payload)
@@ -74,8 +79,8 @@ print(response.json())
   "title": "nvidia 最新业绩分析",
   "status": "active",
   "url": "https://reportify.cn/agents/11887655289749510/chat/123456789",
+  "shared_url": "https://reportify.cn/share/chat/11887655289749510-123456789",
   "created_at": 1765851195760,
   "updated_at": 1765851195768
 }
 ```
-
