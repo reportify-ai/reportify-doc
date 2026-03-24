@@ -2310,7 +2310,7 @@ paths:
         Compute indicator values for given symbols and date range.
 
         **Variables vs Functions:**
-        - Variables (no parentheses): `CLOSE`, `OPEN`, `HIGH`, `LOW`, `VOLUME` (aliases: `C`, `O`, `H`, `L`, `V`, `VOL`)
+        - Variables (no parentheses): `CLOSE`, `OPEN`, `HIGH`, `LOW`, `VOLUME`, `AMOUNT` (aliases: `C`, `O`, `H`, `L`, `V`, `VOL`)
         - Functions (with parentheses): `MA(CLOSE, 20)`, `RSI(14)`, `MACD()`, etc.
 
         **Core Function Examples (Level 0, TongDaXin style: col first, n second):**
@@ -2382,7 +2382,7 @@ paths:
         - `type="function"`: Call with parentheses, e.g. `MA(CLOSE, 20)`, `PE()`, `ROE()`
 
         **Technical Factors (Level 0-2):**
-        - **Level 0 Variables** (no parentheses): `CLOSE`, `OPEN`, `HIGH`, `LOW`, `VOLUME` and aliases
+        - **Level 0 Variables** (no parentheses): `CLOSE`, `OPEN`, `HIGH`, `LOW`, `VOLUME`, `AMOUNT` and aliases
         - **Level 0 Functions** (TongDaXin style: col first, n second): `MA(col, n)`, `EMA(col, n)`, `REF(col, n)`, `HHV(col, n)`, `LLV(col, n)`, `STD(col, n)`, etc.
         - **Level 1 Functions** (need parentheses): `CROSS()`, `COUNT()`, `EVERY()`, etc.
         - **Level 2 Functions** (need parentheses): `MACD()`, `KDJ()`, `RSI()`, `BOLL()`, etc.
@@ -2440,7 +2440,7 @@ paths:
         The formula uses Mai-language syntax compatible with TongDaXin/TongHuaShun.
 
         **Variables vs Functions:**
-        - Variables (no parentheses): `CLOSE`, `OPEN`, `HIGH`, `LOW`, `VOLUME` (aliases: `C`, `O`, `H`, `L`, `V`, `VOL`)
+        - Variables (no parentheses): `CLOSE`, `OPEN`, `HIGH`, `LOW`, `VOLUME`, `AMOUNT` (aliases: `C`, `O`, `H`, `L`, `V`, `VOL`)
         - Functions (with parentheses): `MA(CLOSE, 20)`, `RSI(14)`, `PE()`, `ROE()`, etc.
         - Rule: Technical indicators and fundamental factors are functions, need `()`
 
@@ -2473,6 +2473,9 @@ paths:
         - `HIGH`, `H` - High price
         - `LOW`, `L` - Low price
         - `VOLUME`, `V`, `VOL` - Volume
+        - `AMOUNT` - Amount
+        
+        
 
         **Supported Functions (TongDaXin style: col first, n second):**
         - Level 0: MA(col, n), EMA(col, n), SMA(col, n, m), REF(col, n), HHV(col, n), LLV(col, n), STD(col, n), SUM(col, n), ABS(), MAX(), MIN(), IF()...
@@ -2513,7 +2516,7 @@ paths:
         or non-null (for numeric formulas).
 
         **Variables vs Functions:**
-        - Variables (no parentheses): `CLOSE`, `OPEN`, `HIGH`, `LOW`, `VOLUME` (aliases: `C`, `O`, `H`, `L`, `V`, `VOL`)
+        - Variables (no parentheses): `CLOSE`, `OPEN`, `HIGH`, `LOW`, `VOLUME`, `AMOUNT` (aliases: `C`, `O`, `H`, `L`, `V`, `VOL`)
         - Functions (with parentheses): `MA(CLOSE, 20)`, `RSI(14)`, `PE()`, `ROE()`, etc.
         - Rule: Technical indicators and fundamental factors are functions, need `()`
 
@@ -2563,6 +2566,7 @@ paths:
         - `HIGH`, `H` - High price
         - `LOW`, `L` - Low price
         - `VOLUME`, `V`, `VOL` - Volume
+        - `AMOUNT` - Amount
 
         **Supported Functions (TongDaXin style: col first, n second):**
         - Level 0: MA(col, n), EMA(col, n), SMA(col, n, m), REF(col, n), HHV(col, n), LLV(col, n), STD(col, n), SUM(col, n), ABS(), MAX(), MIN(), IF()...
@@ -2892,7 +2896,7 @@ paths:
         Execute strategy backtest with the given parameters.
 
         **Variables vs Functions:**
-        - Variables (no parentheses): `CLOSE`, `OPEN`, `HIGH`, `LOW`, `VOLUME`
+        - Variables (no parentheses): `CLOSE`, `OPEN`, `HIGH`, `LOW`, `VOLUME`, `AMOUNT`
         - Functions (with parentheses): `MA(CLOSE, 20)`, `RSI(14)`, `PE()`, `ROE()`, etc.
 
         **Input Parameters:**
