@@ -60,6 +60,9 @@ const data = await response.json();
   <ResponseField name="description_en" type="string">
     因子描述（英文，可选）
   </ResponseField>
+  <ResponseField name="fields" type="string[]">
+    返回字段列表（多字段指标，如 MACD 返回 `["dif", "dea", "macd"]`）
+  </ResponseField>
 </Expandable>
 
 ## 响应示例

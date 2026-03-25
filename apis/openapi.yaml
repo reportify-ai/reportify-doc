@@ -2250,125 +2250,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
       - BearerAuth: []
-  /v1/quant/indicators:
-    get:
-      tags:
-      - openapi-quant
-      summary: List available indicators
-      description: |
-        List all available technical indicators.
-
-        **How to Use:** All indicators are functions, call with parentheses: `MA(CLOSE, 20)`, `RSI(14)`, `MACD()`
-
-        **Core Functions (Level 0, TongDaXin style: col first, n second):**
-        - Math: `ABS()`, `LN()`, `POW()`, `SQRT()`, `SIN()`, `COS()`, `TAN()`, `MAX()`, `MIN()`
-        - Moving Averages: `MA(col, n)`, `EMA(col, n)`, `SMA(col, n, m)`, `DMA(col, alpha)`, `WMA(col, n)`
-        - Statistics: `HHV(col, n)`, `LLV(col, n)`, `STD(col, n)`, `AVEDEV(col, n)`, `SUM(col, n)`, `REF(col, n)`
-        - Logic: `IF()`, `CONST()`, `DIFF(col, n)`, `RD()`, `RET()`
-
-        **Application Functions (Level 1, need parentheses):**
-        - Crossover: `CROSS()`, `CROSSDOWN()`, `LONGCROSS()`
-        - Counting: `COUNT()`, `EVERY()`, `EXIST()`, `BARSLAST()`, `LAST()`
-        - Value: `VALUEWHEN()`, `BETWEEN()`
-
-        **Trend Indicators (Level 2):** `MACD()`, `BOLL()`, `TAQ()`, `KTN()`, `EXPMA()`, `BBI()`
-
-        **Momentum Indicators (Level 2):** `KDJ()`, `RSI()`, `WR()`, `CCI()`, `BIAS()`, `PSY()`, `MTM()`, `ROC()`
-
-        **Volatility Indicators (Level 2):** `ATR()`, `DMI()`, `TRIX()`, `VR()`, `CR()`, `EMV()`, `DPO()`, `BRAR()`, `DFMA()`, `MASS()`, `OBV()`, `MFI()`, `ASI()`, `XSII()`
-
-        Returns indicators with:
-        - `name`: Indicator name for use in formulas (call with parentheses)
-        - `description`: Brief description
-        - `fields`: Output field names (e.g., ["dif", "dea", "macd"] for MACD)
-      operationId: indicators
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                type: array
-                title: Response List Indicators
-                description: Indicator metadata
-                items:
-                  $ref: '#/components/schemas/IndicatorMeta'
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-      security:
-      - BearerAuth: []
-  /v1/quant/indicators/compute:
-    post:
-      tags:
-      - openapi-quant
-      summary: Compute indicator values
-      description: |
-        Compute indicator values for given symbols and date range.
-
-        **Variables vs Functions:**
-        - Variables (no parentheses): `CLOSE`, `OPEN`, `HIGH`, `LOW`, `VOLUME`, `AMOUNT` (aliases: `C`, `O`, `H`, `L`, `V`, `VOL`)
-        - Functions (with parentheses): `MA(CLOSE, 20)`, `RSI(14)`, `MACD()`, etc.
-
-        **Core Function Examples (Level 0, TongDaXin style: col first, n second):**
-        - `MA(CLOSE, 20)` - 20-day Simple Moving Average
-        - `EMA(CLOSE, 12)` - 12-day Exponential Moving Average
-        - `HHV(HIGH, 20)` - Highest value in 20 days
-        - `STD(CLOSE, 20)` - 20-day Standard Deviation
-        - `REF(CLOSE, 1)` - Yesterday's close
-
-        **Application Function Examples (Level 1):**
-        - `CROSS(MA(CLOSE, 5), MA(CLOSE, 20))` - MA5 crosses above MA20
-        - `COUNT(CLOSE > REF(CLOSE, 1), 10)` - Count up days in 10 periods
-        - `EVERY(CLOSE > REF(CLOSE, 1), 3)` - Up 3 consecutive days
-
-        **Trend Indicator Examples (Level 2):**
-        - `MACD()` - MACD with default parameters (12, 26, 9)
-        - `BOLL(20, 2)` - Bollinger Bands with period 20 and 2 std dev
-        - `KTN(20, 10)` - Keltner Channel
-
-        **Momentum Indicator Examples (Level 2):**
-        - `RSI(14)` - RSI with period 14
-        - `KDJ(9, 3, 3)` - KDJ with custom parameters
-        - `CCI(14)` - Commodity Channel Index
-
-        **Volatility Indicator Examples (Level 2):**
-        - `ATR(14)` - Average True Range
-        - `DMI(14, 6)` - Directional Movement Index
-        - `OBV()` - On Balance Volume
-
-        **Response Fields:**
-        Each indicator returns its specific fields:
-        - RSI: `rsi`
-        - MACD: `dif`, `dea`, `macd`
-        - KDJ: `k`, `d`, `j`
-        - BOLL: `upper`, `middle`, `lower`
-        - DMI: `pdi`, `mdi`, `adx`, `adxr`
-      operationId: indicators_compute
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/IndicatorComputeInput'
-        required: true
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/IndicatorComputeOutput'
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-      security:
-      - BearerAuth: []
   /v1/quant/factors:
     get:
       tags:
@@ -5754,83 +5635,7 @@ components:
           type: string
           description: 响应消息
           example: ""
-
-    IndicatorMeta:
-      type: object
-      required:
-      - name
-      - description
-      - fields
-      properties:
-        name:
-          type: string
-          title: Name
-        description:
-          type: string
-          title: Description
-        fields:
-          type: array
-          title: Fields
-          items:
-            type: string
-      title: IndicatorMeta
       description: Metadata for a technical indicator.
-    IndicatorComputeInput:
-      type: object
-      required:
-      - symbols
-      - formula
-      properties:
-        market:
-          $ref: '#/components/schemas/StockMarket'
-          description: Stock market
-          default: cn
-        symbols:
-          type: array
-          title: Symbols
-          description: Stock code list, e.g., ["600519", "000001"] for CN market (required)
-          items:
-            type: string
-        formula:
-          type: string
-          title: Formula
-          description: Indicator formula (required)
-        start_date:
-          anyOf:
-          - type: string
-            format: date
-          - type: 'null'
-          title: Start Date
-          description: "Start date (optional, default: 3 months ago)"
-        end_date:
-          anyOf:
-          - type: string
-            format: date
-          - type: 'null'
-          title: End Date
-          description: "End date (optional, default: today)"
-      title: IndicatorComputeInput
-      description: Input for indicator computation.
-    IndicatorComputeOutput:
-      type: object
-      required:
-      - datas
-      - metadata
-      properties:
-        datas:
-          type: array
-          title: Datas
-          description: Indicator data list with symbol, date, and indicator fields
-          items:
-            type: object
-            additionalProperties: true
-        metadata:
-          type: object
-          title: Metadata
-          description: Computation metadata
-          additionalProperties: true
-      title: IndicatorComputeOutput
-      description: Output for indicator computation.
     FactorMeta:
       type: object
       required:
@@ -5908,15 +5713,73 @@ components:
         datas:
           type: array
           title: Datas
-          description: Factor data list with symbol, date, and factor value
+          description: Factor data list with symbol, date, name, close, factor_value, and indicators
           items:
             type: object
-            additionalProperties: true
+            required:
+            - date
+            - symbol
+            properties:
+              date:
+                type: string
+                format: date
+                description: Data date
+              symbol:
+                type: string
+                description: Stock code
+              name:
+                type: string
+                description: Stock name (Chinese)
+              name_en:
+                type: string
+                description: Stock name (English)
+              close:
+                type: number
+                description: Close price
+              factor_value:
+                anyOf:
+                - type: number
+                - type: boolean
+                - type: 'null'
+                description: Main formula result value
+              indicators:
+                type: object
+                additionalProperties: true
+                description: Intermediate indicator values from formula
         metadata:
           type: object
-          title: Metadata
-          description: Computation metadata
-          additionalProperties: true
+          required:
+          - formula
+          - start_date
+          - end_date
+          - total_rows
+          - fields
+          - indicators
+          properties:
+            formula:
+              type: string
+              description: The formula used
+            start_date:
+              type: string
+              format: date
+              description: Start date
+            end_date:
+              type: string
+              format: date
+              description: End date
+            total_rows:
+              type: integer
+              description: Total number of rows
+            fields:
+              type: array
+              items:
+                type: string
+              description: List of output field names
+            indicators:
+              type: array
+              items:
+                type: string
+              description: List of indicator formulas
       title: FactorComputeOutput
       description: Output for factor computation.
     FactorScreenInput:
