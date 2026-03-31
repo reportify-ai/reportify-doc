@@ -2833,6 +2833,57 @@ paths:
       security:
       - BearerAuth: []
 
+  /v1/quant/backtest/upload:
+    post:
+      tags:
+      - openapi-quant
+      summary: Upload Excel file for backtest
+      description: |
+        Upload an Excel file (.xlsx/.xls) containing OHLCV data for backtesting.
+        This allows you to use your own market data instead of the system's built-in data source.
+
+        **Request format:** `multipart/form-data` with two fields:
+        - `file`: Excel file (.xlsx or .xls)
+        - `params`: JSON string containing backtest parameters
+
+        **Excel file requirements:**
+        - Required columns: `date`, `open`, `high`, `low`, `close`
+        - Optional columns: `symbol` (required for multi-symbol), `volume`, `amount`
+        - Custom fields: any ASCII-named columns with numeric values (e.g., pe, market_cap, pb_ratio) can be referenced in formulas
+
+        **Formula Examples:**
+        - `CROSS(MA(CLOSE, 5), MA(CLOSE, 20))` - Golden cross signal
+        - `RSI(14) < 30` - RSI oversold
+        - `CLOSE > REF(CLOSE, 1) * 1.05` - Up more than 5%
+
+        **Output:**
+        Returns backtest results including:
+        - Performance metrics (return, drawdown, win rate, etc.)
+        - Trade list with entry/exit details
+        - Daily portfolio values
+      operationId: quant_backtest_upload
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Body_quant_backtest_upload'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BacktestOutput'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+
 components:
   schemas:
     Batch1mklineInput:
@@ -3008,6 +3059,83 @@ components:
       required:
       - file
       title: Body_upload_doc_by_form_reportify_api_v1_docs_upload_form_post
+    Body_quant_backtest_upload:
+      properties:
+        file:
+          type: string
+          format: binary
+          title: File
+          description: 'Excel file (.xlsx or .xls) containing OHLCV data. Required columns: date, open, high, low, close. Optional columns: symbol, volume, amount. Custom numeric columns are also supported.'
+        params:
+          type: string
+          title: Params
+          description: 'JSON string of backtest parameters (ExcelBacktestInput), e.g., {"entry_formula": "CROSS(MA(CLOSE, 5), MA(CLOSE, 10))", "exit_formula": "CLOSE < REF(CLOSE, 1)", "initial_cash": 100000}'
+      type: object
+      required:
+      - file
+      - params
+      title: Body_quant_backtest_upload
+    ExcelBacktestInput:
+      properties:
+        entry_formula:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Entry Formula
+          description: Buy/entry formula, triggers buy when result > 0
+        exit_formula:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Exit Formula
+          description: Sell/exit formula, triggers sell when result > 0
+        strategy_code:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Strategy Code
+          description: 'Custom backtest strategy Python code. Must define: def handle_data(context, datas)'
+        initial_cash:
+          type: number
+          title: Initial Cash
+          description: Initial capital, default 100000.0
+          default: 100000.0
+        commission:
+          type: number
+          title: Commission
+          description: Commission rate, default 0.0
+          default: 0.0
+        position_size:
+          type: number
+          title: Position Size
+          description: Max position size ratio per stock (e.g., 0.2 = 20%)
+          default: 0.2
+        max_positions:
+          type: integer
+          title: Max Positions
+          description: Max number of holding stocks
+          default: 5
+        min_volume:
+          type: integer
+          title: Min Volume
+          description: Minimum trading volume (e.g., 100 for A-shares)
+          default: 100
+        auto_close:
+          type: boolean
+          title: Auto Close
+          description: Auto close positions at end
+          default: true
+        signal_factors:
+          anyOf:
+          - additionalProperties:
+              type: string
+            type: object
+          - type: 'null'
+          title: Signal Factors
+          description: Signal factors dictionary for custom strategy pre-computation
+      type: object
+      title: ExcelBacktestInput
+      description: Backtest parameters for Excel file upload. Either entry_formula or strategy_code must be provided.
     CompanyLabel:
       properties:
         name:
