@@ -3066,6 +3066,14 @@ components:
           format: binary
           title: File
           description: 'Excel file (.xlsx or .xls) containing OHLCV data. Required columns: date, open, high, low, close. Optional columns: symbol, volume, amount. Custom numeric columns are also supported.'
+        start_date:
+          type: string
+          title: Start Date
+          description: Backtest start date (YYYY-MM-DD). Filters data after indicator computation. If not provided, uses the earliest date in the Excel file.
+        end_date:
+          type: string
+          title: End Date
+          description: Backtest end date (YYYY-MM-DD). Filters data after indicator computation. If not provided, uses the latest date in the Excel file.
         entry_formula:
           type: string
           title: Entry Formula

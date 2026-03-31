@@ -522,6 +522,8 @@ result_custom = client.quant.backtest(
 ```python
 result = client.quant.backtest_upload(
     file_path="my_stock_data.xlsx",
+    start_date="2023-06-01",
+    end_date="2024-01-01",
     entry_formula="CROSS(MA(CLOSE, 5), MA(CLOSE, 10))",
     exit_formula="CROSS(MA(CLOSE, 10), MA(CLOSE, 5))",
     initial_cash=100000,
@@ -536,6 +538,8 @@ result = client.quant.backtest_upload(
 | `file_path` | `str` | 否* | None | Excel 文件路径（与 `file_content` 二选一） |
 | `file_content` | `bytes` | 否* | None | Excel 文件字节内容（与 `file_path` 二选一） |
 | `file_name` | `str` | 否 | None | 文件名（使用 `file_content` 时可指定） |
+| `start_date` | `str` | 否 | None | 回测开始日期(YYYY-MM-DD)，指标计算后按此过滤 |
+| `end_date` | `str` | 否 | None | 回测结束日期(YYYY-MM-DD)，指标计算后按此过滤 |
 | `entry_formula` | `str` | 否 | None | 买入/开仓公式（不传则需传 `strategy_code`） |
 | `strategy_code` | `str` | 否 | None | 自定义回测策略 Python 源码 |
 | `exit_formula` | `str` | 否 | None | 卖出/平仓公式 |
