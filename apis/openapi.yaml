@@ -3066,14 +3066,55 @@ components:
           format: binary
           title: File
           description: 'Excel file (.xlsx or .xls) containing OHLCV data. Required columns: date, open, high, low, close. Optional columns: symbol, volume, amount. Custom numeric columns are also supported.'
-        params:
+        entry_formula:
           type: string
-          title: Params
-          description: 'JSON string of backtest parameters (ExcelBacktestInput), e.g., {"entry_formula": "CROSS(MA(CLOSE, 5), MA(CLOSE, 10))", "exit_formula": "CLOSE < REF(CLOSE, 1)", "initial_cash": 100000}'
+          title: Entry Formula
+          description: Buy/entry formula, triggers buy when result > 0
+        exit_formula:
+          type: string
+          title: Exit Formula
+          description: Sell/exit formula, triggers sell when result > 0
+        strategy_code:
+          type: string
+          title: Strategy Code
+          description: 'Custom backtest strategy Python code. Must define: def handle_data(context, datas)'
+        initial_cash:
+          type: number
+          title: Initial Cash
+          description: Initial capital, default 100000.0
+          default: 100000.0
+        commission:
+          type: number
+          title: Commission
+          description: Commission rate, default 0.0
+          default: 0.0
+        position_size:
+          type: number
+          title: Position Size
+          description: Max position size ratio per stock (e.g., 0.2 = 20%)
+          default: 0.2
+        max_positions:
+          type: integer
+          title: Max Positions
+          description: Max number of holding stocks
+          default: 5
+        min_volume:
+          type: integer
+          title: Min Volume
+          description: Minimum trading volume (e.g., 100 for A-shares)
+          default: 100
+        auto_close:
+          type: boolean
+          title: Auto Close
+          description: Auto close positions at end
+          default: true
+        signal_factors:
+          type: string
+          title: Signal Factors
+          description: 'JSON string of signal factors dictionary, e.g., {"up": "CROSS(MA(CLOSE, 20), MA(CLOSE, 60))"}'
       type: object
       required:
       - file
-      - params
       title: Body_quant_backtest_upload
     ExcelBacktestInput:
       properties:
