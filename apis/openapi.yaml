@@ -6131,6 +6131,26 @@ components:
           title: Commission
           description: Commission rate, default 0.0
           default: 0.0
+        buy_commission:
+          type: number
+          title: Buy Commission
+          description: Buy commission rate, takes priority over commission (e.g., 0.0003 for 0.03%)
+          default: 0.0
+        sell_commission:
+          type: number
+          title: Sell Commission
+          description: Sell commission rate, takes priority over commission (e.g., 0.0013 for A-share sell including stamp duty)
+          default: 0.0
+        min_commission_amount:
+          type: number
+          title: Min Commission Amount
+          description: Minimum commission per trade in CNY (e.g., 5.0 means at least 5 yuan per trade)
+          default: 0.0
+        slippage:
+          type: number
+          title: Slippage
+          description: Slippage ratio (e.g., 0.001 for 0.1%, buy price up, sell price down)
+          default: 0.0
         stop_loss:
           type: number
           title: Stop Loss

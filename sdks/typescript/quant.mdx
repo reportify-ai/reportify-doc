@@ -465,7 +465,11 @@ const result = await client.quant.backtest({
 | `entryFormula` | `string` | 是 | - | 买入/开仓公式（结果 > 0 触发买入） |
 | `exitFormula` | `string` | 否 | - | 卖出/平仓公式（结果 > 0 触发卖出） |
 | `initialCash` | `number` | 否 | 100000 | 初始资金 |
-| `commission` | `number` | 否 | 0 | 佣金费率 |
+| `commission` | `number` | 否 | 0 | 佣金费率（买卖通用） |
+| `buyCommission` | `number` | 否 | 0 | 买入手续费率（优先于 commission） |
+| `sellCommission` | `number` | 否 | 0 | 卖出手续费率（优先于 commission） |
+| `minCommissionAmount` | `number` | 否 | 0 | 单笔最低手续费金额（元） |
+| `slippage` | `number` | 否 | 0 | 滑点比例（买入价上浮、卖出价下浮） |
 | `stopLoss` | `number` | 否 | 0 | 止损比例（0 表示不设置） |
 | `sizerPercent` | `number` | 否 | 99 | 仓位百分比 |
 | `autoClose` | `boolean` | 否 | true | 是否自动平仓 |

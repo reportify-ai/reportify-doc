@@ -411,7 +411,11 @@ result = client.quant.backtest(
 | `entry_formula` | `str` | 是 | - | 买入/开仓公式（结果 > 0 触发买入） |
 | `exit_formula` | `str` | 否 | None | 卖出/平仓公式（结果 > 0 触发卖出） |
 | `initial_cash` | `float` | 否 | 100000 | 初始资金 |
-| `commission` | `float` | 否 | 0 | 佣金费率 |
+| `commission` | `float` | 否 | 0 | 佣金费率（买卖通用） |
+| `buy_commission` | `float` | 否 | 0 | 买入手续费率（优先于 commission） |
+| `sell_commission` | `float` | 否 | 0 | 卖出手续费率（优先于 commission） |
+| `min_commission_amount` | `float` | 否 | 0 | 单笔最低手续费金额（元） |
+| `slippage` | `float` | 否 | 0 | 滑点比例（买入价上浮、卖出价下浮） |
 | `stop_loss` | `float` | 否 | 0 | 止损比例（0 表示不设置） |
 | `sizer_percent` | `int` | 否 | 99 | 仓位百分比 |
 | `auto_close` | `bool` | 否 | True | 是否自动平仓 |
