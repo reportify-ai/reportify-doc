@@ -4936,6 +4936,11 @@ components:
           type: object
           title: Meta
           description: 元数据
+        channel:
+          type: string
+          title: Channel
+          description: 消息来源渠道（如 feishu, wecom, web），agent 完成后会回调通知对应渠道
+          example: "feishu"
       type: object
       title: OAIAgentConversationCreateRequest
       description: 创建 agent 对话请求
