@@ -104,6 +104,18 @@ const data = await response.json();
 | `HIGH` | `H` | 最高价 |
 | `LOW` | `L` | 最低价 |
 | `VOLUME` | `V`, `VOL` | 成交量 |
+| `LISTING_DATE` | - | 上市日期（`YYYY-MM-DD` 字符串） |
+
+### Level 0 - 股票属性函数
+
+| 函数 | 描述 | 示例 |
+|------|------|------|
+| `IS_ST()` | 是否为 ST 股票 | `IS_ST() == 0` 排除 ST |
+| `IS_LIMIT_UP()` | 是否一字涨停 | `IS_LIMIT_UP() == 0` |
+| `IS_LIMIT_DOWN()` | 是否一字跌停 | `IS_LIMIT_DOWN() == 0` |
+| `IS_CHAIN_MAIN()` | 是否主板（60/000 开头） | `IS_CHAIN_MAIN() == 1` |
+| `IS_CHAIN_STAR()` | 是否科创板（68 开头） | `IS_CHAIN_STAR() == 1` |
+| `IS_CHAIN_CHINEXT()` | 是否创业板（30 开头） | `IS_CHAIN_CHINEXT() == 1` |
 
 ### Level 0 - 基础函数 (TongDaXin 风格: col 在前, n 在后)
 

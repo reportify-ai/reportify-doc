@@ -313,13 +313,14 @@ const data = await client.quant.ohlcvBatch({
 
 ---
 
-### kline1m()
+### kline()
 
-获取单个股票的 1 分钟 K 线数据。
+获取单个股票的 K 线数据，支持多种周期。
 
 ```typescript
-const data = await client.quant.kline1m({
+const data = await client.quant.kline({
   symbol: '000001',
+  klineType: '5M',
   startDateTime: '2024-01-01 09:30:00',
   endDateTime: '2024-01-01 15:00:00',
   market: 'cn'
@@ -335,9 +336,11 @@ data.forEach(d => {
 | 参数 | 类型 | 必填 | 说明 |
 |------|------|------|------|
 | `symbol` | `string` | 是 | 股票代码 |
-| `startDateTime` | `string` | 是 | 开始时间（YYYY-MM-DD HH:MM:SS） |
-| `endDateTime` | `string` | 是 | 结束时间（YYYY-MM-DD HH:MM:SS） |
+| `klineType` | `string` | 否 | K 线类型，默认 `1D`，支持 `1M`/`5M`/`15M`/`30M`/`60M`/`1D`/`1W`/`1MO` |
 | `market` | `string` | 否 | 市场，默认 cn |
+| `stockType` | `string` | 否 | 品种类型，默认 `stock`，支持 `stock`/`etf`/`index`/`sw` |
+| `startDateTime` | `string` | 否 | 开始时间（YYYY-MM-DD HH:MM:SS），未指定时自动推算 |
+| `endDateTime` | `string` | 否 | 结束时间（YYYY-MM-DD HH:MM:SS） |
 
 **返回类型：**
 
@@ -355,15 +358,14 @@ interface OHLCVData {
 
 ---
 
-### kline1mBatch()
+### klineBatch()
 
-批量获取多个股票的 1 分钟 K 线数据。
+批量获取多个股票的 K 线数据。
 
 ```typescript
-const data = await client.quant.kline1mBatch({
+const data = await client.quant.klineBatch({
   symbols: ['000001', '600519', '000002'],
-  startDateTime: '2024-01-01 09:30:00',
-  endDateTime: '2024-01-01 15:00:00',
+  klineType: '1D',
   market: 'cn'
 });
 ```

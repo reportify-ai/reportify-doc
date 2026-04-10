@@ -1,0 +1,192 @@
+---
+title: '批量获取 K 线数据'
+description: '批量获取多只股票的 K 线数据，支持分钟线、日线、周线、月线'
+openapi: 'POST /v1/quant/quotes/kline/batch'
+---
+
+批量获取多只股票的 K 线数据，通过 `kline_type` 参数支持多种周期。
+
+<CodeGroup>
+
+```bash cURL
+curl -X POST "https://api.reportify.cn/v1/quant/quotes/kline/batch" \
+  -H "Authorization: Bearer <token>" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "symbols": ["000001", "600519"],
+    "kline_type": "1D",
+    "market": "cn"
+  }'
+```
+
+```python Python
+import requests
+
+response = requests.post(
+    "https://api.reportify.cn/v1/quant/quotes/kline/batch",
+    headers={"Authorization": "Bearer <token>"},
+    json={
+        "symbols": ["000001", "600519"],
+        "kline_type": "1D",
+        "market": "cn",
+        "start_datetime": "2026-01-01 00:00:00",
+        "end_datetime": "2026-01-31 00:00:00"
+    }
+)
+print(response.json())
+```
+
+```typescript TypeScript
+const response = await fetch('https://api.reportify.cn/v1/quant/quotes/kline/batch', {
+  method: 'POST',
+  headers: {
+    'Authorization': 'Bearer <token>',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    symbols: ['000001', '600519'],
+    kline_type: '1D',
+    market: 'cn'
+  })
+});
+const data = await response.json();
+```
+
+</CodeGroup>
+
+## 请求参数
+
+<ParamField body="symbols" type="array" required>
+  股票代码列表
+</ParamField>
+
+<ParamField body="kline_type" type="string" default="1D">
+  K 线周期类型：
+  - `1M` - 1 分钟线
+  - `5M` - 5 分钟线
+  - `15M` - 15 分钟线
+  - `30M` - 30 分钟线
+  - `60M` - 60 分钟线
+  - `1D` - 日线（默认）
+  - `1W` - 周线
+  - `1MO` - 月线
+</ParamField>
+
+<ParamField body="market" type="string" default="cn">
+  股票市场：`cn`（A股）, `hk`（港股）, `us`（美股）
+</ParamField>
+
+<ParamField body="stock_type" type="string" default="stock">
+  股票类型：`stock`（股票）, `etf`（ETF）, `index`（指数）, `sw`（申万指数）
+</ParamField>
+
+<ParamField body="start_datetime" type="string">
+  开始时间，格式：`YYYY-MM-DD HH:MM:SS`（可选，不传时按 kline_type 自动推算）
+</ParamField>
+
+<ParamField body="end_datetime" type="string">
+  结束时间，格式：`YYYY-MM-DD HH:MM:SS`（可选，默认当前时间）
+</ParamField>
+
+## 响应参数
+
+<ResponseField name="datas" type="array">
+  K 线数据列表
+  <Expandable title="数据字段">
+    <ResponseField name="datetime" type="string">
+      日期时间（分钟线）或日期（日线/周线/月线）
+    </ResponseField>
+    <ResponseField name="symbol" type="string">
+      股票代码
+    </ResponseField>
+    <ResponseField name="open" type="number">
+      开盘价
+    </ResponseField>
+    <ResponseField name="high" type="number">
+      最高价
+    </ResponseField>
+    <ResponseField name="low" type="number">
+      最低价
+    </ResponseField>
+    <ResponseField name="close" type="number">
+      收盘价
+    </ResponseField>
+    <ResponseField name="volume" type="integer">
+      成交量
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="metadata" type="object">
+  查询元数据，包含 `kline_type`, `start_datetime`, `end_datetime`, `count`
+</ResponseField>
+
+## 响应示例
+
+```json
+{
+  "datas": [
+    {
+      "date": "2026-01-02",
+      "symbol": "000001",
+      "open": 12.15,
+      "high": 12.30,
+      "low": 12.10,
+      "close": 12.25,
+      "volume": 45678900
+    },
+    {
+      "date": "2026-01-02",
+      "symbol": "600519",
+      "open": 1580.00,
+      "high": 1595.00,
+      "low": 1575.00,
+      "close": 1590.00,
+      "volume": 12345678
+    }
+  ],
+  "metadata": {
+    "kline_type": "1D",
+    "start_datetime": "2026-01-01 00:00:00",
+    "end_datetime": "2026-01-31 00:00:00",
+    "count": 2
+  }
+}
+```
+
+## 使用示例
+
+### 批量获取日线数据
+
+```python
+import requests
+
+response = requests.post(
+    "https://api.reportify.cn/v1/quant/quotes/kline/batch",
+    headers={"Authorization": "Bearer <token>"},
+    json={
+        "symbols": ["000001", "600519", "000002"],
+        "kline_type": "1D",
+        "start_datetime": "2026-01-01 00:00:00",
+        "end_datetime": "2026-03-31 00:00:00"
+    }
+)
+data = response.json()
+for row in data["datas"]:
+    print(f"{row['symbol']} {row['date']}: 收{row['close']}")
+```
+
+### 批量获取 5 分钟 K 线
+
+```python
+response = requests.post(
+    "https://api.reportify.cn/v1/quant/quotes/kline/batch",
+    headers={"Authorization": "Bearer <token>"},
+    json={
+        "symbols": ["000001", "600519"],
+        "kline_type": "5M",
+        "start_datetime": "2026-04-09 09:30:00",
+        "end_datetime": "2026-04-09 15:00:00"
+    }
+)
+```

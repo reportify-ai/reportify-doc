@@ -287,13 +287,14 @@ print(df[["symbol", "date", "close", "volume"]])
 
 ---
 
-### kline_1m()
+### kline()
 
-获取单个股票的 1 分钟 K 线数据。
+获取单个股票的 K 线数据，支持多种周期。
 
 ```python
-df = client.quant.kline_1m(
+df = client.quant.kline(
     symbol="000001",
+    kline_type="5M",
     start_datetime="2024-01-01 09:30:00",
     end_datetime="2024-01-01 15:00:00",
     market="cn"
@@ -307,21 +308,22 @@ print(df[["datetime", "open", "high", "low", "close", "volume"]])
 | 参数 | 类型 | 必填 | 说明 |
 |------|------|------|------|
 | `symbol` | `str` | 是 | 股票代码 |
-| `start_datetime` | `str` | 是 | 开始时间（YYYY-MM-DD HH:MM:SS） |
-| `end_datetime` | `str` | 是 | 结束时间（YYYY-MM-DD HH:MM:SS） |
-| `market` | `str` | 否 | 市场，默认 cn |
+| `kline_type` | `str` | 否 | K 线类型，默认 `1D`，支持 `1M`/`5M`/`15M`/`30M`/`60M`/`1D`/`1W`/`1MO` |
+| `market` | `str` | 否 | 市场，默认 `cn` |
+| `stock_type` | `str` | 否 | 品种类型，默认 `stock`，支持 `stock`/`etf`/`index`/`sw` |
+| `start_datetime` | `str` | 否 | 开始时间（YYYY-MM-DD HH:MM:SS），未指定时自动推算 |
+| `end_datetime` | `str` | 否 | 结束时间（YYYY-MM-DD HH:MM:SS） |
 
 ---
 
-### kline_1m_batch()
+### kline_batch()
 
-批量获取多个股票的 1 分钟 K 线数据。
+批量获取多个股票的 K 线数据。
 
 ```python
-df = client.quant.kline_1m_batch(
+df = client.quant.kline_batch(
     symbols=["000001", "600519", "000002"],
-    start_datetime="2024-01-01 09:30:00",
-    end_datetime="2024-01-01 15:00:00",
+    kline_type="1D",
     market="cn"
 )
 

@@ -202,8 +202,8 @@
               "apis/quant/factors_screen",
               "apis/quant/quotes_ohlcv",
               "apis/quant/quotes_ohlcv_batch",
-              "apis/quant/quotes_1mkline",
-              "apis/quant/quotes_1mkline_batch",
+              "apis/quant/quotes_kline",
+              "apis/quant/quotes_kline_batch",
               "apis/quant/quotes_minute",
               "apis/quant/quotes_minute_batch",
               "apis/quant/backtest"
