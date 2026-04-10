@@ -2252,125 +2252,6 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
       - BearerAuth: []
-  /v1/quant/indicators:
-    get:
-      tags:
-      - openapi-quant
-      summary: List available indicators
-      description: |
-        List all available technical indicators.
-
-        **How to Use:** All indicators are functions, call with parentheses: `MA(CLOSE, 20)`, `RSI(14)`, `MACD()`
-
-        **Core Functions (Level 0, TongDaXin style: col first, n second):**
-        - Math: `ABS()`, `LN()`, `POW()`, `SQRT()`, `SIN()`, `COS()`, `TAN()`, `MAX()`, `MIN()`
-        - Moving Averages: `MA(col, n)`, `EMA(col, n)`, `SMA(col, n, m)`, `DMA(col, alpha)`, `WMA(col, n)`
-        - Statistics: `HHV(col, n)`, `LLV(col, n)`, `STD(col, n)`, `AVEDEV(col, n)`, `SUM(col, n)`, `REF(col, n)`
-        - Logic: `IF()`, `CONST()`, `DIFF(col, n)`, `RD()`, `RET()`
-
-        **Application Functions (Level 1, need parentheses):**
-        - Crossover: `CROSS()`, `CROSSDOWN()`, `LONGCROSS()`
-        - Counting: `COUNT()`, `EVERY()`, `EXIST()`, `BARSLAST()`, `LAST()`
-        - Value: `VALUEWHEN()`, `BETWEEN()`
-
-        **Trend Indicators (Level 2):** `MACD()`, `BOLL()`, `TAQ()`, `KTN()`, `EXPMA()`, `BBI()`
-
-        **Momentum Indicators (Level 2):** `KDJ()`, `RSI()`, `WR()`, `CCI()`, `BIAS()`, `PSY()`, `MTM()`, `ROC()`
-
-        **Volatility Indicators (Level 2):** `ATR()`, `DMI()`, `TRIX()`, `VR()`, `CR()`, `EMV()`, `DPO()`, `BRAR()`, `DFMA()`, `MASS()`, `OBV()`, `MFI()`, `ASI()`, `XSII()`
-
-        Returns indicators with:
-        - `name`: Indicator name for use in formulas (call with parentheses)
-        - `description`: Brief description
-        - `fields`: Output field names (e.g., ["dif", "dea", "macd"] for MACD)
-      operationId: indicators
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                type: array
-                title: Response List Indicators
-                description: Indicator metadata
-                items:
-                  $ref: '#/components/schemas/IndicatorMeta'
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-      security:
-      - BearerAuth: []
-  /v1/quant/indicators/compute:
-    post:
-      tags:
-      - openapi-quant
-      summary: Compute indicator values
-      description: |
-        Compute indicator values for given symbols and date range.
-
-        **Variables vs Functions:**
-        - Variables (no parentheses): `CLOSE`, `OPEN`, `HIGH`, `LOW`, `VOLUME` (aliases: `C`, `O`, `H`, `L`, `V`, `VOL`)
-        - Functions (with parentheses): `MA(CLOSE, 20)`, `RSI(14)`, `MACD()`, etc.
-
-        **Core Function Examples (Level 0, TongDaXin style: col first, n second):**
-        - `MA(CLOSE, 20)` - 20-day Simple Moving Average
-        - `EMA(CLOSE, 12)` - 12-day Exponential Moving Average
-        - `HHV(HIGH, 20)` - Highest value in 20 days
-        - `STD(CLOSE, 20)` - 20-day Standard Deviation
-        - `REF(CLOSE, 1)` - Yesterday's close
-
-        **Application Function Examples (Level 1):**
-        - `CROSS(MA(CLOSE, 5), MA(CLOSE, 20))` - MA5 crosses above MA20
-        - `COUNT(CLOSE > REF(CLOSE, 1), 10)` - Count up days in 10 periods
-        - `EVERY(CLOSE > REF(CLOSE, 1), 3)` - Up 3 consecutive days
-
-        **Trend Indicator Examples (Level 2):**
-        - `MACD()` - MACD with default parameters (12, 26, 9)
-        - `BOLL(20, 2)` - Bollinger Bands with period 20 and 2 std dev
-        - `KTN(20, 10)` - Keltner Channel
-
-        **Momentum Indicator Examples (Level 2):**
-        - `RSI(14)` - RSI with period 14
-        - `KDJ(9, 3, 3)` - KDJ with custom parameters
-        - `CCI(14)` - Commodity Channel Index
-
-        **Volatility Indicator Examples (Level 2):**
-        - `ATR(14)` - Average True Range
-        - `DMI(14, 6)` - Directional Movement Index
-        - `OBV()` - On Balance Volume
-
-        **Response Fields:**
-        Each indicator returns its specific fields:
-        - RSI: `rsi`
-        - MACD: `dif`, `dea`, `macd`
-        - KDJ: `k`, `d`, `j`
-        - BOLL: `upper`, `middle`, `lower`
-        - DMI: `pdi`, `mdi`, `adx`, `adxr`
-      operationId: indicators_compute
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/IndicatorComputeInput'
-        required: true
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/IndicatorComputeOutput'
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
-      security:
-      - BearerAuth: []
   /v1/quant/factors:
     get:
       tags:
@@ -2384,7 +2265,7 @@ paths:
         - `type="function"`: Call with parentheses, e.g. `MA(CLOSE, 20)`, `PE()`, `ROE()`
 
         **Technical Factors (Level 0-2):**
-        - **Level 0 Variables** (no parentheses): `CLOSE`, `OPEN`, `HIGH`, `LOW`, `VOLUME` and aliases
+        - **Level 0 Variables** (no parentheses): `CLOSE`, `OPEN`, `HIGH`, `LOW`, `VOLUME`, `AMOUNT` and aliases
         - **Level 0 Functions** (TongDaXin style: col first, n second): `MA(col, n)`, `EMA(col, n)`, `REF(col, n)`, `HHV(col, n)`, `LLV(col, n)`, `STD(col, n)`, etc.
         - **Level 1 Functions** (need parentheses): `CROSS()`, `COUNT()`, `EVERY()`, etc.
         - **Level 2 Functions** (need parentheses): `MACD()`, `KDJ()`, `RSI()`, `BOLL()`, etc.
@@ -2442,7 +2323,7 @@ paths:
         The formula uses Mai-language syntax compatible with TongDaXin/TongHuaShun.
 
         **Variables vs Functions:**
-        - Variables (no parentheses): `CLOSE`, `OPEN`, `HIGH`, `LOW`, `VOLUME` (aliases: `C`, `O`, `H`, `L`, `V`, `VOL`)
+        - Variables (no parentheses): `CLOSE`, `OPEN`, `HIGH`, `LOW`, `VOLUME`, `AMOUNT` (aliases: `C`, `O`, `H`, `L`, `V`, `VOL`)
         - Functions (with parentheses): `MA(CLOSE, 20)`, `RSI(14)`, `PE()`, `ROE()`, etc.
         - Rule: Technical indicators and fundamental factors are functions, need `()`
 
@@ -2475,6 +2356,9 @@ paths:
         - `HIGH`, `H` - High price
         - `LOW`, `L` - Low price
         - `VOLUME`, `V`, `VOL` - Volume
+        - `AMOUNT` - Amount
+        
+        
 
         **Supported Functions (TongDaXin style: col first, n second):**
         - Level 0: MA(col, n), EMA(col, n), SMA(col, n, m), REF(col, n), HHV(col, n), LLV(col, n), STD(col, n), SUM(col, n), ABS(), MAX(), MIN(), IF()...
@@ -2515,7 +2399,7 @@ paths:
         or non-null (for numeric formulas).
 
         **Variables vs Functions:**
-        - Variables (no parentheses): `CLOSE`, `OPEN`, `HIGH`, `LOW`, `VOLUME` (aliases: `C`, `O`, `H`, `L`, `V`, `VOL`)
+        - Variables (no parentheses): `CLOSE`, `OPEN`, `HIGH`, `LOW`, `VOLUME`, `AMOUNT` (aliases: `C`, `O`, `H`, `L`, `V`, `VOL`)
         - Functions (with parentheses): `MA(CLOSE, 20)`, `RSI(14)`, `PE()`, `ROE()`, etc.
         - Rule: Technical indicators and fundamental factors are functions, need `()`
 
@@ -2565,6 +2449,7 @@ paths:
         - `HIGH`, `H` - High price
         - `LOW`, `L` - Low price
         - `VOLUME`, `V`, `VOL` - Volume
+        - `AMOUNT` - Amount
 
         **Supported Functions (TongDaXin style: col first, n second):**
         - Level 0: MA(col, n), EMA(col, n), SMA(col, n, m), REF(col, n), HHV(col, n), LLV(col, n), STD(col, n), SUM(col, n), ABS(), MAX(), MIN(), IF()...
@@ -2690,7 +2575,7 @@ paths:
       security:
       - BearerAuth: []
   /v1/quant/quotes/1mkline:
-    post:
+    get:
       tags:
       - openapi-quant
       summary: Get 1-minute kline data
@@ -2702,19 +2587,47 @@ paths:
         - **end_datetime**: End datetime (required, format: YYYY-MM-DD HH:MM:SS)
         - **market**: Stock market (cn, hk, us), default: cn
       operationId: quote_1mkline
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/MinuteKlineInput'
+      parameters:
+      - name: symbol
+        in: query
         required: true
+        schema:
+          type: string
+          title: Symbol
+        description: Stock code
+      - name: start_datetime
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Start Datetime
+        description: Start datetime
+      - name: end_datetime
+        in: query
+        required: true
+        schema:
+          type: string
+          title: End Datetime
+        description: End datetime
+      - name: market
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - cn
+          - hk
+          - us
+          default: cn
+          title: Market
+        description: Stock market
       responses:
         '200':
           description: Successful Response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/MinuteKlineOutput'
+                $ref: '#/components/schemas/KlineOutput'
         '422':
           description: Validation Error
           content:
@@ -2742,7 +2655,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BatchMinuteKlineInput'
+              $ref: '#/components/schemas/Batch1mklineInput'
         required: true
       responses:
         '200':
@@ -2750,7 +2663,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BatchMinuteKlineOutput'
+                $ref: '#/components/schemas/KlineOutput'
         '422':
           description: Validation Error
           content:
@@ -2760,7 +2673,7 @@ paths:
       security:
       - BearerAuth: []
   /v1/quant/quotes/minute:
-    post:
+    get:
       tags:
       - openapi-quant
       summary: Get minute data
@@ -2772,12 +2685,40 @@ paths:
         - **end_datetime**: End datetime (required, format: YYYY-MM-DD HH:MM:SS)
         - **market**: Stock market (cn, hk, us), default: cn
       operationId: quote_minute
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/MinuteInput'
+      parameters:
+      - name: symbol
+        in: query
         required: true
+        schema:
+          type: string
+          title: Symbol
+        description: Stock code
+      - name: start_datetime
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Start Datetime
+        description: Start datetime
+      - name: end_datetime
+        in: query
+        required: true
+        schema:
+          type: string
+          title: End Datetime
+        description: End datetime
+      - name: market
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - cn
+          - hk
+          - us
+          default: cn
+          title: Market
+        description: Stock market
       responses:
         '200':
           description: Successful Response
@@ -2812,7 +2753,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BatchMinuteInput'
+              $ref: '#/components/schemas/BatchIntradayInput'
         required: true
       responses:
         '200':
@@ -2820,7 +2761,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BatchMinuteOutput'
+                $ref: '#/components/schemas/MinuteOutput'
         '422':
           description: Validation Error
           content:
@@ -2838,22 +2779,26 @@ paths:
         Execute strategy backtest with the given parameters.
 
         **Variables vs Functions:**
-        - Variables (no parentheses): `CLOSE`, `OPEN`, `HIGH`, `LOW`, `VOLUME`
+        - Variables (no parentheses): `CLOSE`, `OPEN`, `HIGH`, `LOW`, `VOLUME`, `AMOUNT`
         - Functions (with parentheses): `MA(CLOSE, 20)`, `RSI(14)`, `PE()`, `ROE()`, etc.
 
         **Input Parameters:**
         - `start_date`: Backtest start date (required)
         - `end_date`: Backtest end date (required)
         - `market`: Stock market (cn, hk, us), default: cn
-        - `symbol`: Stock code (required)
-        - `entry_formula`: Buy/entry formula, triggers buy when result > 0 (required)
+        - `symbols`: List of stock codes (optional if filter_formula is provided)
+        - `filter_formula`: Pre-filter formula, e.g., 'NOT(IS_ST)'
+        - `entry_formula`: Buy/entry formula, triggers buy when result > 0 (required if strategy_code is not provided)
         - `exit_formula`: Sell/exit formula, triggers sell when result > 0 (optional)
+        - `strategy_code`: Custom backtest strategy Python code (optional)
         - `initial_cash`: Initial capital, default: 100000.0
         - `commission`: Commission rate, default: 0.0
         - `stop_loss`: Stop loss percentage, default: 0.0 (disabled)
-        - `sizer_percent`: Position size percentage, default: 99%
+        - `position_size`: Max position size ratio per stock, default: 0.2
+        - `max_positions`: Max number of holding stocks, default: 5
+        - `min_volume`: Minimum trading volume, default: 100
         - `auto_close`: Auto close position at end, default: true
-        - `labels`: Label dictionary for returning additional indicator values in daily data
+        - `indicator`: Indicator dictionary for custom strategy pre-computation or returning values
 
         **Formula Examples:**
         - `CROSS(MA(CLOSE, 5), MA(CLOSE, 20))` - Golden cross signal
@@ -2866,7 +2811,7 @@ paths:
         Returns backtest results including:
         - Performance metrics (return, drawdown, win rate, etc.)
         - Trade list with entry/exit details
-        - Daily data with OHLC and label values
+        - Daily portfolio values
       operationId: quant_backtest
       requestBody:
         content:
@@ -2890,8 +2835,182 @@ paths:
       security:
       - BearerAuth: []
 
+  /v1/quant/backtest/upload:
+    post:
+      tags:
+      - openapi-quant
+      summary: Upload Excel file for backtest
+      description: |
+        Upload an Excel file (.xlsx/.xls) containing OHLCV data for backtesting.
+        This allows you to use your own market data instead of the system's built-in data source.
+
+        **Request format:** `multipart/form-data` with two fields:
+        - `file`: Excel file (.xlsx or .xls)
+        - `params`: JSON string containing backtest parameters
+
+        **Excel file requirements:**
+        - Required columns: `date`, `open`, `high`, `low`, `close`
+        - Optional columns: `symbol` (required for multi-symbol), `volume`, `amount`
+        - Custom fields: any ASCII-named columns with numeric values (e.g., pe, market_cap, pb_ratio) can be referenced in formulas
+
+        **Formula Examples:**
+        - `CROSS(MA(CLOSE, 5), MA(CLOSE, 20))` - Golden cross signal
+        - `RSI(14) < 30` - RSI oversold
+        - `CLOSE > REF(CLOSE, 1) * 1.05` - Up more than 5%
+
+        **Output:**
+        Returns backtest results including:
+        - Performance metrics (return, drawdown, win rate, etc.)
+        - Trade list with entry/exit details
+        - Daily portfolio values
+      operationId: quant_backtest_upload
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Body_quant_backtest_upload'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BacktestOutput'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+
 components:
   schemas:
+    Batch1mklineInput:
+      type: object
+      required:
+      - symbols
+      - start_datetime
+      - end_datetime
+      properties:
+        market:
+          $ref: '#/components/schemas/StockMarket'
+          description: Stock market
+          default: cn
+        symbols:
+          type: array
+          title: Symbols
+          description: List of stock codes
+          minItems: 1
+          items:
+            type: string
+        start_datetime:
+          type: string
+          title: Start Datetime
+          description: Start datetime format YYYY-MM-DD HH:MM:SS
+        end_datetime:
+          type: string
+          title: End Datetime
+          description: End datetime format YYYY-MM-DD HH:MM:SS
+      title: Batch1mklineInput
+      description: Batch 1-minute kline request input.
+    BatchIntradayInput:
+      type: object
+      required:
+      - symbols
+      - start_datetime
+      - end_datetime
+      properties:
+        market:
+          $ref: '#/components/schemas/StockMarket'
+          description: Stock market
+          default: cn
+        symbols:
+          type: array
+          title: Symbols
+          description: List of stock codes
+          minItems: 1
+          items:
+            type: string
+        start_datetime:
+          type: string
+          title: Start Datetime
+          description: Start datetime format YYYY-MM-DD HH:MM:SS
+        end_datetime:
+          type: string
+          title: End Datetime
+          description: End datetime format YYYY-MM-DD HH:MM:SS
+      title: BatchIntradayInput
+      description: Batch intraday request input.
+    KlineOutput:
+      type: object
+      required:
+      - datas
+      - metadata
+      properties:
+        datas:
+          type: array
+          title: Datas
+          description: Kline data list
+          items:
+            type: object
+            additionalProperties: true
+            description: |
+              Items contain:
+              - market (string)
+              - date (string, YYYY-MM-DD HH:MM:SS)
+              - symbol (string)
+              - open (number)
+              - high (number)
+              - low (number)
+              - close (number)
+              - volume (integer)
+              - amount (number)
+              - chg_percent (number)
+              - chg (number)
+              - turnover_rate (number)
+        metadata:
+          type: object
+          title: Metadata
+          description: Query metadata
+          additionalProperties: true
+      title: KlineOutput
+      description: Kline data response.
+    MinuteOutput:
+      type: object
+      required:
+      - datas
+      - metadata
+      properties:
+        datas:
+          type: array
+          title: Datas
+          description: Minute data list
+          items:
+            type: object
+            additionalProperties: true
+            description: |
+              Items contain:
+              - market (string)
+              - date (string, YYYY-MM-DD HH:MM:SS)
+              - symbol (string)
+              - current (number)
+              - high (number)
+              - low (number)
+              - avg (number)
+              - volume (integer)
+              - amount (number)
+              - chg_percent (number)
+              - chg (number)
+        metadata:
+          type: object
+          title: Metadata
+          description: Query metadata
+          additionalProperties: true
+      title: MinuteOutput
+      description: Minute data response.
     Body_create_token_reportify_api_v1_oauth_token_post:
       properties:
         grant_type:
@@ -2942,6 +3061,132 @@ components:
       required:
       - file
       title: Body_upload_doc_by_form_reportify_api_v1_docs_upload_form_post
+    Body_quant_backtest_upload:
+      properties:
+        file:
+          type: string
+          format: binary
+          title: File
+          description: 'Excel file (.xlsx or .xls) containing OHLCV data. Required columns: date, open, high, low, close. Optional columns: symbol, volume, amount. Custom numeric columns are also supported.'
+        start_date:
+          type: string
+          title: Start Date
+          description: Backtest start date (YYYY-MM-DD). Filters data after indicator computation. If not provided, uses the earliest date in the Excel file.
+        end_date:
+          type: string
+          title: End Date
+          description: Backtest end date (YYYY-MM-DD). Filters data after indicator computation. If not provided, uses the latest date in the Excel file.
+        entry_formula:
+          type: string
+          title: Entry Formula
+          description: Buy/entry formula, triggers buy when result > 0
+        exit_formula:
+          type: string
+          title: Exit Formula
+          description: Sell/exit formula, triggers sell when result > 0
+        strategy_code:
+          type: string
+          title: Strategy Code
+          description: 'Custom backtest strategy Python code. Must define: def handle_data(context, datas)'
+        initial_cash:
+          type: number
+          title: Initial Cash
+          description: Initial capital, default 100000.0
+          default: 100000.0
+        commission:
+          type: number
+          title: Commission
+          description: Commission rate, default 0.0
+          default: 0.0
+        position_size:
+          type: number
+          title: Position Size
+          description: Max position size ratio per stock (e.g., 0.2 = 20%)
+          default: 0.2
+        max_positions:
+          type: integer
+          title: Max Positions
+          description: Max number of holding stocks
+          default: 5
+        min_volume:
+          type: integer
+          title: Min Volume
+          description: Minimum trading volume (e.g., 100 for A-shares)
+          default: 100
+        auto_close:
+          type: boolean
+          title: Auto Close
+          description: Auto close positions at end
+          default: true
+        signal_factors:
+          type: string
+          title: Signal Factors
+          description: 'JSON string of signal factors dictionary, e.g., {"up": "CROSS(MA(CLOSE, 20), MA(CLOSE, 60))"}'
+      type: object
+      required:
+      - file
+      title: Body_quant_backtest_upload
+    ExcelBacktestInput:
+      properties:
+        entry_formula:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Entry Formula
+          description: Buy/entry formula, triggers buy when result > 0
+        exit_formula:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Exit Formula
+          description: Sell/exit formula, triggers sell when result > 0
+        strategy_code:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Strategy Code
+          description: 'Custom backtest strategy Python code. Must define: def handle_data(context, datas)'
+        initial_cash:
+          type: number
+          title: Initial Cash
+          description: Initial capital, default 100000.0
+          default: 100000.0
+        commission:
+          type: number
+          title: Commission
+          description: Commission rate, default 0.0
+          default: 0.0
+        position_size:
+          type: number
+          title: Position Size
+          description: Max position size ratio per stock (e.g., 0.2 = 20%)
+          default: 0.2
+        max_positions:
+          type: integer
+          title: Max Positions
+          description: Max number of holding stocks
+          default: 5
+        min_volume:
+          type: integer
+          title: Min Volume
+          description: Minimum trading volume (e.g., 100 for A-shares)
+          default: 100
+        auto_close:
+          type: boolean
+          title: Auto Close
+          description: Auto close positions at end
+          default: true
+        signal_factors:
+          anyOf:
+          - additionalProperties:
+              type: string
+            type: object
+          - type: 'null'
+          title: Signal Factors
+          description: Signal factors dictionary for custom strategy pre-computation
+      type: object
+      title: ExcelBacktestInput
+      description: Backtest parameters for Excel file upload. Either entry_formula or strategy_code must be provided.
     CompanyLabel:
       properties:
         name:
@@ -5594,83 +5839,7 @@ components:
           type: string
           description: 响应消息
           example: ""
-
-    IndicatorMeta:
-      type: object
-      required:
-      - name
-      - description
-      - fields
-      properties:
-        name:
-          type: string
-          title: Name
-        description:
-          type: string
-          title: Description
-        fields:
-          type: array
-          title: Fields
-          items:
-            type: string
-      title: IndicatorMeta
       description: Metadata for a technical indicator.
-    IndicatorComputeInput:
-      type: object
-      required:
-      - symbols
-      - formula
-      properties:
-        market:
-          $ref: '#/components/schemas/StockMarket'
-          description: Stock market
-          default: cn
-        symbols:
-          type: array
-          title: Symbols
-          description: Stock code list, e.g., ["600519", "000001"] for CN market (required)
-          items:
-            type: string
-        formula:
-          type: string
-          title: Formula
-          description: Indicator formula (required)
-        start_date:
-          anyOf:
-          - type: string
-            format: date
-          - type: 'null'
-          title: Start Date
-          description: "Start date (optional, default: 3 months ago)"
-        end_date:
-          anyOf:
-          - type: string
-            format: date
-          - type: 'null'
-          title: End Date
-          description: "End date (optional, default: today)"
-      title: IndicatorComputeInput
-      description: Input for indicator computation.
-    IndicatorComputeOutput:
-      type: object
-      required:
-      - datas
-      - metadata
-      properties:
-        datas:
-          type: array
-          title: Datas
-          description: Indicator data list with symbol, date, and indicator fields
-          items:
-            type: object
-            additionalProperties: true
-        metadata:
-          type: object
-          title: Metadata
-          description: Computation metadata
-          additionalProperties: true
-      title: IndicatorComputeOutput
-      description: Output for indicator computation.
     FactorMeta:
       type: object
       required:
@@ -5748,15 +5917,73 @@ components:
         datas:
           type: array
           title: Datas
-          description: Factor data list with symbol, date, and factor value
+          description: Factor data list with symbol, date, name, close, factor_value, and indicators
           items:
             type: object
-            additionalProperties: true
+            required:
+            - date
+            - symbol
+            properties:
+              date:
+                type: string
+                format: date
+                description: Data date
+              symbol:
+                type: string
+                description: Stock code
+              name:
+                type: string
+                description: Stock name (Chinese)
+              name_en:
+                type: string
+                description: Stock name (English)
+              close:
+                type: number
+                description: Close price
+              factor_value:
+                anyOf:
+                - type: number
+                - type: boolean
+                - type: 'null'
+                description: Main formula result value
+              indicators:
+                type: object
+                additionalProperties: true
+                description: Intermediate indicator values from formula
         metadata:
           type: object
-          title: Metadata
-          description: Computation metadata
-          additionalProperties: true
+          required:
+          - formula
+          - start_date
+          - end_date
+          - total_rows
+          - fields
+          - indicators
+          properties:
+            formula:
+              type: string
+              description: The formula used
+            start_date:
+              type: string
+              format: date
+              description: Start date
+            end_date:
+              type: string
+              format: date
+              description: End date
+            total_rows:
+              type: integer
+              description: Total number of rows
+            fields:
+              type: array
+              items:
+                type: string
+              description: List of output field names
+            indicators:
+              type: array
+              items:
+                type: string
+              description: List of indicator formulas
       title: FactorComputeOutput
       description: Output for factor computation.
     FactorScreenInput:
@@ -5910,192 +6137,6 @@ components:
           additionalProperties: true
       title: BatchOHLCVOutput
       description: Batch OHLCV data response.
-    MinuteKlineInput:
-      type: object
-      required:
-      - symbol
-      - start_datetime
-      - end_datetime
-      properties:
-        symbol:
-          type: string
-          title: Symbol
-          description: Stock code (required)
-        start_datetime:
-          type: string
-          title: Start Datetime
-          description: Start datetime (YYYY-MM-DD HH:MM:SS) (required)
-        end_datetime:
-          type: string
-          title: End Datetime
-          description: End datetime (YYYY-MM-DD HH:MM:SS) (required)
-        market:
-          $ref: '#/components/schemas/StockMarket'
-          description: Stock market
-          default: cn
-      title: MinuteKlineInput
-      description: Input for 1-minute kline data request.
-    MinuteKlineOutput:
-      type: object
-      required:
-      - datas
-      - metadata
-      properties:
-        datas:
-          type: array
-          title: Datas
-          description: 1-minute kline data list
-          items:
-            type: object
-            additionalProperties: true
-        metadata:
-          type: object
-          title: Metadata
-          description: Query metadata
-          additionalProperties: true
-      title: MinuteKlineOutput
-      description: 1-minute kline data response.
-    BatchMinuteKlineInput:
-      type: object
-      required:
-      - symbols
-      - start_datetime
-      - end_datetime
-      properties:
-        symbols:
-          type: array
-          title: Symbols
-          description: List of stock codes (required)
-          minItems: 1
-          items:
-            type: string
-        start_datetime:
-          type: string
-          title: Start Datetime
-          description: Start datetime (YYYY-MM-DD HH:MM:SS) (required)
-        end_datetime:
-          type: string
-          title: End Datetime
-          description: End datetime (YYYY-MM-DD HH:MM:SS) (required)
-        market:
-          $ref: '#/components/schemas/StockMarket'
-          description: Stock market
-          default: cn
-      title: BatchMinuteKlineInput
-      description: Input for batch 1-minute kline data request.
-    BatchMinuteKlineOutput:
-      type: object
-      required:
-      - datas
-      - metadata
-      properties:
-        datas:
-          type: array
-          title: Datas
-          description: 1-minute kline data list sorted by date (ascending), then by symbol
-          items:
-            type: object
-            additionalProperties: true
-        metadata:
-          type: object
-          title: Metadata
-          description: Query metadata
-          additionalProperties: true
-      title: BatchMinuteKlineOutput
-      description: Batch 1-minute kline data response.
-    MinuteInput:
-      type: object
-      required:
-      - symbol
-      - start_datetime
-      - end_datetime
-      properties:
-        symbol:
-          type: string
-          title: Symbol
-          description: Stock code (required)
-        start_datetime:
-          type: string
-          title: Start Datetime
-          description: Start datetime (YYYY-MM-DD HH:MM:SS) (required)
-        end_datetime:
-          type: string
-          title: End Datetime
-          description: End datetime (YYYY-MM-DD HH:MM:SS) (required)
-        market:
-          $ref: '#/components/schemas/StockMarket'
-          description: Stock market
-          default: cn
-      title: MinuteInput
-      description: Input for minute data request.
-    MinuteOutput:
-      type: object
-      required:
-      - datas
-      - metadata
-      properties:
-        datas:
-          type: array
-          title: Datas
-          description: Minute data list
-          items:
-            type: object
-            additionalProperties: true
-        metadata:
-          type: object
-          title: Metadata
-          description: Query metadata
-          additionalProperties: true
-      title: MinuteOutput
-      description: Minute data response.
-    BatchMinuteInput:
-      type: object
-      required:
-      - symbols
-      - start_datetime
-      - end_datetime
-      properties:
-        symbols:
-          type: array
-          title: Symbols
-          description: List of stock codes (required)
-          minItems: 1
-          items:
-            type: string
-        start_datetime:
-          type: string
-          title: Start Datetime
-          description: Start datetime (YYYY-MM-DD HH:MM:SS) (required)
-        end_datetime:
-          type: string
-          title: End Datetime
-          description: End datetime (YYYY-MM-DD HH:MM:SS) (required)
-        market:
-          $ref: '#/components/schemas/StockMarket'
-          description: Stock market
-          default: cn
-      title: BatchMinuteInput
-      description: Input for batch minute data request.
-    BatchMinuteOutput:
-      type: object
-      required:
-      - datas
-      - metadata
-      properties:
-        datas:
-          type: array
-          title: Datas
-          description: Minute data list sorted by date (ascending), then by symbol
-          items:
-            type: object
-            additionalProperties: true
-        metadata:
-          type: object
-          title: Metadata
-          description: Query metadata
-          additionalProperties: true
-      title: BatchMinuteOutput
-      description: Batch minute data response.
     BacktestInput:
       properties:
         start_date:
@@ -6112,20 +6153,38 @@ components:
           $ref: '#/components/schemas/StockMarket'
           description: Stock market (cn, hk, us), default cn
           default: cn
-        symbol:
-          type: string
-          title: Symbol
-          description: Stock code (e.g., 600519, 00700, AAPL)
+        symbols:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Symbols
+          description: List of stock codes. If empty, defaults to full market (must provide filter_formula)
+        filter_formula:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Filter Formula
+          description: Pre-filter formula, e.g., 'NOT(IS_ST)'
         entry_formula:
-          type: string
+          anyOf:
+          - type: string
+          - type: 'null'
           title: Entry Formula
-          description: Buy/entry formula, triggers buy when result > 0 (required)
+          description: Buy/entry formula, triggers buy when result > 0
         exit_formula:
           anyOf:
           - type: string
           - type: 'null'
           title: Exit Formula
           description: Sell/exit formula, triggers sell when result > 0 (optional)
+        strategy_code:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Strategy Code
+          description: Backtest strategy python code
         initial_cash:
           type: number
           title: Initial Cash
@@ -6141,29 +6200,37 @@ components:
           title: Stop Loss
           description: Stop loss percentage, default 0.0 (disabled)
           default: 0.0
-        sizer_percent:
-          type: integer
-          title: Sizer Percent
-          description: Position size percentage, default 99%
-          default: 99
         auto_close:
           type: boolean
           title: Auto Close
           description: Auto close position at end, default true
           default: true
-        labels:
+        signal_factors:
           anyOf:
           - additionalProperties: true
             type: object
           - type: 'null'
-          title: Labels
-          description: 'Label dictionary for additional indicators, e.g., {"up": "CROSS(MA(CLOSE, 20), MA(CLOSE, 60))"}'
+          title: Signal Factors
+          description: 'Signal factors dictionary for custom strategy pre-computation'
+        position_size:
+          type: number
+          title: Position Size
+          description: Max position size ratio per stock, default 0.2
+          default: 0.2
+        max_positions:
+          type: integer
+          title: Max Positions
+          description: Max number of holding stocks, default 5
+          default: 5
+        min_volume:
+          type: integer
+          title: Min Volume
+          description: Minimum trading volume (e.g., 100 for A-shares), default 100
+          default: 100
       type: object
       required:
       - start_date
       - end_date
-      - symbol
-      - entry_formula
       title: BacktestInput
       description: Backtest input parameters for strategy execution.
     BacktestOutput:
@@ -6236,14 +6303,13 @@ components:
           items:
             $ref: '#/components/schemas/TradeItem'
           default: []
-        daily_data:
-          type: array
-          title: Daily Data
-          description: Daily data list with OHLC and label values
-          items:
-            type: object
-            additionalProperties: true
-          default: []
+        portfolio_value:
+          type: object
+          additionalProperties:
+            type: number
+          title: Portfolio Value
+          description: Daily portfolio values (for equity curve)
+          default: {}
         error_msg:
           anyOf:
           - type: string
@@ -6270,6 +6336,12 @@ components:
           type: integer
           title: Id
           description: Trade ID
+        symbol:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Symbol
+          description: Stock code (optional for multi-symbol backtest)
         type:
           type: string
           title: Type
@@ -6297,11 +6369,11 @@ components:
         net_pnl:
           type: number
           title: Net Pnl
-          description: Net profit/loss after commission
+          description: Net profit/loss
         return_pct:
           type: number
           title: Return Pct
-          description: Return percentage for this trade
+          description: Return percentage
         cumulative_pnl:
           type: number
           title: Cumulative Pnl
