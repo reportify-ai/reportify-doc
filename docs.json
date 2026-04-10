@@ -195,8 +195,6 @@
             "group": "量化分析接口",
             "icon": "chart-mixed",
             "pages": [
-              "apis/quant/indicators_list",
-              "apis/quant/indicators_compute",
               "apis/quant/factors_list",
               "apis/quant/factors_compute",
               "apis/quant/factors_screen",

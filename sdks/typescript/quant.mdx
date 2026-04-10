@@ -138,7 +138,7 @@ factors.forEach(f => {
 ```
 
 **因子分级：**
-- **Level 0 变量**: CLOSE, OPEN, HIGH, LOW, VOLUME 及别名
+- **Level 0 变量**: CLOSE, OPEN, HIGH, LOW, VOLUME, AMOUNT 及别名
 - **Level 0 函数**: MA, EMA, REF, HHV, LLV, STD 等核心函数
 - **Level 1 函数**: CROSS, COUNT, EVERY 等应用函数
 - **Level 2 函数**: MACD, KDJ, RSI, BOLL 等技术指标
@@ -221,7 +221,7 @@ const stocks = await client.quant.factorsScreen({
   formula: 'RSI(14) < 30',
   market: 'cn',             // 可选
   checkDate: '2024-06-01',  // 可选，默认最新交易日
-  symbols: undefined        // 可选，undefined 表示全市场
+  symbols: undefined        // 可选，undefined 表示当前市场
 });
 ```
 
@@ -232,7 +232,7 @@ const stocks = await client.quant.factorsScreen({
 | `formula` | `string` | 是 | 选股公式 |
 | `market` | `string` | 否 | 市场，默认 cn |
 | `checkDate` | `string` | 否 | 检查日期，默认最新交易日 |
-| `symbols` | `string[]` | 否 | 股票池，undefined 表示全市场 |
+| `symbols` | `string[]` | 否 | 股票池，undefined 表示当前市场 |
 
 **选股示例：**
 
@@ -443,16 +443,17 @@ const data = await client.quant.minuteBatch({
 const result = await client.quant.backtest({
   startDate: '2023-01-01',
   endDate: '2024-01-01',
-  symbol: '000001',
+  symbols: ['000001'],
   market: 'cn',
   entryFormula: 'CROSS(MA(CLOSE, 5), MA(CLOSE, 20))',  // 买入信号：MA5 上穿 MA20
   exitFormula: 'CROSSDOWN(MA(CLOSE, 5), MA(CLOSE, 20))',  // 卖出信号（可选）
   initialCash: 100000,  // 初始资金
   commission: 0.0003,   // 佣金费率
   stopLoss: 0.05,       // 止损 5%
-  sizerPercent: 99,     // 仓位 99%
+  positionSize: 0.2,    // 单个股票最大仓位 20%
+  maxPositions: 5,      // 最大持仓股票数量
   autoClose: true,      // 自动平仓
-  labels: { rsi: 'RSI(14)', ma20: 'MA(CLOSE, 20)' }  // 额外指标（可选）
+  signal_factors: { rsi: 'RSI(14)', ma20: 'MA(CLOSE, 20)' }  // 额外指标（可选）
 });
 ```
 
@@ -462,20 +463,24 @@ const result = await client.quant.backtest({
 |------|------|------|--------|------|
 | `startDate` | `string` | 是 | - | 回测开始日期（YYYY-MM-DD） |
 | `endDate` | `string` | 是 | - | 回测结束日期（YYYY-MM-DD） |
-| `symbol` | `string` | 是 | - | 股票代码 |
+| `symbols` | `string[]` | 否 | - | 股票代码列表（不传则需传 filterFormula） |
+| `filterFormula` | `string` | 否 | - | 前置过滤公式 |
 | `market` | `string` | 否 | cn | 市场（cn/hk/us） |
-| `entryFormula` | `string` | 是 | - | 买入/开仓公式（结果 > 0 触发买入） |
+| `entryFormula` | `string` | 否 | - | 买入/开仓公式（不传则需传 strategyCode） |
+| `strategyCode` | `string` | 否 | - | 自定义回测策略 Python 源码代码。代码中必须定义 `handle_data(context, datas)` 函数。 |
 | `exitFormula` | `string` | 否 | - | 卖出/平仓公式（结果 > 0 触发卖出） |
-| `initialCash` | `number` | 否 | 100000 | 初始资金 |
-| `commission` | `number` | 否 | 0 | 佣金费率（买卖通用） |
+| `initialCash` | `number` | 否 | 100000 | 初始资金（元） |
+| `commission` | `number` | 否 | 0 | 佣金费率（如 0.0003 表示万三） |
 | `buyCommission` | `number` | 否 | 0 | 买入手续费率（优先于 commission） |
 | `sellCommission` | `number` | 否 | 0 | 卖出手续费率（优先于 commission） |
 | `minCommissionAmount` | `number` | 否 | 0 | 单笔最低手续费金额（元） |
 | `slippage` | `number` | 否 | 0 | 滑点比例（买入价上浮、卖出价下浮） |
-| `stopLoss` | `number` | 否 | 0 | 止损比例（0 表示不设置） |
-| `sizerPercent` | `number` | 否 | 99 | 仓位百分比 |
-| `autoClose` | `boolean` | 否 | true | 是否自动平仓 |
-| `labels` | `Record<string, string>` | 否 | - | 标签字典，返回额外指标值 |
+| `stopLoss` | `number` | 否 | 0 | 止损比例（如 0.1 表示 10% 止损） |
+| `positionSize` | `number` | 否 | 0.2 | 单只股票最大仓位比例 |
+| `maxPositions` | `number` | 否 | 5 | 最大持仓股票数量 |
+| `minVolume` | `number` | 否 | 100 | 最小买入股数 |
+| `autoClose` | `boolean` | 否 | true | 是否在回测结束时自动平仓 |
+| `signalFactors` | `Record<string, string>` | 否 | - | 指标与因子字典，用于策略计算或返回 |
 
 **返回类型：**
 
@@ -490,14 +495,23 @@ interface BacktestResult {
   profit_factor: number;
   win_rate: number;
   total_trades: number;
+  winning_trades: number;
+  losing_trades: number;
   trades: Array<{
-    date: string;
-    action: 'buy' | 'sell';
-    price: number;
-    quantity: number;
-    value: number;
-    pnl?: number;
+    id: number;
+    symbol: string | null;
+    type: string;
+    entry_date: string;
+    exit_date: string;
+    entry_price: number;
+    exit_price: number;
+    size: number;
+    net_pnl: number;
+    return_pct: number;
+    cumulative_pnl: number;
   }>;
+  portfolio_value: Record<string, number>;
+  error_msg: string | null;
 }
 ```
 
@@ -508,7 +522,7 @@ interface BacktestResult {
 const result = await client.quant.backtest({
   startDate: '2023-01-01',
   endDate: '2024-01-01',
-  symbol: '000001',
+  symbols: ['000001'],
   entryFormula: 'CROSS(MA(CLOSE, 5), MA(CLOSE, 20))'
 });
 
@@ -523,7 +537,7 @@ console.log(`交易次数: ${result.total_trades}`);
 const result2 = await client.quant.backtest({
   startDate: '2023-01-01',
   endDate: '2024-01-01',
-  symbol: '000001',
+  symbols: ['000001'],
   entryFormula: 'CROSS(MA(CLOSE, 5), MA(CLOSE, 20))',      // 金叉买入
   exitFormula: 'CROSSDOWN(MA(CLOSE, 5), MA(CLOSE, 20))'    // 死叉卖出
 });
@@ -532,25 +546,108 @@ const result2 = await client.quant.backtest({
 const result3 = await client.quant.backtest({
   startDate: '2023-01-01',
   endDate: '2024-01-01',
-  symbol: '000001',
+  symbols: ['000001'],
   entryFormula: 'RSI(14) < 30',   // RSI 低于 30 买入
   exitFormula: 'RSI(14) > 70'     // RSI 高于 70 卖出
 });
 
-// 4. 使用 labels 记录额外指标
-const result4 = await client.quant.backtest({
+// 4. 使用 signalFactors 记录额外指标
+const resultIndicator = await client.quant.backtest({
   startDate: '2023-01-01',
   endDate: '2024-01-01',
-  symbol: '000001',
-  entryFormula: 'CROSS(RSI(14), 30)',
-  labels: {
-    rsi: 'RSI(14)',
-    ma20: 'MA(CLOSE, 20)',
-    ma60: 'MA(CLOSE, 60)'
+  symbols: ['000001'],
+  entryFormula: 'CROSS(MA(CLOSE, 5), MA(CLOSE, 10))',
+  exitFormula: 'CROSS(MA(CLOSE, 10), MA(CLOSE, 5))',
+  signalFactors: {
+    ma5: 'MA(CLOSE, 5)',
+    ma10: 'MA(CLOSE, 10)'
   }
 });
-// 每日数据中会包含 rsi、ma20、ma60 的值
+
+// 5. 自定义策略
+const customCode = `
+def handle_data(context, datas):
+    for data in datas:
+        symbol = data.name
+        position = context.portfolio.get_position(symbol)
+
+        if position is None:
+            if data.close > data.open:  # 阳线买入
+                context.order_target_percent(symbol, 0.2)
+        else:
+            if data.close < data.open:  # 阴线卖出
+                context.order_target_percent(symbol, 0)
+`;
+
+const resultCustom = await client.quant.backtest({
+  startDate: '2023-01-01',
+  endDate: '2024-01-01',
+  symbols: ['000001'],
+  strategyCode: customCode
+});
 ```
+
+### backtestUpload()
+
+上传 Excel 文件进行回测。使用自己的行情数据（而非系统内置数据源）。
+
+```typescript
+const result = await client.quant.backtestUpload({
+  file: myFile,  // File 对象
+  startDate: '2023-06-01',
+  endDate: '2024-01-01',
+  entryFormula: 'CROSS(MA(CLOSE, 5), MA(CLOSE, 10))',
+  exitFormula: 'CROSS(MA(CLOSE, 10), MA(CLOSE, 5))',
+  initialCash: 100000,
+  commission: 0.0003
+});
+```
+
+**参数：**
+
+| 参数 | 类型 | 必填 | 默认值 | 说明 |
+|------|------|------|--------|------|
+| `file` | `File` | 是 | - | Excel 文件（File 对象） |
+| `startDate` | `string` | 否 | - | 回测开始日期(YYYY-MM-DD)，指标计算后按此过滤 |
+| `endDate` | `string` | 否 | - | 回测结束日期(YYYY-MM-DD)，指标计算后按此过滤 |
+| `entryFormula` | `string` | 否 | - | 买入/开仓公式（不传则需传 `strategyCode`） |
+| `strategyCode` | `string` | 否 | - | 自定义回测策略 Python 源码 |
+| `exitFormula` | `string` | 否 | - | 卖出/平仓公式 |
+| `initialCash` | `number` | 否 | 100000 | 初始资金（元） |
+| `commission` | `number` | 否 | 0 | 佣金费率 |
+| `positionSize` | `number` | 否 | 0.2 | 单只股票最大仓位比例 |
+| `maxPositions` | `number` | 否 | 5 | 最大持仓股票数量 |
+| `minVolume` | `number` | 否 | 100 | 最小买入股数 |
+| `autoClose` | `boolean` | 否 | true | 是否自动平仓 |
+| `signalFactors` | `Record<string, string>` | 否 | - | 指标与因子字典 |
+
+**Excel 文件格式：**
+
+| 列名 | 是否必须 | 说明 |
+|------|---------|------|
+| `date` | 必须 | 交易日期 |
+| `open` | 必须 | 开盘价 |
+| `high` | 必须 | 最高价 |
+| `low` | 必须 | 最低价 |
+| `close` | 必须 | 收盘价 |
+| `symbol` | 多标的时必须 | 股票代码 |
+| `volume` | 可选 | 成交量 |
+| `amount` | 可选 | 成交额 |
+
+支持中文列名自动映射：
+
+| 中文列名 | 映射到 |
+|----------|--------|
+| 日期 / 时间 / 交易日期 / 交易日 | `date` |
+| 开盘 / 开盘价 | `open` |
+| 最高 / 最高价 | `high` |
+| 最低 / 最低价 | `low` |
+| 收盘 / 收盘价 | `close` |
+| 成交量 / 交易量 | `volume` |
+| 成交额 / 交易额 | `amount` |
+| 代码 / 股票代码 / 证券代码 | `symbol` |
+
+> 自定义字段列名仍须为 ASCII 字符（英文字母、数字、下划线）。
 
 ---
 
@@ -608,7 +705,7 @@ async function screenAndBacktest() {
     const result = await client.quant.backtest({
       startDate: '2023-01-01',
       endDate: '2024-01-01',
-      symbol: stock.symbol,
+      symbols: [stock.symbol],
       entryFormula: 'CROSS(RSI(14), 30)'  // RSI 上穿 30 买入
     });
     

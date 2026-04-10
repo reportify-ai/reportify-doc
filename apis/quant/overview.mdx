@@ -51,6 +51,7 @@ icon: 'book-open'
 | `HIGH` | `H` | 最高价 |
 | `LOW` | `L` | 最低价 |
 | `VOLUME` | `V`, `VOL` | 成交量 |
+| `AMOUNT` | - | 成交额 |
 | `LISTING_DATE` | - | 上市日期（`YYYY-MM-DD` 字符串，可直接与日期字符串比较） |
 
 ### 股票属性函数
@@ -275,15 +276,16 @@ icon: 'book-open'
 | `labels` | 标签字典，用于返回每日额外的指标值（可选） |
 
 <Tip>
-`labels` 参数可以在回测时同时返回每日的指标计算值，方便分析：
+`signal_factors` 参数用于预计算因子并在 `strategy_code` 中调用：
 
 ```json
 {
-  "labels": {
-    "ma5": "MA(CLOSE, 5)",
-    "ma10": "MA(CLOSE, 10)",
-    "rsi": "RSI(14)"
-  }
+    "signal_factors": {
+        "ma5": "MA(CLOSE, 5)",
+        "ma10": "MA(CLOSE, 10)",
+        "rsi": "RSI(14)"
+    },
+    "strategy_code": "def handle_data(context, datas):\n    for data in datas:\n        symbol = data.name\n        position = context.portfolio.get_position(symbol)\n        if not position:\n            if data.ma5 > data.ma10:\n                context.order_target_percent(symbol, 0.2)\n        elif data.rsi > 70:\n            context.order_target_percent(symbol, 0)"
 }
 ```
 </Tip>
