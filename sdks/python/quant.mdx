@@ -288,13 +288,14 @@ print(df[["symbol", "date", "close", "volume"]])
 
 ---
 
-### kline_1m()
+### kline()
 
-获取单个股票的 1 分钟 K 线数据。
+获取单个股票的 K 线数据，支持多种周期。
 
 ```python
-df = client.quant.kline_1m(
+df = client.quant.kline(
     symbol="000001",
+    kline_type="5M",
     start_datetime="2024-01-01 09:30:00",
     end_datetime="2024-01-01 15:00:00",
     market="cn"
@@ -308,21 +309,22 @@ print(df[["datetime", "open", "high", "low", "close", "volume"]])
 | 参数 | 类型 | 必填 | 说明 |
 |------|------|------|------|
 | `symbol` | `str` | 是 | 股票代码 |
-| `start_datetime` | `str` | 是 | 开始时间（YYYY-MM-DD HH:MM:SS） |
-| `end_datetime` | `str` | 是 | 结束时间（YYYY-MM-DD HH:MM:SS） |
-| `market` | `str` | 否 | 市场，默认 cn |
+| `kline_type` | `str` | 否 | K 线类型，默认 `1D`，支持 `1M`/`5M`/`15M`/`30M`/`60M`/`1D`/`1W`/`1MO` |
+| `market` | `str` | 否 | 市场，默认 `cn` |
+| `stock_type` | `str` | 否 | 品种类型，默认 `stock`，支持 `stock`/`etf`/`index`/`sw` |
+| `start_datetime` | `str` | 否 | 开始时间（YYYY-MM-DD HH:MM:SS），未指定时自动推算 |
+| `end_datetime` | `str` | 否 | 结束时间（YYYY-MM-DD HH:MM:SS） |
 
 ---
 
-### kline_1m_batch()
+### kline_batch()
 
-批量获取多个股票的 1 分钟 K 线数据。
+批量获取多个股票的 K 线数据。
 
 ```python
-df = client.quant.kline_1m_batch(
+df = client.quant.kline_batch(
     symbols=["000001", "600519", "000002"],
-    start_datetime="2024-01-01 09:30:00",
-    end_datetime="2024-01-01 15:00:00",
+    kline_type="1D",
     market="cn"
 )
 
@@ -398,7 +400,7 @@ result = client.quant.backtest(
     position_size=0.2,    # 单个股票最大仓位 20%
     max_positions=5,      # 最大持仓股票数量
     auto_close=True,      # 自动平仓
-    indicator={"rsi": "RSI(14)", "ma20": "MA(CLOSE, 20)"}  # 额外指标（可选）
+    signal_factors={"rsi": "RSI(14)", "ma20": "MA(CLOSE, 20)"}  # 额外指标（可选）
 )
 ```
 
@@ -416,6 +418,10 @@ result = client.quant.backtest(
 | `exit_formula` | `str` | 否 | None | 卖出/平仓公式（结果 > 0 触发卖出） |
 | `initial_cash` | `float` | 否 | 100000 | 初始资金（元） |
 | `commission` | `float` | 否 | 0 | 佣金费率（如 0.0003 表示万三） |
+| `buy_commission` | `float` | 否 | 0 | 买入手续费率（优先于 commission） |
+| `sell_commission` | `float` | 否 | 0 | 卖出手续费率（优先于 commission） |
+| `min_commission_amount` | `float` | 否 | 0 | 单笔最低手续费金额（元） |
+| `slippage` | `float` | 否 | 0 | 滑点比例（买入价上浮、卖出价下浮） |
 | `stop_loss` | `float` | 否 | 0 | 止损比例（如 0.1 表示 10% 止损） |
 | `position_size` | `float` | 否 | 0.2 | 单只股票最大仓位比例 |
 | `max_positions` | `int` | 否 | 5 | 最大持仓股票数量 |
@@ -498,7 +504,7 @@ def handle_data(context, datas):
     for data in datas:
         symbol = data.name
         position = context.portfolio.get_position(symbol)
-        
+
         if position is None:
             if data.close > data.open:  # 阳线买入
                 context.order_target_percent(symbol, 0.2)

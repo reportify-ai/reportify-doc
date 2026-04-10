@@ -34,6 +34,8 @@ icon: 'book-open'
 | `/v1/quant/factors/screen` | POST | 因子选股筛选 |
 | `/v1/quant/quotes/ohlcv` | GET | 获取单只股票 OHLCV 数据 |
 | `/v1/quant/quotes/ohlcv/batch` | POST | 批量获取 OHLCV 数据 |
+| `/v1/quant/quotes/kline` | GET | 获取 K 线数据（支持分钟/日/周/月线） |
+| `/v1/quant/quotes/kline/batch` | POST | 批量获取 K 线数据 |
 | `/v1/quant/backtest` | POST | 策略回测 |
 
 ## 公式语法
@@ -50,6 +52,18 @@ icon: 'book-open'
 | `LOW` | `L` | 最低价 |
 | `VOLUME` | `V`, `VOL` | 成交量 |
 | `AMOUNT` | - | 成交额 |
+| `LISTING_DATE` | - | 上市日期（`YYYY-MM-DD` 字符串，可直接与日期字符串比较） |
+
+### 股票属性函数
+
+| 函数 | 描述 |
+|------|------|
+| `IS_ST()` | 是否为 ST 股票 |
+| `IS_LIMIT_UP()` | 是否一字涨停 |
+| `IS_LIMIT_DOWN()` | 是否一字跌停 |
+| `IS_CHAIN_MAIN()` | 是否主板（60/000 开头） |
+| `IS_CHAIN_STAR()` | 是否科创板（68 开头） |
+| `IS_CHAIN_CHINEXT()` | 是否创业板（30 开头） |
 
 ### 支持的运算符
 
@@ -218,6 +232,22 @@ icon: 'book-open'
 
 # 价值 + 金叉
 "(PB() < 1.5) & (CROSS(MA(CLOSE, 5), MA(CLOSE, 20)))"
+```
+
+### 股票属性筛选
+
+```python
+# 2020年后上市的次新股
+"LISTING_DATE >= '2020-01-01'"
+
+# 科创板次新股（2019年后上市）
+"(LISTING_DATE >= '2019-01-01') & IS_CHAIN_STAR()"
+
+# 主板非ST股票
+"IS_CHAIN_MAIN() & (IS_ST() == 0)"
+
+# 主板老股 + 低估值
+"IS_CHAIN_MAIN() & (LISTING_DATE <= '2015-01-01') & (PE() < 15)"
 ```
 
 ### 回测策略公式

@@ -2574,19 +2574,21 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
       - BearerAuth: []
-  /v1/quant/quotes/1mkline:
+  /v1/quant/quotes/kline:
     get:
       tags:
       - openapi-quant
-      summary: Get 1-minute kline data
+      summary: Get kline data
       description: |
-        Get 1-minute kline data for a single symbol.
+        Get kline data for a single symbol. Supports all periods via kline_type parameter.
 
         - **symbol**: Stock code (required)
-        - **start_datetime**: Start datetime (required, format: YYYY-MM-DD HH:MM:SS)
-        - **end_datetime**: End datetime (required, format: YYYY-MM-DD HH:MM:SS)
+        - **kline_type**: Kline period (1M/5M/15M/30M/60M/1D/1W/1MO), default: 1D
         - **market**: Stock market (cn, hk, us), default: cn
-      operationId: quote_1mkline
+        - **stock_type**: Stock type (stock, etf, index, sw), default: stock
+        - **start_datetime**: Start datetime (optional, auto-inferred if omitted)
+        - **end_datetime**: End datetime (optional, default: now)
+      operationId: quote_kline
       parameters:
       - name: symbol
         in: query
@@ -2594,33 +2596,46 @@ paths:
         schema:
           type: string
           title: Symbol
-        description: Stock code
-      - name: start_datetime
+        description: Stock code (e.g., 600519, 00700, AAPL)
+      - name: kline_type
         in: query
-        required: true
+        required: false
         schema:
-          type: string
-          title: Start Datetime
-        description: Start datetime
-      - name: end_datetime
-        in: query
-        required: true
-        schema:
-          type: string
-          title: End Datetime
-        description: End datetime
+          $ref: '#/components/schemas/KLineType'
+          default: 1D
+        description: Kline period type
       - name: market
         in: query
         required: false
         schema:
-          type: string
-          enum:
-          - cn
-          - hk
-          - us
+          $ref: '#/components/schemas/StockMarket'
           default: cn
-          title: Market
-        description: Stock market
+      - name: stock_type
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/StockType'
+          default: stock
+      - name: start_datetime
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Start Datetime
+        description: Start datetime (YYYY-MM-DD HH:MM:SS)
+      - name: end_datetime
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: End Datetime
+        description: End datetime (YYYY-MM-DD HH:MM:SS)
       responses:
         '200':
           description: Successful Response
@@ -2636,26 +2651,26 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
       - BearerAuth: []
-  /v1/quant/quotes/1mkline/batch:
+  /v1/quant/quotes/kline/batch:
     post:
       tags:
       - openapi-quant
-      summary: Get batch 1-minute kline data for multiple symbols
+      summary: Get batch kline data for multiple symbols
       description: |
-        Get 1-minute kline data for multiple symbols.
+        Get kline data for multiple symbols. Supports all periods via kline_type parameter.
 
-        - **symbols**: List of stock code (required)
-        - **start_datetime**: Start datetime (required, format: YYYY-MM-DD HH:MM:SS)
-        - **end_datetime**: End datetime (required, format: YYYY-MM-DD HH:MM:SS)
+        - **symbols**: List of stock codes (required)
+        - **kline_type**: Kline period (1M/5M/15M/30M/60M/1D/1W/1MO), default: 1D
         - **market**: Stock market (cn, hk, us), default: cn
-
-        Returns data sorted by date (ascending), then by symbol.
-      operationId: quote_1mkline_batch
+        - **stock_type**: Stock type (stock, etf, index, sw), default: stock
+        - **start_datetime**: Start datetime (optional, auto-inferred if omitted)
+        - **end_datetime**: End datetime (optional, default: now)
+      operationId: quote_kline_batch
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Batch1mklineInput'
+              $ref: '#/components/schemas/BatchKlineInput'
         required: true
       responses:
         '200':
@@ -2753,7 +2768,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BatchIntradayInput'
+              $ref: '#/components/schemas/BatchMinuteInput'
         required: true
       responses:
         '200':
@@ -2888,129 +2903,6 @@ paths:
 
 components:
   schemas:
-    Batch1mklineInput:
-      type: object
-      required:
-      - symbols
-      - start_datetime
-      - end_datetime
-      properties:
-        market:
-          $ref: '#/components/schemas/StockMarket'
-          description: Stock market
-          default: cn
-        symbols:
-          type: array
-          title: Symbols
-          description: List of stock codes
-          minItems: 1
-          items:
-            type: string
-        start_datetime:
-          type: string
-          title: Start Datetime
-          description: Start datetime format YYYY-MM-DD HH:MM:SS
-        end_datetime:
-          type: string
-          title: End Datetime
-          description: End datetime format YYYY-MM-DD HH:MM:SS
-      title: Batch1mklineInput
-      description: Batch 1-minute kline request input.
-    BatchIntradayInput:
-      type: object
-      required:
-      - symbols
-      - start_datetime
-      - end_datetime
-      properties:
-        market:
-          $ref: '#/components/schemas/StockMarket'
-          description: Stock market
-          default: cn
-        symbols:
-          type: array
-          title: Symbols
-          description: List of stock codes
-          minItems: 1
-          items:
-            type: string
-        start_datetime:
-          type: string
-          title: Start Datetime
-          description: Start datetime format YYYY-MM-DD HH:MM:SS
-        end_datetime:
-          type: string
-          title: End Datetime
-          description: End datetime format YYYY-MM-DD HH:MM:SS
-      title: BatchIntradayInput
-      description: Batch intraday request input.
-    KlineOutput:
-      type: object
-      required:
-      - datas
-      - metadata
-      properties:
-        datas:
-          type: array
-          title: Datas
-          description: Kline data list
-          items:
-            type: object
-            additionalProperties: true
-            description: |
-              Items contain:
-              - market (string)
-              - date (string, YYYY-MM-DD HH:MM:SS)
-              - symbol (string)
-              - open (number)
-              - high (number)
-              - low (number)
-              - close (number)
-              - volume (integer)
-              - amount (number)
-              - chg_percent (number)
-              - chg (number)
-              - turnover_rate (number)
-        metadata:
-          type: object
-          title: Metadata
-          description: Query metadata
-          additionalProperties: true
-      title: KlineOutput
-      description: Kline data response.
-    MinuteOutput:
-      type: object
-      required:
-      - datas
-      - metadata
-      properties:
-        datas:
-          type: array
-          title: Datas
-          description: Minute data list
-          items:
-            type: object
-            additionalProperties: true
-            description: |
-              Items contain:
-              - market (string)
-              - date (string, YYYY-MM-DD HH:MM:SS)
-              - symbol (string)
-              - current (number)
-              - high (number)
-              - low (number)
-              - avg (number)
-              - volume (integer)
-              - amount (number)
-              - chg_percent (number)
-              - chg (number)
-        metadata:
-          type: object
-          title: Metadata
-          description: Query metadata
-          additionalProperties: true
-      title: MinuteOutput
-      description: Minute data response.
     Body_create_token_reportify_api_v1_oauth_token_post:
       properties:
         grant_type:
@@ -6137,6 +6029,103 @@ components:
           additionalProperties: true
       title: BatchOHLCVOutput
       description: Batch OHLCV data response.
+    MinuteInput:
+      type: object
+      required:
+      - symbol
+      - start_datetime
+      - end_datetime
+      properties:
+        symbol:
+          type: string
+          title: Symbol
+          description: Stock code (required)
+        start_datetime:
+          type: string
+          title: Start Datetime
+          description: Start datetime (YYYY-MM-DD HH:MM:SS) (required)
+        end_datetime:
+          type: string
+          title: End Datetime
+          description: End datetime (YYYY-MM-DD HH:MM:SS) (required)
+        market:
+          $ref: '#/components/schemas/StockMarket'
+          description: Stock market
+          default: cn
+      title: MinuteInput
+      description: Input for minute data request.
+    MinuteOutput:
+      type: object
+      required:
+      - datas
+      - metadata
+      properties:
+        datas:
+          type: array
+          title: Datas
+          description: Minute data list
+          items:
+            type: object
+            additionalProperties: true
+        metadata:
+          type: object
+          title: Metadata
+          description: Query metadata
+          additionalProperties: true
+      title: MinuteOutput
+      description: Minute data response.
+    BatchMinuteInput:
+      type: object
+      required:
+      - symbols
+      - start_datetime
+      - end_datetime
+      properties:
+        symbols:
+          type: array
+          title: Symbols
+          description: List of stock codes (required)
+          minItems: 1
+          items:
+            type: string
+        start_datetime:
+          type: string
+          title: Start Datetime
+          description: Start datetime (YYYY-MM-DD HH:MM:SS) (required)
+        end_datetime:
+          type: string
+          title: End Datetime
+          description: End datetime (YYYY-MM-DD HH:MM:SS) (required)
+        market:
+          $ref: '#/components/schemas/StockMarket'
+          description: Stock market
+          default: cn
+        stock_type:
+          $ref: '#/components/schemas/StockType'
+          default: stock
+          description: Stock type
+      title: BatchMinuteInput
+      description: Input for batch minute data request.
+    BatchMinuteOutput:
+      type: object
+      required:
+      - datas
+      - metadata
+      properties:
+        datas:
+          type: array
+          title: Datas
+          description: Minute data list sorted by date (ascending), then by symbol
+          items:
+            type: object
+            additionalProperties: true
+        metadata:
+          type: object
+          title: Metadata
+          description: Query metadata
+          additionalProperties: true
+      title: BatchMinuteOutput
+      description: Batch minute data response.
     BacktestInput:
       properties:
         start_date:
@@ -6194,6 +6183,26 @@ components:
           type: number
           title: Commission
           description: Commission rate, default 0.0
+          default: 0.0
+        buy_commission:
+          type: number
+          title: Buy Commission
+          description: Buy commission rate, takes priority over commission (e.g., 0.0003 for 0.03%)
+          default: 0.0
+        sell_commission:
+          type: number
+          title: Sell Commission
+          description: Sell commission rate, takes priority over commission (e.g., 0.0013 for A-share sell including stamp duty)
+          default: 0.0
+        min_commission_amount:
+          type: number
+          title: Min Commission Amount
+          description: Minimum commission per trade in CNY (e.g., 5.0 means at least 5 yuan per trade)
+          default: 0.0
+        slippage:
+          type: number
+          title: Slippage
+          description: Slippage ratio (e.g., 0.001 for 0.1%, buy price up, sell price down)
           default: 0.0
         stop_loss:
           type: number
@@ -6429,6 +6438,97 @@ components:
       - us
       title: StockMarket
       description: Stock market identifier
+    StockType:
+      type: string
+      enum:
+      - stock
+      - etf
+      - index
+      - sw
+      title: StockType
+      description: Stock type identifier
+    KLineType:
+      type: string
+      enum:
+      - 1M
+      - 5M
+      - 15M
+      - 30M
+      - 60M
+      - 1D
+      - 1W
+      - 1MO
+      title: KLineType
+      description: Kline period type
+    BatchKlineInput:
+      type: object
+      required:
+      - symbols
+      properties:
+        kline_type:
+          $ref: '#/components/schemas/KLineType'
+          default: 1D
+          description: Kline period type
+        market:
+          $ref: '#/components/schemas/StockMarket'
+          default: cn
+          description: Stock market
+        stock_type:
+          $ref: '#/components/schemas/StockType'
+          default: stock
+          description: Stock type
+        symbols:
+          type: array
+          title: Symbols
+          description: List of stock codes (required)
+          minItems: 1
+          items:
+            type: string
+        start_datetime:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Start Datetime
+          description: Start datetime (YYYY-MM-DD HH:MM:SS)
+        end_datetime:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: End Datetime
+          description: End datetime (YYYY-MM-DD HH:MM:SS)
+      title: BatchKlineInput
+      description: Batch kline request input.
+    KlineOutput:
+      type: object
+      required:
+      - datas
+      - metadata
+      properties:
+        datas:
+          type: array
+          title: Datas
+          description: Kline data list
+          items:
+            type: object
+            additionalProperties: true
+            description: |
+              Items contain:
+              - date or datetime (string)
+              - symbol (string)
+              - open (number)
+              - high (number)
+              - low (number)
+              - close (number)
+              - volume (integer)
+        metadata:
+          type: object
+          title: Metadata
+          description: Query metadata (symbol, kline_type, start_datetime, end_datetime, count)
+          additionalProperties: true
+      title: KlineOutput
+      description: Kline data response.
     FollowedCompanyItem:
       properties:
         symbol:
