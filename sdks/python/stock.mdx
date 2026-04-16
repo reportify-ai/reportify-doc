@@ -12,29 +12,35 @@ icon: 'chart-line'
 
 ### overview()
 
-获取公司概览信息。
+获取公司概览信息。返回结构为 `{"items": [company, ...]}`，每个 company 下有 `stockList` 数组。
 
 ```python
 # 通过股票代码查询（支持多个，逗号分隔）
-info = client.stock.overview(symbols="AAPL,00700")
-print(info)
+result = client.stock.overview(symbols="AAPL,00700")
+companies = result.get("items", [result]) if isinstance(result, dict) else result
+for company in companies:
+    for stock in company.get("stockList", []):
+        print(stock["symbol"], stock.get("stock_name"), stock.get("ipo_date"))
 
-# 通过股票名称查询（支持多个，逗号分隔）
-info = client.stock.overview(names="腾讯,苹果")
-print(info)
+# 通过股票名称查询
+result = client.stock.overview(names="腾讯,苹果")
 ```
 
 <ParamField path="symbols" type="string">
-  股票代码，支持多个，用逗号分隔，如 `AAPL,00700`
+  股票代码（不含市场前缀），支持多个用逗号分隔，如 `AAPL,00700`。与 `names` 至少提供一个
 </ParamField>
 
 <ParamField path="names" type="string">
-  股票名称，支持多个，用逗号分隔，如 `腾讯,苹果`
+  股票名称，支持多个用逗号分隔，如 `腾讯,苹果`
 </ParamField>
 
 <ResponseField name="返回值" type="dict">
-  公司信息，包含 `name`, `description`, `sector`, `industry`, `market_cap` 等
+  `{"items": [...]}` 结构。每个 item 包含 `country`、`city`、`fiscal_year_end`、`stockList` 等字段；`stockList` 是股票列表，每项含 `symbol`、`stock_name`、`market`、`ipo_date`、`industry_HS_1` 等
 </ResponseField>
+
+<Tip>
+批量查询 IPO 日期、市值等量化字段时，建议用 `client.quant.factors_compute(formula="LISTING_DATE")` 或 `"CIRCULATING_MARKET_CAP"`，单次调用即可处理全市场，比循环调用 `overview` 快得多。
+</Tip>
 
 ---
 
@@ -45,15 +51,26 @@ print(info)
 ```python
 shareholders = client.stock.shareholders("AAPL")
 for holder in shareholders:
-    print(holder["name"], holder["percentage"])
+    print(holder["name"], holder["percent"])
+
+# 获取流通股东
+outstanding = client.stock.shareholders("AAPL", type="outstanding_shareholders", limit=20)
 ```
 
 <ParamField path="symbol" type="string" required>
   股票代码
 </ParamField>
 
+<ParamField path="type" type="string" default="shareholders">
+  股东类型：`shareholders`（全部股东）或 `outstanding_shareholders`（流通股东）
+</ParamField>
+
+<ParamField path="limit" type="integer" default="10">
+  返回股东数量上限
+</ParamField>
+
 <ResponseField name="返回值" type="list[dict]">
-  股东列表，包含 `name`, `shares`, `percentage` 等
+  股东列表，包含 `name`, `holdings`, `percent`, `date` 等
 </ResponseField>
 
 ---
