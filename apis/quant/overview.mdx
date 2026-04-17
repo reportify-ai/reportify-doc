@@ -9,14 +9,11 @@ icon: 'book-open'
 量化分析 API 提供专业的量化投资工具，支持技术指标计算、因子选股、行情数据查询和策略回测。
 
 <CardGroup cols={2}>
-  <Card title="技术指标" icon="chart-line" href="/apis/quant/indicators_list">
-    获取可用指标列表，计算 RSI、MACD、KDJ、BOLL 等技术指标数据
-  </Card>
-  <Card title="因子选股" icon="filter" href="/apis/quant/factors_list">
-    获取因子定义，计算因子值，基于因子公式筛选股票
+  <Card title="因子系统" icon="filter" href="/apis/quant/factors_list">
+    获取因子定义，计算因子值（含技术指标 RSI/MACD/KDJ/BOLL 与基本面因子 PE/ROE 等），基于公式筛选股票
   </Card>
   <Card title="行情数据" icon="chart-candlestick" href="/apis/quant/quotes_ohlcv">
-    获取 OHLCV 日线数据（单只或批量）
+    获取 OHLCV 日线、K 线（1M/5M/15M/30M/60M/1D/1W/1MO）及分钟数据
   </Card>
   <Card title="策略回测" icon="flask" href="/apis/quant/backtest">
     运行策略回测并获取绩效分析
@@ -27,16 +24,20 @@ icon: 'book-open'
 
 | 接口 | 方法 | 描述 |
 |------|------|------|
-| `/v1/quant/indicators` | GET | 获取可用技术指标列表 |
-| `/v1/quant/indicators/compute` | POST | 计算技术指标数据 |
-| `/v1/quant/factors` | GET | 获取可用因子列表 |
-| `/v1/quant/factors/compute` | POST | 计算因子数据 |
+| `/v1/quant/factors` | GET | 获取可用因子列表（含变量、函数、技术指标、基本面因子） |
+| `/v1/quant/factors/compute` | POST | 计算因子数据（技术指标与基本面因子统一走此接口） |
 | `/v1/quant/factors/screen` | POST | 因子选股筛选 |
-| `/v1/quant/quotes/ohlcv` | GET | 获取单只股票 OHLCV 数据 |
+| `/v1/quant/quotes/ohlcv` | GET | 获取单只股票 OHLCV 日线数据 |
 | `/v1/quant/quotes/ohlcv/batch` | POST | 批量获取 OHLCV 数据 |
-| `/v1/quant/quotes/kline` | GET | 获取 K 线数据（支持分钟/日/周/月线） |
+| `/v1/quant/quotes/kline` | GET | 获取 K 线数据（支持 1M/5M/15M/30M/60M/1D/1W/1MO） |
 | `/v1/quant/quotes/kline/batch` | POST | 批量获取 K 线数据 |
+| `/v1/quant/quotes/minute` | GET | 获取单只股票分钟数据 |
+| `/v1/quant/quotes/minute/batch` | POST | 批量获取分钟数据 |
 | `/v1/quant/backtest` | POST | 策略回测 |
+
+<Note>
+技术指标（RSI/MACD/KDJ/BOLL 等）与基本面因子（PE/ROE/EPS 等）现已统一通过 `factors` 系列接口访问，不再有独立的 `indicators` 接口。
+</Note>
 
 ## 公式语法
 
@@ -256,12 +257,12 @@ icon: 'book-open'
 
 ```json
 {
-  "entry_formula": "CROSS(MA(CLOSE, 5), MA(CLOSE, 10))",
-  "exit_formula": "CROSS(MA(CLOSE, 10), MA(CLOSE, 5))",
-  "symbol": "000001",
   "start_date": "2024-01-01",
   "end_date": "2025-01-01",
-  "labels": {
+  "symbols": ["000001"],
+  "entry_formula": "CROSS(MA(CLOSE, 5), MA(CLOSE, 10))",
+  "exit_formula": "CROSS(MA(CLOSE, 10), MA(CLOSE, 5))",
+  "signal_factors": {
     "ma5": "MA(CLOSE, 5)",
     "ma10": "MA(CLOSE, 10)",
     "rsi": "RSI(14)"
@@ -273,7 +274,7 @@ icon: 'book-open'
 |------|------|
 | `entry_formula` | 买入/开仓公式，结果 > 0 时触发买入 |
 | `exit_formula` | 卖出/平仓公式，结果 > 0 时触发卖出（可选） |
-| `labels` | 标签字典，用于返回每日额外的指标值（可选） |
+| `signal_factors` | 预计算因子字典，用于 `strategy_code` 模式访问或返回额外值（可选） |
 
 <Tip>
 `signal_factors` 参数用于预计算因子并在 `strategy_code` 中调用：
@@ -293,11 +294,11 @@ icon: 'book-open'
 ## 快速开始
 
 <Steps>
-  <Step title="获取指标列表">
-    调用 `GET /v1/quant/indicators` 获取所有可用的技术指标定义
+  <Step title="获取因子列表">
+    调用 `GET /v1/quant/factors` 获取所有可用的变量、函数、技术指标和基本面因子
   </Step>
-  <Step title="计算指标数据">
-    调用 `POST /v1/quant/indicators/compute` 计算指定股票的指标数据
+  <Step title="计算因子数据">
+    调用 `POST /v1/quant/factors/compute` 计算指定股票的因子或指标数据
   </Step>
   <Step title="因子选股">
     调用 `POST /v1/quant/factors/screen` 筛选符合条件的股票
