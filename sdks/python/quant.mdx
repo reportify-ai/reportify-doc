@@ -18,7 +18,7 @@ from reportify_sdk import Reportify
 client = Reportify(api_key="your-api-key")
 
 # 计算 RSI 指标
-df = client.quant.indicators_compute(["000001"], "RSI(14)")
+df = client.quant.factors_compute(["000001"], "RSI(14)")
 
 # 因子选股
 stocks = client.quant.factors_screen(formula="RSI(14) < 30")
@@ -33,76 +33,6 @@ result = client.quant.backtest(
     start_date="2023-01-01",
     end_date="2024-01-01"
 )
-```
-
----
-
-## 指标 (Indicators)
-
-### indicators()
-
-获取可用技术指标列表。
-
-```python
-indicators = client.quant.indicators()
-
-for ind in indicators:
-    print(f"{ind['name']}: {ind['description']}")
-    print(f"  输出字段: {ind['fields']}")
-```
-
-**返回字段：**
-- `name`: 指标名称（如 MACD, RSI, KDJ）
-- `description`: 指标描述
-- `fields`: 输出字段（如 MACD 返回 ["dif", "dea", "macd"]）
-
----
-
-### indicators_compute()
-
-计算技术指标值。
-
-```python
-df = client.quant.indicators_compute(
-    symbols=["000001", "600519"],
-    formula="RSI(14)",
-    market="cn",           # 可选，默认 "cn"
-    start_date="2024-01-01",  # 可选
-    end_date="2024-06-01"     # 可选
-)
-```
-
-**参数：**
-
-| 参数 | 类型 | 必填 | 说明 |
-|------|------|------|------|
-| `symbols` | `list[str]` | 是 | 股票代码列表 |
-| `formula` | `str` | 是 | 指标公式 |
-| `market` | `str` | 否 | 市场（cn/hk/us），默认 cn |
-| `start_date` | `str` | 否 | 开始日期，默认 3 个月前 |
-| `end_date` | `str` | 否 | 结束日期，默认今天 |
-
-**公式示例：**
-
-```python
-# RSI 指标
-df = client.quant.indicators_compute(["000001"], "RSI(14)")
-print(df[["symbol", "date", "rsi"]])
-
-# MACD 指标（默认参数）
-df = client.quant.indicators_compute(["000001"], "MACD()")
-print(df[["symbol", "date", "dif", "dea", "macd"]])
-
-# MACD 指标（自定义参数）
-df = client.quant.indicators_compute(["000001"], "MACD(12, 26, 9)")
-
-# KDJ 指标
-df = client.quant.indicators_compute(["000001"], "KDJ(9, 3, 3)")
-print(df[["symbol", "date", "k", "d", "j"]])
-
-# 布林带
-df = client.quant.indicators_compute(["000001"], "BOLL(20, 2)")
-print(df[["symbol", "date", "upper", "mid", "lower"]])
 ```
 
 ---
@@ -450,7 +380,17 @@ result = client.quant.backtest(
     "winning_trades": 6,
     "losing_trades": 4,
     "trades": [...],
-    "portfolio_value": {...}
+    "portfolio_value": {...},
+    "benchmark_value": {...},
+    "benchmark_return_pct": 0.12,
+    "sharpe_ratio": 1.18,
+    "alpha": 0.04,
+    "beta": 0.92,
+    "max_drawdown_start": "2023-08-15",
+    "max_drawdown_end": "2023-10-23",
+    "daily_returns": {...},
+    "drawdown_series": {...},
+    "error_msg": None
 }
 ```
 
@@ -623,9 +563,9 @@ client = Reportify(api_key="your-api-key")
 df = client.quant.ohlcv("000001", start_date="2024-01-01")
 
 # 2. 计算多个指标
-rsi = client.quant.indicators_compute(["000001"], "RSI(14)")
-macd = client.quant.indicators_compute(["000001"], "MACD()")
-boll = client.quant.indicators_compute(["000001"], "BOLL(20, 2)")
+rsi = client.quant.factors_compute(["000001"], "RSI(14)")
+macd = client.quant.factors_compute(["000001"], "MACD()")
+boll = client.quant.factors_compute(["000001"], "BOLL(20, 2)")
 
 # 3. 合并数据
 import pandas as pd

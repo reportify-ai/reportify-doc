@@ -42,87 +42,6 @@ const result = await client.quant.backtest({
 
 ---
 
-## 指标 (Indicators)
-
-### indicators()
-
-获取可用技术指标列表。
-
-```typescript
-const indicators = await client.quant.indicators();
-
-indicators.forEach(ind => {
-  console.log(`${ind.name}: ${ind.description}`);
-  console.log(`  输出字段: ${ind.fields.join(', ')}`);
-});
-```
-
-**返回类型：**
-
-```typescript
-interface IndicatorMeta {
-  name: string;        // 指标名称（如 MACD, RSI, KDJ）
-  description: string; // 指标描述
-  fields: string[];    // 输出字段
-}
-```
-
----
-
-### indicatorsCompute()
-
-计算技术指标值。
-
-```typescript
-const data = await client.quant.indicatorsCompute({
-  symbols: ['000001', '600519'],
-  formula: 'RSI(14)',
-  market: 'cn',           // 可选，默认 "cn"
-  startDate: '2024-01-01',  // 可选
-  endDate: '2024-06-01'     // 可选
-});
-```
-
-**参数：**
-
-| 参数 | 类型 | 必填 | 说明 |
-|------|------|------|------|
-| `symbols` | `string[]` | 是 | 股票代码列表 |
-| `formula` | `string` | 是 | 指标公式 |
-| `market` | `string` | 否 | 市场（cn/hk/us），默认 cn |
-| `startDate` | `string` | 否 | 开始日期，默认 3 个月前 |
-| `endDate` | `string` | 否 | 结束日期，默认今天 |
-
-**公式示例：**
-
-```typescript
-// RSI 指标
-const rsi = await client.quant.indicatorsCompute({
-  symbols: ['000001'],
-  formula: 'RSI(14)'
-});
-
-// MACD 指标（默认参数）
-const macd = await client.quant.indicatorsCompute({
-  symbols: ['000001'],
-  formula: 'MACD()'
-});
-
-// KDJ 指标
-const kdj = await client.quant.indicatorsCompute({
-  symbols: ['000001'],
-  formula: 'KDJ(9, 3, 3)'
-});
-
-// 布林带
-const boll = await client.quant.indicatorsCompute({
-  symbols: ['000001'],
-  formula: 'BOLL(20, 2)'
-});
-```
-
----
-
 ## 因子 (Factors)
 
 ### factors()
@@ -518,6 +437,15 @@ interface BacktestResult {
     cumulative_pnl: number;
   }>;
   portfolio_value: Record<string, number>;
+  benchmark_value: Record<string, number>;
+  benchmark_return_pct: number;
+  sharpe_ratio: number;
+  alpha: number;
+  beta: number;
+  max_drawdown_start: string | null;
+  max_drawdown_end: string | null;
+  daily_returns: Record<string, number>;
+  drawdown_series: Record<string, number>;
   error_msg: string | null;
 }
 ```

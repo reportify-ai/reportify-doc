@@ -274,8 +274,6 @@ Authorization: Bearer YOUR_API_KEY
   
   | 工具名 | 功能描述 |
   |--------|----------|
-  | `indicators` | 获取可用技术指标列表 |
-  | `indicators_compute` | 计算技术指标（RSI, MACD, KDJ, BOLL, ATR 等） |
   | `factors` | 获取可用因子列表（技术因子 + 基本面因子） |
   | `factors_compute` | 计算因子值（支持技术和基本面因子） |
   | `factors_screen` | 因子筛选选股 |
@@ -424,21 +422,6 @@ Agent 对话相关工具。
     ```
   </Tab>
 
-  <Tab title="计算指标">
-    使用 Stock MCP 计算 RSI 指标：
-
-    ```json
-    {
-      "tool": "indicators_compute",
-      "parameters": {
-        "market": "cn",
-        "symbols": ["000001", "600519"],
-        "formula": "RSI(14)",
-        "start_date": "2025-01-01"
-      }
-    }
-    ```
-  </Tab>
 </Tabs>
 
 ## 股票代码格式
