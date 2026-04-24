@@ -104,6 +104,7 @@ icon: 'book-open'
     | `EVERY(X, N)` | N 周期内全部满足条件 | `EVERY(CLOSE > MA(CLOSE, 20), 5)` |
     | `EXIST(X, N)` | N 周期内存在满足条件 | `EXIST(CLOSE > HHV(HIGH, 60), 5)` |
     | `BARSLAST(X)` | 上次满足条件到现在的周期数 | `BARSLAST(CROSS(MA(CLOSE, 5), MA(CLOSE, 10)))` |
+    | `FIN_REF(expr)` | 财务历史数据链式引用，支持 `.where(cond).shift(n).alias(name)` | `FIN_REF(INCOME.net_profit).where(INCOME.fiscal_quarter == "FY").shift(1)` |
   </Accordion>
   
   <Accordion title="Level 2 - 技术指标">
