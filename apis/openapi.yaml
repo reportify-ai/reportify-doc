@@ -2808,7 +2808,6 @@ paths:
         - `strategy_code`: Custom backtest strategy Python code (optional)
         - `initial_cash`: Initial capital, default: 100000.0
         - `commission`: Commission rate, default: 0.0
-        - `stop_loss`: Stop loss percentage, default: 0.0 (disabled)
         - `position_size`: Max position size ratio per stock, default: 0.2
         - `max_positions`: Max number of holding stocks, default: 5
         - `min_volume`: Minimum trading volume, default: 100
@@ -6204,11 +6203,6 @@ components:
           title: Slippage
           description: Slippage ratio (e.g., 0.001 for 0.1%, buy price up, sell price down)
           default: 0.0
-        stop_loss:
-          type: number
-          title: Stop Loss
-          description: Stop loss percentage, default 0.0 (disabled)
-          default: 0.0
         auto_close:
           type: boolean
           title: Auto Close
@@ -6318,6 +6312,59 @@ components:
             type: number
           title: Portfolio Value
           description: Daily portfolio values (for equity curve)
+          default: {}
+        benchmark_value:
+          type: object
+          additionalProperties:
+            type: number
+          title: Benchmark Value
+          description: Daily benchmark values scaled to initial capital
+          default: {}
+        benchmark_return_pct:
+          type: number
+          title: Benchmark Return Pct
+          description: Benchmark total return percentage
+          default: 0.0
+        sharpe_ratio:
+          type: number
+          title: Sharpe Ratio
+          description: Annualized Sharpe ratio with risk-free rate = 0
+          default: 0.0
+        alpha:
+          type: number
+          title: Alpha
+          description: Annualized CAPM Jensen's Alpha with risk-free rate = 0
+          default: 0.0
+        beta:
+          type: number
+          title: Beta
+          description: Strategy beta relative to benchmark
+          default: 0.0
+        max_drawdown_start:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Max Drawdown Start
+          description: Start date of maximum drawdown period (peak date)
+        max_drawdown_end:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Max Drawdown End
+          description: End date of maximum drawdown period (trough date)
+        daily_returns:
+          type: object
+          additionalProperties:
+            type: number
+          title: Daily Returns
+          description: Daily return series (decimal values)
+          default: {}
+        drawdown_series:
+          type: object
+          additionalProperties:
+            type: number
+          title: Drawdown Series
+          description: Daily drawdown series (positive decimal values)
           default: {}
         error_msg:
           anyOf:

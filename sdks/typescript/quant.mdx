@@ -42,87 +42,6 @@ const result = await client.quant.backtest({
 
 ---
 
-## 指标 (Indicators)
-
-### indicators()
-
-获取可用技术指标列表。
-
-```typescript
-const indicators = await client.quant.indicators();
-
-indicators.forEach(ind => {
-  console.log(`${ind.name}: ${ind.description}`);
-  console.log(`  输出字段: ${ind.fields.join(', ')}`);
-});
-```
-
-**返回类型：**
-
-```typescript
-interface IndicatorMeta {
-  name: string;        // 指标名称（如 MACD, RSI, KDJ）
-  description: string; // 指标描述
-  fields: string[];    // 输出字段
-}
-```
-
----
-
-### indicatorsCompute()
-
-计算技术指标值。
-
-```typescript
-const data = await client.quant.indicatorsCompute({
-  symbols: ['000001', '600519'],
-  formula: 'RSI(14)',
-  market: 'cn',           // 可选，默认 "cn"
-  startDate: '2024-01-01',  // 可选
-  endDate: '2024-06-01'     // 可选
-});
-```
-
-**参数：**
-
-| 参数 | 类型 | 必填 | 说明 |
-|------|------|------|------|
-| `symbols` | `string[]` | 是 | 股票代码列表 |
-| `formula` | `string` | 是 | 指标公式 |
-| `market` | `string` | 否 | 市场（cn/hk/us），默认 cn |
-| `startDate` | `string` | 否 | 开始日期，默认 3 个月前 |
-| `endDate` | `string` | 否 | 结束日期，默认今天 |
-
-**公式示例：**
-
-```typescript
-// RSI 指标
-const rsi = await client.quant.indicatorsCompute({
-  symbols: ['000001'],
-  formula: 'RSI(14)'
-});
-
-// MACD 指标（默认参数）
-const macd = await client.quant.indicatorsCompute({
-  symbols: ['000001'],
-  formula: 'MACD()'
-});
-
-// KDJ 指标
-const kdj = await client.quant.indicatorsCompute({
-  symbols: ['000001'],
-  formula: 'KDJ(9, 3, 3)'
-});
-
-// 布林带
-const boll = await client.quant.indicatorsCompute({
-  symbols: ['000001'],
-  formula: 'BOLL(20, 2)'
-});
-```
-
----
-
 ## 因子 (Factors)
 
 ### factors()
@@ -250,6 +169,11 @@ const goldenCross = await client.quant.factorsScreen({
 // 上升趋势
 const uptrend = await client.quant.factorsScreen({
   formula: '(CLOSE > MA(CLOSE, 20)) & (MA(CLOSE, 20) > MA(CLOSE, 60))'
+});
+
+// 行业筛选（申万行业）
+const banks = await client.quant.factorsScreen({
+  formula: 'INDUSTRY("银行") & (PE_TTM() < 10)'
 });
 
 // 在指定股票池中筛选
@@ -449,11 +373,11 @@ const result = await client.quant.backtest({
   exitFormula: 'CROSSDOWN(MA(CLOSE, 5), MA(CLOSE, 20))',  // 卖出信号（可选）
   initialCash: 100000,  // 初始资金
   commission: 0.0003,   // 佣金费率
-  stopLoss: 0.05,       // 止损 5%
   positionSize: 0.2,    // 单个股票最大仓位 20%
   maxPositions: 5,      // 最大持仓股票数量
+  cheatOnOpen: false,   // 是否启用 T 日信号当日开盘成交
   autoClose: true,      // 自动平仓
-  signal_factors: { rsi: 'RSI(14)', ma20: 'MA(CLOSE, 20)' }  // 额外指标（可选）
+  signalFactors: { rsi: 'RSI(14)', ma20: 'MA(CLOSE, 20)' }  // 额外指标（可选）
 });
 ```
 
@@ -475,11 +399,11 @@ const result = await client.quant.backtest({
 | `sellCommission` | `number` | 否 | 0 | 卖出手续费率（优先于 commission） |
 | `minCommissionAmount` | `number` | 否 | 0 | 单笔最低手续费金额（元） |
 | `slippage` | `number` | 否 | 0 | 滑点比例（买入价上浮、卖出价下浮） |
-| `stopLoss` | `number` | 否 | 0 | 止损比例（如 0.1 表示 10% 止损） |
-| `positionSize` | `number` | 否 | 0.2 | 单只股票最大仓位比例 |
-| `maxPositions` | `number` | 否 | 5 | 最大持仓股票数量 |
+| `positionSize` | `number \| null` | 否 | 不传/`null` | 单只股票最大仓位比例。不传或传 `null` 表示不限制 |
+| `maxPositions` | `number \| null` | 否 | 不传/`null` | 最大持仓股票数量。不传或传 `null` 表示不限制 |
 | `minVolume` | `number` | 否 | 100 | 最小买入股数 |
 | `autoClose` | `boolean` | 否 | true | 是否在回测结束时自动平仓 |
+| `cheatOnOpen` | `boolean` | 否 | false | `true` 时 T 日信号在 T 日开盘成交，`false` 时在 T+1 开盘成交 |
 | `signalFactors` | `Record<string, string>` | 否 | - | 指标与因子字典，用于策略计算或返回 |
 
 **返回类型：**
@@ -511,6 +435,15 @@ interface BacktestResult {
     cumulative_pnl: number;
   }>;
   portfolio_value: Record<string, number>;
+  benchmark_value: Record<string, number>;
+  benchmark_return_pct: number;
+  sharpe_ratio: number;
+  alpha: number;
+  beta: number;
+  max_drawdown_start: string | null;
+  max_drawdown_end: string | null;
+  daily_returns: Record<string, number>;
+  drawdown_series: Record<string, number>;
   error_msg: string | null;
 }
 ```
@@ -615,10 +548,15 @@ const result = await client.quant.backtestUpload({
 | `exitFormula` | `string` | 否 | - | 卖出/平仓公式 |
 | `initialCash` | `number` | 否 | 100000 | 初始资金（元） |
 | `commission` | `number` | 否 | 0 | 佣金费率 |
-| `positionSize` | `number` | 否 | 0.2 | 单只股票最大仓位比例 |
-| `maxPositions` | `number` | 否 | 5 | 最大持仓股票数量 |
-| `minVolume` | `number` | 否 | 100 | 最小买入股数 |
+| `buyCommission` | `number` | 否 | 0 | 买入手续费率（优先于 commission） |
+| `sellCommission` | `number` | 否 | 0 | 卖出手续费率（优先于 commission） |
+| `minCommissionAmount` | `number` | 否 | 0 | 单笔最低手续费金额（元） |
+| `slippage` | `number` | 否 | 0 | 滑点比例（买入价上浮、卖出价下浮） |
+| `positionSize` | `number \| null` | 否 | 不传/`null` | 单只股票最大仓位比例。不传或传 `null` 表示不限制 |
+| `maxPositions` | `number \| null` | 否 | 不传/`null` | 最大持仓股票数量。不传或传 `null` 表示不限制 |
+| `minVolume` | `number` | 否 | 1 | 最小买入股数 |
 | `autoClose` | `boolean` | 否 | true | 是否自动平仓 |
+| `cheatOnOpen` | `boolean` | 否 | false | `true` 时 T 日信号在 T 日开盘成交，`false` 时在 T+1 开盘成交 |
 | `signalFactors` | `Record<string, string>` | 否 | - | 指标与因子字典 |
 
 **Excel 文件格式：**
