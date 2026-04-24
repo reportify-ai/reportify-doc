@@ -2808,7 +2808,6 @@ paths:
         - `strategy_code`: Custom backtest strategy Python code (optional)
         - `initial_cash`: Initial capital, default: 100000.0
         - `commission`: Commission rate, default: 0.0
-        - `stop_loss`: Stop loss percentage, default: 0.0 (disabled)
         - `position_size`: Max position size ratio per stock, default: 0.2
         - `max_positions`: Max number of holding stocks, default: 5
         - `min_volume`: Minimum trading volume, default: 100
@@ -6203,11 +6202,6 @@ components:
           type: number
           title: Slippage
           description: Slippage ratio (e.g., 0.001 for 0.1%, buy price up, sell price down)
-          default: 0.0
-        stop_loss:
-          type: number
-          title: Stop Loss
-          description: Stop loss percentage, default 0.0 (disabled)
           default: 0.0
         auto_close:
           type: boolean
