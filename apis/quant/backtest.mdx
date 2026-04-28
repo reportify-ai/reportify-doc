@@ -311,6 +311,10 @@ const data = await response.json();
   基准总收益率（如 0.154 表示 15.4%）
 </ResponseField>
 
+<ResponseField name="annualized_return_pct" type="number">
+  年化收益率（如 0.15 表示 15%，按 252 交易日折算）
+</ResponseField>
+
 <ResponseField name="sharpe_ratio" type="number">
   夏普比率（年化，无风险利率按 0 计算）
 </ResponseField>
@@ -385,6 +389,7 @@ const data = await response.json();
     "2024-02-20": 108430.6
   },
   "benchmark_return_pct": 0.0843,
+  "annualized_return_pct": 0.172,
   "sharpe_ratio": 1.18,
   "alpha": 0.041,
   "beta": 0.92,
