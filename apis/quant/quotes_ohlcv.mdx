@@ -1,6 +1,6 @@
 ---
-title: '获取 OHLCV 数据'
-description: '获取单只股票的 OHLCV 日线数据'
+title: '日线行情'
+description: '获取单只股票的日线行情数据'
 openapi: 'GET /v1/quant/quotes/ohlcv'
 ---
 
@@ -73,32 +73,82 @@ const data = await response.json();
 <ResponseField name="datas" type="array">
   OHLCV 数据列表，按日期排序
   <Expandable title="数据字段">
+    <ResponseField name="market" type="string">
+      股票市场（cn / hk / us）
+    </ResponseField>
     <ResponseField name="date" type="string">
-      日期
+      日期，格式：`YYYY-MM-DD`
     </ResponseField>
     <ResponseField name="symbol" type="string">
       股票代码
     </ResponseField>
     <ResponseField name="open" type="number">
-      开盘价
+      开盘价（复权）
     </ResponseField>
     <ResponseField name="high" type="number">
-      最高价
+      最高价（复权）
     </ResponseField>
     <ResponseField name="low" type="number">
-      最低价
+      最低价（复权）
     </ResponseField>
     <ResponseField name="close" type="number">
-      收盘价
+      收盘价（复权）
     </ResponseField>
     <ResponseField name="volume" type="integer">
-      成交量
+      成交量（股）
+    </ResponseField>
+    <ResponseField name="amount" type="number">
+      成交额（元）
+    </ResponseField>
+    <ResponseField name="chg_percent" type="number">
+      涨跌幅（%）
+    </ResponseField>
+    <ResponseField name="turnover_rate" type="number">
+      换手率，ETF 不返回
+    </ResponseField>
+    <ResponseField name="pe_ttm" type="number">
+      市盈率 TTM，ETF 不返回
+    </ResponseField>
+    <ResponseField name="pe_static" type="number">
+      静态市盈率，指数/ETF 不返回
+    </ResponseField>
+    <ResponseField name="pe_dynamic" type="number">
+      动态市盈率，指数/ETF 不返回
+    </ResponseField>
+    <ResponseField name="is_limit_up_down" type="boolean">
+      是否涨停/跌停，指数不返回
+    </ResponseField>
+    <ResponseField name="pb" type="number">
+      市净率，ETF 不返回
+    </ResponseField>
+    <ResponseField name="market_cap" type="number">
+      总市值（元），ETF 不返回
+    </ResponseField>
+    <ResponseField name="circulating_market_cap" type="number">
+      流通市值（元），ETF 不返回
     </ResponseField>
   </Expandable>
 </ResponseField>
 
 <ResponseField name="metadata" type="object">
   查询元数据
+  <Expandable title="元数据字段">
+    <ResponseField name="symbol" type="string">
+      股票代码
+    </ResponseField>
+    <ResponseField name="market" type="string">
+      股票市场
+    </ResponseField>
+    <ResponseField name="start_date" type="string">
+      查询开始日期
+    </ResponseField>
+    <ResponseField name="end_date" type="string">
+      查询结束日期
+    </ResponseField>
+    <ResponseField name="count" type="integer">
+      返回数据条数
+    </ResponseField>
+  </Expandable>
 </ResponseField>
 
 ## 响应示例
@@ -107,39 +157,52 @@ const data = await response.json();
 {
   "datas": [
     {
-      "date": "2026-01-10",
+      "market": "cn",
+      "date": "2026-04-02",
       "symbol": "000001",
-      "open": 12.15,
-      "high": 12.48,
-      "low": 12.10,
-      "close": 12.35,
-      "volume": 98765432
+      "open": 10.98,
+      "high": 11.02,
+      "low": 10.93,
+      "close": 11.0,
+      "volume": 17744106,
+      "amount": 194464864.8,
+      "chg_percent": 0.1821,
+      "turnover_rate": 0.0004,
+      "pe_ttm": 12.34,
+      "pe_static": 11.89,
+      "pe_dynamic": 12.01,
+      "is_limit_up_down": false,
+      "pb": 0.8512,
+      "market_cap": 213456789000.0,
+      "circulating_market_cap": 198765432000.0
     },
     {
-      "date": "2026-01-09",
+      "market": "cn",
+      "date": "2026-04-01",
       "symbol": "000001",
-      "open": 12.00,
-      "high": 12.25,
-      "low": 11.95,
-      "close": 12.15,
-      "volume": 87654321
-    },
-    {
-      "date": "2026-01-08",
-      "symbol": "000001",
-      "open": 11.85,
-      "high": 12.10,
-      "low": 11.80,
-      "close": 12.00,
-      "volume": 76543210
+      "open": 10.95,
+      "high": 11.0,
+      "low": 10.90,
+      "close": 10.98,
+      "volume": 15321456,
+      "amount": 168123456.5,
+      "chg_percent": 0.2752,
+      "turnover_rate": 0.0004,
+      "pe_ttm": 12.32,
+      "pe_static": 11.87,
+      "pe_dynamic": 11.99,
+      "is_limit_up_down": false,
+      "pb": 0.8498,
+      "market_cap": 213123456000.0,
+      "circulating_market_cap": 198456789000.0
     }
   ],
   "metadata": {
     "symbol": "000001",
     "market": "cn",
-    "start_date": "2026-01-01",
-    "end_date": "2026-01-10",
-    "count": 3
+    "start_date": "2026-04-01",
+    "end_date": "2026-04-10",
+    "count": 2
   }
 }
 ```

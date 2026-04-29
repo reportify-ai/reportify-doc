@@ -1,5 +1,5 @@
 ---
-title: '批量获取 K 线数据'
+title: '批量 K 线数据'
 description: '批量获取多只股票的 K 线数据，支持分钟线、日线、周线、月线'
 openapi: 'POST /v1/quant/quotes/kline/batch'
 ---
@@ -91,10 +91,13 @@ const data = await response.json();
 ## 响应参数
 
 <ResponseField name="datas" type="array">
-  K 线数据列表
+  K 线数据列表，按日期（升序）和股票代码排序
   <Expandable title="数据字段">
-    <ResponseField name="datetime" type="string">
-      日期时间（分钟线）或日期（日线/周线/月线）
+    <ResponseField name="market" type="string">
+      股票市场（cn / hk / us）
+    </ResponseField>
+    <ResponseField name="date" type="string">
+      日期时间（分钟线格式：`YYYY-MM-DD HH:MM:SS`，日线/周线/月线格式：`YYYY-MM-DD`）
     </ResponseField>
     <ResponseField name="symbol" type="string">
       股票代码
@@ -112,7 +115,16 @@ const data = await response.json();
       收盘价
     </ResponseField>
     <ResponseField name="volume" type="integer">
-      成交量
+      成交量（股）
+    </ResponseField>
+    <ResponseField name="amount" type="number">
+      成交额（元）
+    </ResponseField>
+    <ResponseField name="chg_percent" type="number">
+      涨跌幅（%）
+    </ResponseField>
+    <ResponseField name="turnover_rate" type="number">
+      换手率
     </ResponseField>
   </Expandable>
 </ResponseField>
@@ -127,28 +139,36 @@ const data = await response.json();
 {
   "datas": [
     {
-      "date": "2026-01-02",
+      "market": "cn",
+      "date": "2026-04-01",
       "symbol": "000001",
-      "open": 12.15,
-      "high": 12.30,
-      "low": 12.10,
-      "close": 12.25,
-      "volume": 45678900
+      "open": 10.98,
+      "high": 11.02,
+      "low": 10.93,
+      "close": 11.0,
+      "volume": 17744106,
+      "amount": 194464864.8,
+      "chg_percent": 0.1821,
+      "turnover_rate": 0.0004
     },
     {
-      "date": "2026-01-02",
+      "market": "cn",
+      "date": "2026-04-01",
       "symbol": "600519",
-      "open": 1580.00,
-      "high": 1595.00,
-      "low": 1575.00,
-      "close": 1590.00,
-      "volume": 12345678
+      "open": 1572.0,
+      "high": 1589.0,
+      "low": 1568.0,
+      "close": 1583.0,
+      "volume": 3421890,
+      "amount": 5412345678.0,
+      "chg_percent": 0.6997,
+      "turnover_rate": 0.0003
     }
   ],
   "metadata": {
     "kline_type": "1D",
-    "start_datetime": "2026-01-01 00:00:00",
-    "end_datetime": "2026-01-31 00:00:00",
+    "start_datetime": "2026-04-01 00:00:00",
+    "end_datetime": "2026-04-30 00:00:00",
     "count": 2
   }
 }

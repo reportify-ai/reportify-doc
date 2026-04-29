@@ -2499,6 +2499,7 @@ paths:
           type: string
           title: Symbol
         description: Stock code (e.g., 600519, 00700, AAPL)
+        example: "000001"
       - name: market
         in: query
         required: false
@@ -2514,6 +2515,7 @@ paths:
             format: date
           - type: 'null'
           title: Start Date
+        example: "2026-04-01"
       - name: end_date
         in: query
         required: false
@@ -2523,6 +2525,7 @@ paths:
             format: date
           - type: 'null'
           title: End Date
+        example: "2026-04-28"
       responses:
         '200':
           description: Successful Response
@@ -2597,6 +2600,7 @@ paths:
           type: string
           title: Symbol
         description: Stock code (e.g., 600519, 00700, AAPL)
+        example: "000001"
       - name: kline_type
         in: query
         required: false
@@ -2626,6 +2630,7 @@ paths:
           - type: 'null'
           title: Start Datetime
         description: Start datetime (YYYY-MM-DD HH:MM:SS)
+        example: "2026-04-01 00:00:00"
       - name: end_datetime
         in: query
         required: false
@@ -2636,6 +2641,7 @@ paths:
           - type: 'null'
           title: End Datetime
         description: End datetime (YYYY-MM-DD HH:MM:SS)
+        example: "2026-04-28 00:00:00"
       responses:
         '200':
           description: Successful Response
@@ -2708,6 +2714,7 @@ paths:
           type: string
           title: Symbol
         description: Stock code
+        example: "000001"
       - name: start_datetime
         in: query
         required: true
@@ -2715,6 +2722,7 @@ paths:
           type: string
           title: Start Datetime
         description: Start datetime
+        example: "2026-04-28 09:30:00"
       - name: end_datetime
         in: query
         required: true
@@ -2722,6 +2730,7 @@ paths:
           type: string
           title: End Datetime
         description: End datetime
+        example: "2026-04-28 15:00:00"
       - name: market
         in: query
         required: false
@@ -2777,6 +2786,40 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MinuteOutput'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v1/quant/quotes/realtime:
+    get:
+      tags:
+      - openapi-quant
+      summary: Get realtime quote
+      description: |
+        Get realtime quote for a single symbol.
+
+        - **symbol**: Stock code (required)
+      operationId: quote_realtime
+      parameters:
+      - name: symbol
+        in: query
+        required: true
+        schema:
+          type: string
+          title: Symbol
+        description: Stock code
+        example: "000001"
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RealtimeOutput'
         '422':
           description: Validation Error
           content:
@@ -6073,6 +6116,41 @@ components:
           additionalProperties: true
       title: MinuteOutput
       description: Minute data response.
+    RealtimeOutput:
+      type: object
+      required:
+      - datas
+      - metadata
+      properties:
+        datas:
+          type: array
+          title: Datas
+          description: Realtime quote data
+          items:
+            type: object
+            properties:
+              change_percent:
+                type: number
+                description: Price change percentage
+              price:
+                type: number
+                description: Current price
+              change:
+                type: number
+                description: Price change amount
+              name:
+                type: string
+                description: Stock name
+              date:
+                type: string
+                description: Quote timestamp
+        metadata:
+          type: object
+          title: Metadata
+          description: Query metadata
+          additionalProperties: true
+      title: RealtimeOutput
+      description: Realtime quote response.
     BatchMinuteInput:
       type: object
       required:
