@@ -1,15 +1,15 @@
 ---
-title: '获取分钟数据'
-description: '获取单只股票的分钟数据'
+title: '分时数据'
+description: '获取单只股票的分时数据'
 openapi: 'GET /v1/quant/quotes/minute'
 ---
 
-获取单只股票的分钟（开高低收量）数据。
+获取单只股票的分时数据。
 
 <CodeGroup>
 
 ```bash cURL
-curl -X GET "https://api.reportify.cn/v1/quant/quotes/minute?symbol=000001&start_datetime=2024-01-01%2009:30:00&end_datetime=2024-01-01%2015:00:00&market=cn" \
+curl "https://api.reportify.cn/v1/quant/quotes/minute?symbol=000001&start_datetime=2026-04-01%2009:30:00&end_datetime=2026-04-01%2015:00:00&market=cn" \
   -H "Authorization: Bearer <token>"
 ```
 
@@ -21,8 +21,8 @@ response = requests.get(
     headers={"Authorization": "Bearer <token>"},
     params={
         "symbol": "000001",
-        "start_datetime": "2024-01-01 09:30:00",
-        "end_datetime": "2024-01-01 15:00:00",
+        "start_datetime": "2026-04-01 09:30:00",
+        "end_datetime": "2026-04-01 15:00:00",
         "market": "cn"
     }
 )
@@ -30,7 +30,7 @@ print(response.json())
 ```
 
 ```typescript TypeScript
-const response = await fetch('https://api.reportify.cn/v1/quant/quotes/minute?symbol=000001&start_datetime=2024-01-01%2009:30:00&end_datetime=2024-01-01%2015:00:00&market=cn', {
+const response = await fetch('https://api.reportify.cn/v1/quant/quotes/minute?symbol=000001&start_datetime=2026-04-01%2009:30:00&end_datetime=2026-04-01%2015:00:00&market=cn', {
   method: 'GET',
   headers: {
     'Authorization': 'Bearer <token>'
@@ -62,16 +62,19 @@ const data = await response.json();
 ## 响应参数
 
 <ResponseField name="datas" type="array">
-  分钟数据列表
+  分时数据列表
   <Expandable title="数据字段">
-    <ResponseField name="datetime" type="string">
-      日期时间
+    <ResponseField name="market" type="string">
+      股票市场（cn / hk / us）
+    </ResponseField>
+    <ResponseField name="date" type="string">
+      日期时间，格式：`YYYY-MM-DD HH:MM:SS`
     </ResponseField>
     <ResponseField name="symbol" type="string">
       股票代码
     </ResponseField>
-    <ResponseField name="open" type="number">
-      开盘价
+    <ResponseField name="current" type="number">
+      当前价
     </ResponseField>
     <ResponseField name="high" type="number">
       最高价
@@ -79,17 +82,37 @@ const data = await response.json();
     <ResponseField name="low" type="number">
       最低价
     </ResponseField>
-    <ResponseField name="close" type="number">
-      收盘价
+    <ResponseField name="avg" type="number">
+      均价
     </ResponseField>
     <ResponseField name="volume" type="integer">
-      成交量
+      成交量（股）
+    </ResponseField>
+    <ResponseField name="amount" type="number">
+      成交额（元）
+    </ResponseField>
+    <ResponseField name="chg_percent" type="number">
+      涨跌幅（%）
+    </ResponseField>
+    <ResponseField name="chg" type="number">
+      涨跌额
     </ResponseField>
   </Expandable>
 </ResponseField>
 
 <ResponseField name="metadata" type="object">
   查询元数据
+  <Expandable title="元数据字段">
+    <ResponseField name="start_datetime" type="string">
+      查询开始时间
+    </ResponseField>
+    <ResponseField name="end_datetime" type="string">
+      查询结束时间
+    </ResponseField>
+    <ResponseField name="count" type="integer">
+      返回数据条数
+    </ResponseField>
+  </Expandable>
 </ResponseField>
 
 ## 响应示例
@@ -98,36 +121,48 @@ const data = await response.json();
 {
   "datas": [
     {
-      "datetime": "2024-01-01 09:30:00",
+      "market": "cn",
+      "date": "2026-04-01 09:30:00",
       "symbol": "000001",
-      "open": 12.15,
-      "high": 12.20,
-      "low": 12.10,
-      "close": 12.18,
-      "volume": 1234567
+      "current": 10.58,
+      "high": 10.62,
+      "low": 10.55,
+      "avg": 10.59,
+      "volume": 1234567,
+      "amount": 13072345.67,
+      "chg_percent": 0.1899,
+      "chg": 0.02
     },
     {
-      "datetime": "2024-01-01 09:31:00",
+      "market": "cn",
+      "date": "2026-04-01 09:31:00",
       "symbol": "000001",
-      "open": 12.18,
-      "high": 12.25,
-      "low": 12.15,
-      "close": 12.22,
-      "volume": 2345678
+      "current": 10.61,
+      "high": 10.65,
+      "low": 10.58,
+      "avg": 10.60,
+      "volume": 2345678,
+      "amount": 24864187.80,
+      "chg_percent": 0.4751,
+      "chg": 0.05
     },
     {
-      "datetime": "2024-01-01 09:32:00",
+      "market": "cn",
+      "date": "2026-04-01 09:32:00",
       "symbol": "000001",
-      "open": 12.22,
-      "high": 12.28,
-      "low": 12.20,
-      "close": 12.25,
-      "volume": 3456789
+      "current": 10.60,
+      "high": 10.65,
+      "low": 10.57,
+      "avg": 10.60,
+      "volume": 3456789,
+      "amount": 36642163.40,
+      "chg_percent": 0.3802,
+      "chg": 0.04
     }
   ],
   "metadata": {
-    "start_datetime": "2024-01-01 09:30:00",
-    "end_datetime": "2024-01-01 15:00:00",
+    "start_datetime": "2026-04-01 09:30:00",
+    "end_datetime": "2026-04-01 15:00:00",
     "count": 3
   }
 }
@@ -141,7 +176,6 @@ const data = await response.json();
 import requests
 from datetime import datetime
 
-# 获取当日 9:30 到 15:00 的分钟数据
 today = datetime.now().strftime("%Y-%m-%d")
 response = requests.get(
     "https://api.reportify.cn/v1/quant/quotes/minute",
@@ -156,19 +190,19 @@ response = requests.get(
 data = response.json()
 
 for row in data["datas"][:10]:
-    print(f"{row['datetime']}: 开{row['open']} 高{row['high']} 低{row['low']} 收{row['close']} 量{row['volume']}")
+    print(f"{row['date']}: 价{row['current']} 量{row['volume']}")
 ```
 
 ### 获取港股数据
 
 ```python
-response = requests.post(
+response = requests.get(
     "https://api.reportify.cn/v1/quant/quotes/minute",
     headers={"Authorization": "Bearer <token>"},
-    json={
+    params={
         "symbol": "00700",
-        "start_datetime": "2024-01-01 09:30:00",
-        "end_datetime": "2024-01-01 16:00:00",
+        "start_datetime": "2026-04-01 09:30:00",
+        "end_datetime": "2026-04-01 16:00:00",
         "market": "hk"
     }
 )
@@ -177,13 +211,13 @@ response = requests.post(
 ### 获取美股数据
 
 ```python
-response = requests.post(
+response = requests.get(
     "https://api.reportify.cn/v1/quant/quotes/minute",
     headers={"Authorization": "Bearer <token>"},
-    json={
+    params={
         "symbol": "AAPL",
-        "start_datetime": "2024-01-01 09:30:00",
-        "end_datetime": "2024-01-01 16:00:00",
+        "start_datetime": "2026-04-01 09:30:00",
+        "end_datetime": "2026-04-01 16:00:00",
         "market": "us"
     }
 )
