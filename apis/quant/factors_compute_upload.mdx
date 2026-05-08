@@ -1,0 +1,222 @@
+---
+title: '上传文件计算因子'
+description: '上传自定义行情数据（Excel）并计算技术指标因子值'
+openapi: 'POST /v1/quant/factors/compute/upload'
+---
+
+上传包含 OHLCV 数据的 Excel 文件，对自定义行情数据计算技术指标因子值。适用于使用系统外部数据源（港美股指数、自研数据、分钟 K 线等）进行因子计算的场景。
+
+<Note>
+仅支持技术指标（MA、EMA、RSI、MACD、BOLL、KDJ 等），**不支持**需要系统财务数据的基本面因子（PE、ROE、INCOME.\* 等）。
+</Note>
+
+<CodeGroup>
+
+```python Python SDK
+# 从文件路径上传（日线数据）
+df = client.quant.factors_compute_upload(
+    file_path="my_data.xlsx",
+    formula="RSI(14)",
+    start_datetime="2026-01-01",
+    end_datetime="2026-03-31"
+)
+
+# 从文件路径上传（分钟 K 线）
+df = client.quant.factors_compute_upload(
+    file_path="minute_data.xlsx",
+    formula="MA(CLOSE, 20)",
+    start_datetime="2026-03-01 09:30:00",
+    end_datetime="2026-03-01 15:00:00"
+)
+
+# 从 bytes 上传
+with open("my_data.xlsx", "rb") as f:
+    content = f.read()
+df = client.quant.factors_compute_upload(
+    file_content=content,
+    formula="MACD()"
+)
+```
+
+```bash cURL
+curl -X POST https://api.reportify.cn/v1/quant/factors/compute/upload \
+  -H "Authorization: Bearer <token>" \
+  -F "file=@my_data.xlsx" \
+  -F "formula=RSI(14)" \
+  -F "start_datetime=2026-01-01" \
+  -F "end_datetime=2026-03-31"
+```
+
+```typescript TypeScript SDK
+// 从 File 对象上传（浏览器）
+const fileInput = document.getElementById('file') as HTMLInputElement;
+const df = await client.quant.factorsComputeUpload({
+  file: fileInput.files[0],
+  formula: 'RSI(14)',
+  startDatetime: '2026-01-01',
+  endDatetime: '2026-03-31'
+});
+
+// 分钟 K 线
+const df2 = await client.quant.factorsComputeUpload({
+  file: fileInput.files[0],
+  formula: 'MA(CLOSE, 20)',
+  startDatetime: '2026-03-01 09:30:00',
+  endDatetime: '2026-03-01 15:00:00'
+});
+```
+
+</CodeGroup>
+
+## 请求参数
+
+请求格式为 `multipart/form-data`。
+
+<ParamField body="file" type="file" required>
+  Excel 文件（`.xlsx` 或 `.xls`）
+</ParamField>
+
+<ParamField body="formula" type="string" required>
+  因子公式，仅支持技术指标。示例：`RSI(14)`、`MACD()`、`MA(CLOSE, 20)`
+</ParamField>
+
+<ParamField body="start_datetime" type="string">
+  开始时间，支持 `YYYY-MM-DD` 或 `YYYY-MM-DD HH:MM:SS`（不传则使用文件中最早时间）
+</ParamField>
+
+<ParamField body="end_datetime" type="string">
+  结束时间，支持 `YYYY-MM-DD` 或 `YYYY-MM-DD HH:MM:SS`（不传则使用文件中最晚时间）
+</ParamField>
+
+## Excel 文件格式
+
+| 列名 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `date` | 日期/时间 | ✅ | 日线：`YYYY-MM-DD`；分钟线：`YYYY-MM-DD HH:MM` 或 `YYYY-MM-DD HH:MM:SS` |
+| `open` | 数值 | ✅ | 开盘价 |
+| `high` | 数值 | ✅ | 最高价 |
+| `low` | 数值 | ✅ | 最低价 |
+| `close` | 数值 | ✅ | 收盘价 |
+| `symbol` | 文本 | 可选 | 标的代码，多标的时必填；缺省默认为 `"UPLOAD"` |
+| `volume` | 数值 | 可选 | 成交量 |
+| 自定义字段 | 数值 | 可选 | 任意英文字段名（字母/数字/下划线，不能以数字开头），可在公式中引用 |
+
+<Tip>
+列名支持中文自动映射：`日期` → `date`、`开盘价` → `open`、`收盘价` → `close`、`最高价` → `high`、`最低价` → `low`、`成交量` → `volume`、`股票代码` → `symbol`
+</Tip>
+
+## 公式示例
+
+| 公式 | 描述 |
+|------|------|
+| `RSI(14)` | 14 周期 RSI |
+| `MACD()` | MACD 指标（返回 dif、dea、macd 三个字段） |
+| `MA(CLOSE, 20)` | 20 周期均线 |
+| `BOLL(20, 2)` | 布林带（返回 upper、mid、lower） |
+| `CROSS(MA(CLOSE, 5), MA(CLOSE, 20))` | MA5 上穿 MA20 |
+| `(CLOSE - MA(CLOSE, 20)) / MA(CLOSE, 20) * 100` | 偏离均线百分比 |
+| `CLOSE > MA(CLOSE, 20)` | 收盘价是否在均线上方（布尔） |
+
+## 响应参数
+
+<ResponseField name="datas" type="array">
+  因子数据列表，每条记录包含：
+
+  <Expandable>
+    <ResponseField name="date" type="string | datetime">
+      日期或时间（与上传数据的 date 列类型一致）
+    </ResponseField>
+    <ResponseField name="symbol" type="string">
+      标的代码
+    </ResponseField>
+    <ResponseField name="close" type="number">
+      收盘价
+    </ResponseField>
+    <ResponseField name="factor_value" type="number | boolean">
+      单值公式（如 `RSI(14)`、`MA(CLOSE,20)`）的计算结果
+    </ResponseField>
+    <ResponseField name="[field]" type="number">
+      多值指标的各字段（如 MACD 返回 `dif`、`dea`、`macd`；BOLL 返回 `upper`、`mid`、`lower`）
+    </ResponseField>
+    <ResponseField name="indicators" type="object">
+      公式中间计算过程的中间指标值
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="metadata" type="object">
+  元数据，包含 `formula`、`start_date`、`end_date`、`total_rows`、`fields`、`indicators`
+</ResponseField>
+
+## 响应示例
+
+### RSI
+
+```json
+{
+  "datas": [
+    {
+      "date": "2026-03-27",
+      "symbol": "NDX.GI",
+      "close": 23132.77,
+      "factor_value": 42.15
+    }
+  ],
+  "metadata": {
+    "formula": "RSI(14)",
+    "start_date": "2026-01-01",
+    "end_date": "2026-03-31",
+    "total_rows": 60,
+    "fields": ["factor_value"],
+    "indicators": []
+  }
+}
+```
+
+### MACD
+
+```json
+{
+  "datas": [
+    {
+      "date": "2026-03-27",
+      "symbol": "NDX.GI",
+      "close": 23132.77,
+      "dif": -366.29,
+      "dea": -247.61,
+      "macd": -237.37
+    }
+  ],
+  "metadata": {
+    "formula": "MACD()",
+    "start_date": "2026-01-01",
+    "end_date": "2026-03-31",
+    "total_rows": 60,
+    "fields": ["dif", "dea", "macd"],
+    "indicators": []
+  }
+}
+```
+
+### 分钟 K 线
+
+```json
+{
+  "datas": [
+    {
+      "date": "2026-03-27T09:30:00",
+      "symbol": "UPLOAD",
+      "close": 23150.0,
+      "factor_value": 23089.45
+    }
+  ],
+  "metadata": {
+    "formula": "MA(CLOSE, 20)",
+    "start_date": "2026-03-27 09:30:00",
+    "end_date": "2026-03-27 15:00:00",
+    "total_rows": 240,
+    "fields": ["factor_value"],
+    "indicators": []
+  }
+}
+```

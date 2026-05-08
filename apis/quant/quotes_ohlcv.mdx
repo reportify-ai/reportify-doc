@@ -106,27 +106,6 @@ const data = await response.json();
     <ResponseField name="turnover_rate" type="number">
       换手率，ETF 不返回
     </ResponseField>
-    <ResponseField name="pe_ttm" type="number">
-      市盈率 TTM，ETF 不返回
-    </ResponseField>
-    <ResponseField name="pe_static" type="number">
-      静态市盈率，指数/ETF 不返回
-    </ResponseField>
-    <ResponseField name="pe_dynamic" type="number">
-      动态市盈率，指数/ETF 不返回
-    </ResponseField>
-    <ResponseField name="is_limit_up_down" type="boolean">
-      是否涨停/跌停，指数不返回
-    </ResponseField>
-    <ResponseField name="pb" type="number">
-      市净率，ETF 不返回
-    </ResponseField>
-    <ResponseField name="market_cap" type="number">
-      总市值（元），ETF 不返回
-    </ResponseField>
-    <ResponseField name="circulating_market_cap" type="number">
-      流通市值（元），ETF 不返回
-    </ResponseField>
   </Expandable>
 </ResponseField>
 
@@ -167,14 +146,7 @@ const data = await response.json();
       "volume": 17744106,
       "amount": 194464864.8,
       "chg_percent": 0.1821,
-      "turnover_rate": 0.0004,
-      "pe_ttm": 12.34,
-      "pe_static": 11.89,
-      "pe_dynamic": 12.01,
-      "is_limit_up_down": false,
-      "pb": 0.8512,
-      "market_cap": 213456789000.0,
-      "circulating_market_cap": 198765432000.0
+      "turnover_rate": 0.0004
     },
     {
       "market": "cn",
@@ -187,14 +159,7 @@ const data = await response.json();
       "volume": 15321456,
       "amount": 168123456.5,
       "chg_percent": 0.2752,
-      "turnover_rate": 0.0004,
-      "pe_ttm": 12.32,
-      "pe_static": 11.87,
-      "pe_dynamic": 11.99,
-      "is_limit_up_down": false,
-      "pb": 0.8498,
-      "market_cap": 213123456000.0,
-      "circulating_market_cap": 198456789000.0
+      "turnover_rate": 0.0004
     }
   ],
   "metadata": {
