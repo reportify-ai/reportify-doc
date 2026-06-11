@@ -1267,6 +1267,46 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
       security:
       - BearerAuth: []
+  /v1/stock/ipo-calendar-cn:
+    post:
+      tags:
+      - openapi-stock-tools
+      summary: Stock IPO Calendar CN
+      description: Retrieve the China A-share (SH/SZ/BJ) IPO calendar, including issue shares, issue price, issue PE, listing dates, online issue dates, and current status. All filters are optional.
+      operationId: stock_ipo_calendar_cn_reportify_api_v1_stock_ipo_calendar_cn_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StockIPOCalendarCNInput'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StockAPIResponse'
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Unprocessable Entity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+      - BearerAuth: []
   /v1/stock/index-tracking-funds:
     post:
       tags:
@@ -5161,6 +5201,41 @@ components:
       - status
       title: StockIPOCalendarHKInput
       description: Input schema for StockIPOCalendarHKTool
+    StockIPOCalendarCNInput:
+      properties:
+        market:
+          type: string
+          enum:
+          - SH
+          - SZ
+          - BJ
+          title: Market
+          description: 'Stock market: SH, SZ, or BJ. Default all'
+          example: SH
+        start_date:
+          type: string
+          title: Start Date
+          description: Start date (YYYY-MM-DD)
+          example: '2026-01-01'
+        end_date:
+          type: string
+          title: End Date
+          description: End date (YYYY-MM-DD)
+          example: '2026-06-20'
+        status:
+          type: string
+          enum:
+          - listed
+          - delisted
+          - currently_issuing
+          - deferred_issuance
+          - issuance_complete
+          title: Status
+          description: 'IPO status: listed, delisted, currently_issuing, deferred_issuance, issuance_complete. Default all'
+          example: listed
+      type: object
+      title: StockIPOCalendarCNInput
+      description: Input schema for StockIPOCalendarCNTool
     StockEarningsCalendarInput:
       properties:
         market:

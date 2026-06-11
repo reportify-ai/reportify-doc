@@ -454,3 +454,34 @@ ipos = client.stock.ipo_calendar_hk(status="Filing")
 <ParamField path="status" type="string" default="Filing">
   IPO 状态：`Filing`（申报）, `Hearing`（聆讯）, `Priced`（定价）
 </ParamField>
+
+---
+
+### ipo_calendar_cn()
+
+A 股（沪深北）IPO 日历。所有参数均为可选，不传则返回全部。
+
+```python
+ipos = client.stock.ipo_calendar_cn(
+    market="SH",
+    start_date="2026-01-01",
+    end_date="2026-06-20",
+    status="listed"
+)
+```
+
+<ParamField path="market" type="string">
+  股票市场：`SH`（沪市）, `SZ`（深市）, `BJ`（北交所）。默认全部
+</ParamField>
+
+<ParamField path="start_date" type="str">
+  开始日期（YYYY-MM-DD）
+</ParamField>
+
+<ParamField path="end_date" type="str">
+  结束日期（YYYY-MM-DD）
+</ParamField>
+
+<ParamField path="status" type="string">
+  IPO 状态：`listed`（已上市）, `delisted`（已退市）, `currently_issuing`（发行中）, `deferred_issuance`（暂缓发行）, `issuance_complete`（发行完成）。默认全部
+</ParamField>

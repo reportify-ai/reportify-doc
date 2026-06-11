@@ -182,6 +182,7 @@
             "icon": "calendar",
             "pages": [
               "apis/stock/ipo_calendar_hk",
+              "apis/stock/ipo_calendar_cn",
               "apis/stock/earnings_calendar"
             ]
           },

@@ -1,0 +1,170 @@
+---
+title: 'IPO Calendar CN'
+openapi: 'POST /v1/stock/ipo-calendar-cn'
+mode: 'show'
+---
+
+## 查询 A 股 IPO 日历
+
+**URL:** `/v1/stock/ipo-calendar-cn`  
+**方法:** `POST`  
+**描述:** 根据市场、日期范围和状态查询 A 股（沪深北）IPO 日历信息。所有参数均为可选。
+
+### 请求参数
+
+| 参数名      | 类型   | 必填 | 描述                                                                 |
+|-------------|--------|------|----------------------------------------------------------------------|
+| market      | string | 否   | 股票市场：SH（沪市）、SZ（深市）、BJ（北交所）。默认全部              |
+| start_date  | string | 否   | 开始日期（YYYY-MM-DD）                                               |
+| end_date    | string | 否   | 结束日期（YYYY-MM-DD）                                               |
+| status      | string | 否   | IPO 状态：listed（已上市）、delisted（已退市）、currently_issuing（发行中）、deferred_issuance（暂缓发行）、issuance_complete（发行完成）。默认全部 |
+
+### 响应参数
+
+| 参数名  | 类型    | 描述           |
+|---------|---------|----------------|
+| status  | integer | HTTP 状态码    |
+| code    | integer | 业务状态码     |
+| message | string  | 响应消息       |
+| data    | object  | 响应数据       |
+
+#### data 对象结构
+
+| 参数名 | 类型  | 描述         |
+|--------|-------|--------------|
+| items  | array | IPO 项目列表 |
+
+#### IPO 项目对象结构
+
+| 参数名                | 类型    | 描述                          |
+|-----------------------|---------|-------------------------------|
+| symbol                | string  | 股票代码                      |
+| name                  | string  | 公司名称                      |
+| status                | string  | IPO 状态                      |
+| market                | string  | 市场：SH / SZ / BJ            |
+| issue_shares          | integer | 发行股数                      |
+| issue_price           | number  | 发行价格                      |
+| list_date             | string  | 上市日期（ISO 8601）          |
+| issue_pe              | number  | 发行市盈率                    |
+| online_issue_date     | string  | 网上发行日期（ISO 8601）      |
+| online_issue_shares   | integer | 网上发行股数                  |
+| currency              | string  | 币种（如 CNY）                |
+| sortTime              | integer | 排序时间戳（毫秒）            |
+
+### 示例代码
+
+#### cURL 示例
+
+```bash
+curl -X POST "https://api.reportify.cn/v1/stock/ipo-calendar-cn" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "market": "SH",
+    "start_date": "2026-01-01",
+    "end_date": "2026-06-20",
+    "status": "listed"
+  }'
+```
+
+#### Python 示例
+
+```python
+import requests
+
+url = "https://api.reportify.cn/v1/stock/ipo-calendar-cn"
+headers = {
+    "Authorization": "Bearer YOUR_API_KEY",
+    "Content-Type": "application/json"
+}
+data = {
+    "start_date": "2026-01-01",
+    "end_date": "2026-06-20",
+    "status": "listed"
+}
+
+response = requests.post(url, headers=headers, json=data)
+result = response.json()
+
+print(f"状态码: {result['status']}")
+print(f"IPO 项目数量: {len(result['data']['items'])}")
+
+for item in result['data']['items']:
+    print(f"\n公司: {item['name']} ({item['symbol']})")
+    print(f"市场: {item['market']}")
+    print(f"上市日期: {item['list_date']}")
+    print(f"发行价: {item['issue_price']}  发行市盈率: {item['issue_pe']}")
+```
+
+### 响应示例
+
+```json
+{
+  "status": 200,
+  "code": 0,
+  "message": "",
+  "data": {
+    "items": [
+      {
+        "symbol": "920220",
+        "name": "朗信电气",
+        "status": "listed",
+        "market": "BJ",
+        "issue_shares": 13241252,
+        "issue_price": 28.29,
+        "list_date": "2026-05-22T00:00:00+08:00",
+        "issue_pe": 14.99,
+        "online_issue_date": "2026-05-13T00:00:00+08:00",
+        "online_issue_shares": 11917127,
+        "currency": "CNY",
+        "sortTime": 1779379200000
+      },
+      {
+        "symbol": "603435",
+        "name": "嘉德利",
+        "status": "listed",
+        "market": "SH",
+        "issue_shares": 46000000,
+        "issue_price": 15.76,
+        "list_date": "2026-05-22T00:00:00+08:00",
+        "issue_pe": 29.63,
+        "online_issue_date": "2026-05-13T00:00:00+08:00",
+        "online_issue_shares": 25760000,
+        "currency": "CNY",
+        "sortTime": 1779379200000
+      },
+      {
+        "symbol": "001237",
+        "name": "惠康科技",
+        "status": "listed",
+        "market": "SZ",
+        "issue_shares": 37087858,
+        "issue_price": 53.26,
+        "list_date": "2026-05-22T00:00:00+08:00",
+        "issue_pe": 21.04,
+        "online_issue_date": "2026-05-13T00:00:00+08:00",
+        "online_issue_shares": 29670500,
+        "currency": "CNY",
+        "sortTime": 1779379200000
+      }
+    ]
+  }
+}
+```
+
+### 注意事项
+
+- **market 参数值**：
+  - `SH` - 上海证券交易所（沪市）
+  - `SZ` - 深圳证券交易所（深市）
+  - `BJ` - 北京证券交易所（北交所）
+  - 不传则返回全部市场
+- **status 参数值**：
+  - `listed` - 已上市
+  - `delisted` - 已退市
+  - `currently_issuing` - 发行中
+  - `deferred_issuance` - 暂缓发行
+  - `issuance_complete` - 发行完成
+  - 不传则返回全部状态
+- **时间格式**：`list_date`、`online_issue_date` 等日期时间字段使用 ISO 8601 格式，包含时区信息
+- **sortTime**：毫秒级时间戳，用于排序

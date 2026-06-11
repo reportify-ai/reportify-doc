@@ -361,6 +361,37 @@ const pendingIPOs = await client.stock.ipoCalendarHK('Pending');
 
 ---
 
+### ipoCalendarCN()
+
+A 股（沪深北）IPO 日历。所有参数均为可选，不传则返回全部。
+
+```typescript
+// 查询沪市已上市的 IPO
+const listedIPOs = await client.stock.ipoCalendarCN({
+  market: 'SH',
+  status: 'listed'
+});
+
+// 按日期范围查询全市场 IPO
+const ipos = await client.stock.ipoCalendarCN({
+  startDate: '2026-01-01',
+  endDate: '2026-06-20'
+});
+```
+
+**参数：**
+
+| 参数 | 类型 | 必填 | 说明 |
+|------|------|------|------|
+| `options.market` | `string` | 否 | 股票市场：`SH`（沪市）, `SZ`（深市）, `BJ`（北交所）。默认全部 |
+| `options.startDate` | `string` | 否 | 开始日期（YYYY-MM-DD） |
+| `options.endDate` | `string` | 否 | 结束日期（YYYY-MM-DD） |
+| `options.status` | `string` | 否 | IPO 状态：`listed`（已上市）, `delisted`（已退市）, `currently_issuing`（发行中）, `deferred_issuance`（暂缓发行）, `issuance_complete`（发行完成）。默认全部 |
+
+**返回值：** `Promise<IPOEvent[]>` - IPO 事件列表
+
+---
+
 ## 类型定义
 
 ```typescript
