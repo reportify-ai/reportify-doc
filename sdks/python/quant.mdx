@@ -197,7 +197,7 @@ print(df[["date", "open", "high", "low", "close", "volume"]])
 | 参数 | 类型 | 必填 | 说明 |
 |------|------|------|------|
 | `symbol` | `str` | 是 | 股票代码 |
-| `market` | `str` | 否 | 市场，默认 cn |
+| `market` | `str` | 否 | 市场，默认 cn，可选 `cn`/`hk`/`us`/`global`。获取指数行情（`stock_type=index`）时，除 A 股（`cn`）、港股（`hk`）、美股（`us`）外，其余指数统一通过 `global` 查询 |
 | `start_date` | `str` | 否 | 开始日期，默认 1 个月前 |
 | `end_date` | `str` | 否 | 结束日期，默认今天 |
 
@@ -311,6 +311,57 @@ print(df[["symbol", "datetime", "close", "volume"]])
 ```
 
 数据按日期（升序）、股票代码排序。
+
+---
+
+## 交易日历 (Trading Calendar)
+
+<Note>
+支持的市场：`cn`（A 股，含 `sh`/`sz`/`bj`）、`hk`（港股）、`us`（美股）。`global` 无日历源，传入会抛出错误。
+</Note>
+
+### calendar()
+
+获取指定区间内的 A 股交易日列表，返回带 `date` 列的 DataFrame（按日期升序）。
+
+```python
+df = client.quant.calendar(
+    start_date="2026-01-01",
+    end_date="2026-01-31"
+)
+
+print(df["date"].tolist())
+# ['2026-01-05', '2026-01-06', ...]
+```
+
+| 参数 | 类型 | 必填 | 描述 |
+|------|------|------|------|
+| `start_date` | `str` | 否 | 开始日期 `YYYY-MM-DD`，默认当年 1 月 1 日 |
+| `end_date` | `str` | 否 | 结束日期 `YYYY-MM-DD`，默认当年 12 月 31 日 |
+| `market` | `str` | 否 | 市场，默认 `cn`，可选 `cn`/`hk`/`us` |
+| `exchange` | `str` | 否 | 交易所（`cn`: `sh`/`sz`/`bj`，`hk`: `hk`，`us`: `us`），默认市场对应交易所（`cn` 为 `sh`） |
+
+---
+
+### calendar_check()
+
+判断某一天是否为交易日，并返回上一/下一交易日。
+
+```python
+info = client.quant.calendar_check("2026-01-01")
+
+print(info["is_trading_day"])        # False
+print(info["previous_trading_day"])  # '2025-12-31'
+print(info["next_trading_day"])      # '2026-01-05'
+```
+
+| 参数 | 类型 | 必填 | 描述 |
+|------|------|------|------|
+| `target` | `str` | 否 | 待判断日期 `YYYY-MM-DD`，默认今天 |
+| `market` | `str` | 否 | 市场，默认 `cn`，可选 `cn`/`hk`/`us` |
+| `exchange` | `str` | 否 | 交易所（`cn`: `sh`/`sz`/`bj`，`hk`: `hk`，`us`: `us`），默认市场对应交易所（`cn` 为 `sh`） |
+
+返回字段：`date`、`is_trading_day`、`previous_trading_day`、`next_trading_day`。
 
 ---
 

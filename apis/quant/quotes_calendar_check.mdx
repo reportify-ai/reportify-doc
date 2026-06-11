@@ -1,0 +1,99 @@
+---
+title: '交易日判断'
+description: '判断某一天是否为交易日，并返回上一/下一交易日'
+openapi: 'GET /v1/quant/quotes/calendar/check'
+---
+
+判断指定日期是否为交易日，并返回相对该日期的上一交易日和下一交易日（均为严格的前/后一个交易日）。
+
+<Note>
+支持的市场：`cn`（A 股，含 `sh`/`sz`/`bj`）、`hk`（港股）、`us`（美股）。`global` 无日历源，传入会返回错误。
+</Note>
+
+<CodeGroup>
+
+```bash cURL
+curl "https://api.reportify.cn/v1/quant/quotes/calendar/check?target=2026-01-01" \
+  -H "Authorization: Bearer <token>"
+```
+
+```python Python
+import requests
+
+response = requests.get(
+    "https://api.reportify.cn/v1/quant/quotes/calendar/check",
+    headers={"Authorization": "Bearer <token>"},
+    params={"target": "2026-01-01"}
+)
+print(response.json())
+```
+
+```typescript TypeScript
+const response = await fetch(
+  'https://api.reportify.cn/v1/quant/quotes/calendar/check?target=2026-01-01',
+  {
+    headers: { 'Authorization': 'Bearer <token>' }
+  }
+);
+const data = await response.json();
+```
+
+</CodeGroup>
+
+## 请求参数
+
+<ParamField query="target" type="string">
+  待判断日期（`YYYY-MM-DD`），可选，默认今天
+</ParamField>
+
+<ParamField query="market" type="string" default="cn">
+  股票市场，可选 `cn`/`hk`/`us`（`global` 不支持）
+</ParamField>
+
+<ParamField query="exchange" type="string">
+  交易所。`cn`：`sh`（上交所）/`sz`（深交所）/`bj`（北交所）；`hk`：`hk`；`us`：`us`。不传时使用市场默认交易所（`cn` 为 `sh`）
+</ParamField>
+
+## 响应参数
+
+<ResponseField name="datas" type="array">
+  单元素数组，包含判断结果
+  <Expandable title="数据字段">
+    <ResponseField name="date" type="string">
+      被判断的日期（`YYYY-MM-DD`）
+    </ResponseField>
+    <ResponseField name="is_trading_day" type="boolean">
+      是否为交易日
+    </ResponseField>
+    <ResponseField name="previous_trading_day" type="string">
+      上一交易日（严格早于 `date`），无则为 `null`
+    </ResponseField>
+    <ResponseField name="next_trading_day" type="string">
+      下一交易日（严格晚于 `date`），无则为 `null`
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="metadata" type="object">
+  查询元数据，包含 `market`、`exchange`、`target`
+</ResponseField>
+
+## 响应示例
+
+```json
+{
+  "datas": [
+    {
+      "date": "2026-01-01",
+      "is_trading_day": false,
+      "previous_trading_day": "2025-12-31",
+      "next_trading_day": "2026-01-05"
+    }
+  ],
+  "metadata": {
+    "market": "cn",
+    "exchange": "sh",
+    "target": "2026-01-01"
+  }
+}
+```

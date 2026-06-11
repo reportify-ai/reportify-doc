@@ -58,7 +58,7 @@ const data = await response.json();
 ## 请求参数
 
 <ParamField body="market" type="string" default="cn">
-  股票市场：`cn`（A股）, `hk`（港股）, `us`（美股）
+  股票市场：`cn`（A股）, `hk`（港股）, `us`（美股）, `global`（其他全球市场）。获取指数行情（`stock_type=index`）时，除 A 股（`cn`）、港股（`hk`）、美股（`us`）外，其余指数统一通过 `global` 查询。
 </ParamField>
 
 <ParamField body="symbols" type="string[]" required>
