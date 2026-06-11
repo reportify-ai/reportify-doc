@@ -123,6 +123,7 @@ const response = await fetch('https://api.reportify.cn/v1/quant/factors/screen',
 | `(LISTING_DATE >= '2019-01-01') & IS_CHAIN_STAR()` | 科创板次新股 |
 | `IS_CHAIN_MAIN() & (IS_ST() == 0)` | 主板非 ST 股票 |
 | `IS_CHAIN_CHINEXT() & (LISTING_DATE >= '2023-01-01')` | 创业板近三年上市股票 |
+| `(LISTING_DATE >= '2024-01-01') & (CLOSE < ISSUE_PRICE)` | 破发的次新股（现价低于发行价） |
 
 ## 运算符
 
@@ -145,6 +146,7 @@ const response = await fetch('https://api.reportify.cn/v1/quant/factors/screen',
 | `VOLUME` | `V`, `VOL` | 成交量 |
 | `AMOUNT` | - | 成交额 |
 | `LISTING_DATE` | - | 上市日期（`YYYY-MM-DD` 字符串，可直接与日期字符串比较） |
+| `ISSUE_PRICE` | - | IPO 发行价 |
 
 ## 支持的函数
 

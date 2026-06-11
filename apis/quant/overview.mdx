@@ -57,6 +57,7 @@ icon: 'book-open'
 | `VOLUME` | `V`, `VOL` | 成交量 |
 | `AMOUNT` | - | 成交额 |
 | `LISTING_DATE` | - | 上市日期（`YYYY-MM-DD` 字符串，可直接与日期字符串比较） |
+| `ISSUE_PRICE` | - | IPO 发行价 |
 
 ### 股票属性函数
 
@@ -253,6 +254,9 @@ icon: 'book-open'
 
 # 主板老股 + 低估值
 "IS_CHAIN_MAIN() & (LISTING_DATE <= '2015-01-01') & (PE() < 15)"
+
+# 破发的次新股（现价低于 IPO 发行价）
+"(LISTING_DATE >= '2024-01-01') & (CLOSE < ISSUE_PRICE)"
 ```
 
 ### 回测策略公式
