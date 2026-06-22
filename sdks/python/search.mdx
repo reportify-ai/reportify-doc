@@ -28,7 +28,7 @@ docs = client.search.all(
 </ParamField>
 
 <ParamField path="categories" type="list[str]">
-  文档类别过滤，可选值：`news`, `reports`, `filings`, `transcripts`, `socials`
+  文档类别过滤，可选值：`news`, `reports`（国内研报）, `global_research`（外资研报）, `filings`, `transcripts`, `socials`。
 </ParamField>
 
 <ParamField path="symbols" type="list[str]">
@@ -112,6 +112,10 @@ reports = client.search.reports(
 
 <ParamField path="num" type="int" default="10">
   返回结果数量
+</ParamField>
+
+<ParamField path="categories" type="list[str]">
+  研报类别，可选值：`reports`（国内研报）、`global_research`（外资研报）。默认两者全选，可单独指定其一以缩小范围
 </ParamField>
 
 <ParamField path="symbols" type="list[str]">

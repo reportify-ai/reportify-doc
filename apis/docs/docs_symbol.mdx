@@ -13,7 +13,7 @@ openapi: 'POST /v1/docs/symbols'
 
 | 参数名       | 类型         | 描述                                                      |
 |--------------|--------------|-----------------------------------------------------------|
-| categories     | array  | 文档类别，可选值有 `financials`，`transcripts`，`reports`，`filings`，`news`, `socials`。 |
+| categories     | array  | 文档类别，可选值有 `financials`，`transcripts`，`reports`（国内研报），`global_research`（外资研报），`filings`，`news`, `socials`。 |
 | language       | str    | 搜索语言，支持值为 `all`，`chinese`，`english`。*暂未支持*            |
 | symbols       | array          | 股票代码数组，例如 `["AAPL", "TSLA"]`。                   |
 | page_num       | int    | 当前页码，默认值为 `1`。                                   |
@@ -35,7 +35,7 @@ openapi: 'POST /v1/docs/symbols'
 | &nbsp;&nbsp;institution  | str   | 发布机构。                                                        |
 | &nbsp;&nbsp;author       | str   | 作者。                                                          |
 | &nbsp;&nbsp;published_at | str   | 发布时间，格式为 `YYYY-MM-DDTHH:MM:SS.000Z`。                         |
-| &nbsp;&nbsp;category     | str   | 文档类别（`financials`, `transcripts`, `reports`, `filings`, `news`, `socials`）。 |
+| &nbsp;&nbsp;category     | str   | 文档类别（`financials`, `transcripts`, `reports`, `global_research`, `filings`, `news`, `socials`）。 |
 | &nbsp;&nbsp;market       | str   | 市场区域（`cn`, `hk`, `us`）。                                      |
 | &nbsp;&nbsp;symbol       | str   | 股票代码。                                                        |
 | &nbsp;&nbsp;company_name | str   | 公司名称。                                                        |

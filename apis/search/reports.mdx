@@ -13,6 +13,7 @@ openapi: 'POST /v2/search/reports'
 | 参数名           | 类型         | 必填 | 描述                                                                 |
 |------------------|--------------|------|----------------------------------------------------------------------|
 | query            | str          | 是   | 搜索关键词。                                                         |
+| categories       | array[str]   | 否   | 研报类别，可选值 `reports`（国内研报）与 `global_research`（外资研报），默认两者全选，可单独指定其一以缩小范围。|
 | symbols          | array[str]   | 否   | 股票代码列表，格式为 market:ticker（如 `US:AAPL`、`HK:00700`、`SH:600519`、`SZ:000001`）。|
 | industries       | array[str]   | 否   | 行业列表，如 `["科技", "消费"]`。                                    |
 | channel_ids      | array[str]   | 否   | 频道 ID 列表，用于筛选特定机构的报告。                               |

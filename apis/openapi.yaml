@@ -3672,6 +3672,7 @@ components:
       - files
       - filings
       - socials
+      - global_research
       title: OAIDocCategory
       description: An enumeration.
     OAIDocContentsResponse:
@@ -4623,6 +4624,13 @@ components:
       - query
       title: SearchToolsMinutesRequest
       description: Request model for conference calls and IR meetings search
+    ReportsCategory:
+      type: string
+      enum:
+      - reports
+      - global_research
+      title: ReportsCategory
+      description: Categories available for the reports search endpoint
     SearchToolsReportsRequest:
       properties:
         query:
@@ -4636,6 +4644,17 @@ components:
           title: Num
           description: Number of results to return
           default: 10
+        categories:
+          items:
+            $ref: '#/components/schemas/ReportsCategory'
+          type: array
+          title: Categories
+          description: "Report categories to search: 'reports' (domestic research reports)
+            and/or 'global_research' (foreign/overseas research reports). Defaults to both;
+            specify a subset to narrow the search."
+          default:
+          - reports
+          - global_research
         symbols:
           items:
             type: string

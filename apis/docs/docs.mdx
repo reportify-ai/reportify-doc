@@ -14,7 +14,7 @@ openapi: 'POST /v1/docs'
 | 参数名       | 类型         | 描述                                                      |
 |--------------|--------------|-----------------------------------------------------------|
 | folder_ids   | array[str]   | 指定的文件夹 ID 列表，如 `["2046915273103380480", "2046522679340961792"]`。                  |
-| categories     | array  | 文档类别（默认不包含 `files`），可选值有 `financials`，`transcripts`，`reports`，`filings`，`news`, `socials`，`files`。 |
+| categories     | array  | 文档类别（默认不包含 `files`），可选值有 `financials`，`transcripts`，`reports`（国内研报），`global_research`（外资研报），`filings`，`news`, `socials`，`files`。 |
 | institutions       | array          | 机构数组，例如 `["Morgan Stanley", "JPMorgan"]`。                   |
 | language       | str    | 搜索语言，支持值为 `all`，`chinese`，`english`。*暂未支持*            |
 | markets       | array          | 市场区域数组，例如 `["us", "cn"]`。                   |
@@ -41,7 +41,7 @@ openapi: 'POST /v1/docs'
 | &nbsp;&nbsp;institution  | str   | 发布机构。                                                        |
 | &nbsp;&nbsp;author       | str   | 作者。                                                          |
 | &nbsp;&nbsp;published_at | str   | 发布时间，格式为 `YYYY-MM-DDTHH:MM:SS.000Z`。                         |
-| &nbsp;&nbsp;category     | str   | 文档类别（`financials`, `transcripts`, `reports`, `filings`, `news`, `socials`, `files`）。 |
+| &nbsp;&nbsp;category     | str   | 文档类别（`financials`, `transcripts`, `reports`, `global_research`, `filings`, `news`, `socials`, `files`）。 |
 | &nbsp;&nbsp;market       | str   | 市场区域（`cn`, `hk`, `us`）。                                      |
 | &nbsp;&nbsp;symbol       | str   | 股票代码。                                                        |
 | &nbsp;&nbsp;company_name | str   | 公司名称。                                                        |
