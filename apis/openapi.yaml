@@ -2152,6 +2152,241 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
       - BearerAuth: []
+  /v1/tools/user/follow-company:
+    post:
+      tags:
+      - openapi-tools-user
+      summary: Follow Company
+      description: Follow a company by stock symbol
+      operationId: follow_company_reportify_api_v1_tools_user_follow_company_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FollowCompanyRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FollowedCompanyItem'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v1/tools/user/unfollow-company:
+    post:
+      tags:
+      - openapi-tools-user
+      summary: Unfollow Company
+      description: Unfollow a company by stock symbol
+      operationId: unfollow_company_reportify_api_v1_tools_user_unfollow_company_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FollowCompanyRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusMessage'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v1/followings:
+    get:
+      tags:
+      - openapi-followings
+      summary: List Followings
+      description: List all followings (companies/topics/channels) unified + paginated; filter by follow_type/follow_sub_type.
+      operationId: list_followings_reportify_api_v1_followings_get
+      parameters:
+      - description: 1 company, 2 topic, 3 channel
+        required: false
+        schema:
+          type: integer
+          title: Follow Type
+          description: 1 company, 2 topic, 3 channel
+        name: follow_type
+        in: query
+      - description: 1 institution, 2 media, 3 social
+        required: false
+        schema:
+          type: integer
+          title: Follow Sub Type
+          description: 1 institution, 2 media, 3 social
+        name: follow_sub_type
+        in: query
+      - required: false
+        schema:
+          type: integer
+          title: Page Num
+          default: 1
+        name: page_num
+        in: query
+      - required: false
+        schema:
+          type: integer
+          title: Page Size
+          default: 20
+        name: page_size
+        in: query
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OAIFollowingsResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v1/followings/recommend:
+    get:
+      tags:
+      - openapi-followings
+      summary: Recommend Followings
+      description: Recommend followings for the current user
+      operationId: recommend_followings_reportify_api_v1_followings_recommend_get
+      parameters:
+      - description: 1 company, 2 topic, 3 channel
+        required: true
+        schema:
+          type: integer
+          title: Follow Type
+          description: 1 company, 2 topic, 3 channel
+        name: follow_type
+        in: query
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OAIFollowingRecommendResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v1/followings/topics:
+    post:
+      tags:
+      - openapi-followings
+      summary: Create Topic
+      description: Create a topic following
+      operationId: create_topic_reportify_api_v1_followings_topics_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OAITopicCreateRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OAIFollowingItem'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+  /v1/followings/topics/{follow_id}:
+    post:
+      tags:
+      - openapi-followings
+      summary: Update Topic
+      description: Update an existing topic following
+      operationId: update_topic_reportify_api_v1_followings_topics__follow_id__post
+      parameters:
+      - description: Follow ID
+        required: true
+        schema:
+          type: string
+          title: Follow Id
+          description: Follow ID
+        name: follow_id
+        in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OAITopicUpdateRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OAIFollowingItem'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
+    delete:
+      tags:
+      - openapi-followings
+      summary: Delete Topic
+      description: Delete a topic following
+      operationId: delete_topic_reportify_api_v1_followings_topics__follow_id__delete
+      parameters:
+      - description: Follow ID
+        required: true
+        schema:
+          type: string
+          title: Follow Id
+          description: Follow ID
+        name: follow_id
+        in: path
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatusMessage'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
   /v1/tools/kb/search:
     post:
       tags:
@@ -7288,6 +7523,12 @@ components:
           default: 10
           minimum: 1
           maximum: 100
+        page:
+          type: integer
+          title: Page
+          description: Page number, starting from 1
+          default: 1
+          minimum: 1
       type: object
       title: OAITimelineToolsRequest
       description: Request model for timeline tools
@@ -7349,9 +7590,157 @@ components:
           title: Took Ms
           description: Timeline execution time in milliseconds
           default: 0
+        page:
+          type: integer
+          title: Page
+          description: Current page number
+          default: 1
+        total_page:
+          type: integer
+          title: Total Page
+          description: Total number of pages
+          default: 0
       type: object
       title: TimelineToolsResponse
       description: Response model for timeline tools
+    FollowCompanyRequest:
+      properties:
+        symbol:
+          type: string
+          title: Symbol
+          description: Stock symbol, e.g. 00700 / AAPL
+      type: object
+      required:
+      - symbol
+      title: FollowCompanyRequest
+      description: Request model for following/unfollowing a company
+    OAIFollowingItem:
+      properties:
+        follow_id:
+          type: string
+          title: Follow Id
+        follow_type:
+          type: integer
+          title: Follow Type
+          description: 1 company, 2 topic, 3 channel
+        follow_sub_type:
+          type: integer
+          title: Follow Sub Type
+          description: 1 institution, 2 media, 3 social
+        follow_value:
+          type: string
+          title: Follow Value
+        name:
+          type: string
+          title: Name
+        logo:
+          type: string
+          title: Logo
+        title:
+          type: string
+          title: Title
+        followed_at:
+          type: integer
+          title: Followed At
+      type: object
+      required:
+      - follow_id
+      - follow_type
+      title: OAIFollowingItem
+      description: A unified following item (company/topic/channel)
+    OAIFollowingsResponse:
+      properties:
+        total_count:
+          type: integer
+          title: Total Count
+          default: 0
+        total_page:
+          type: integer
+          title: Total Page
+          default: 0
+        page_num:
+          type: integer
+          title: Page Num
+          default: 1
+        page_size:
+          type: integer
+          title: Page Size
+          default: 20
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OAIFollowingItem'
+          title: Items
+      type: object
+      title: OAIFollowingsResponse
+      description: Paginated list of followings
+    OAIFollowingRecommendItem:
+      properties:
+        follow_value:
+          type: string
+          title: Follow Value
+        name:
+          type: string
+          title: Name
+        logo:
+          type: string
+          title: Logo
+        is_following:
+          type: boolean
+          title: Is Following
+        group_key:
+          type: string
+          title: Group Key
+        description:
+          type: string
+          title: Description
+      type: object
+      required:
+      - name
+      - is_following
+      title: OAIFollowingRecommendItem
+      description: A recommended following item
+    OAIFollowingRecommendResponse:
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OAIFollowingRecommendItem'
+          title: Items
+      type: object
+      title: OAIFollowingRecommendResponse
+      description: List of recommended followings
+    OAITopicCreateRequest:
+      properties:
+        query:
+          type: string
+          title: Query
+          description: Topic query text
+        meta_data:
+          type: object
+          title: Meta Data
+          description: Optional topic scope
+      type: object
+      required:
+      - query
+      title: OAITopicCreateRequest
+      description: Request model for creating a topic following
+    OAITopicUpdateRequest:
+      properties:
+        query:
+          type: string
+          title: Query
+        meta_data:
+          type: object
+          title: Meta Data
+        title:
+          type: string
+          title: Title
+      type: object
+      required:
+      - query
+      title: OAITopicUpdateRequest
+      description: Request model for updating a topic following
 
   responses:
     BadRequest:

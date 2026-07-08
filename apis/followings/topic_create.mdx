@@ -1,0 +1,79 @@
+---
+title: 'Create Topic'
+openapi: 'POST /v1/followings/topics'
+---
+
+## 说明
+
+**URL**: `/v1/followings/topics`
+**方法**: `POST`  
+**描述**: 创建话题，为当前用户新增一个话题关注，返回创建后的关注项。
+
+### 请求参数
+| 参数名    | 类型   | 必填 | 描述                       |
+|-----------|--------|------|----------------------------|
+| query     | str    | 是   | 话题查询文本。             |
+| meta_data | object | 否   | 可选的话题范围限定信息。   |
+
+### 响应参数
+| 参数名          | 类型 | 描述                                       |
+|-----------------|------|--------------------------------------------|
+| follow_id       | str  | 关注 ID。                                  |
+| follow_type     | int  | 关注类型：`1` 公司，`2` 话题，`3` 渠道。       |
+| follow_sub_type | int  | 关注子类型：`1` 机构，`2` 媒体，`3` 社交。     |
+| follow_value    | str  | 关注对象的取值。                           |
+| name            | str  | 名称。                                     |
+| logo            | str  | 图标 URL。                                 |
+| title           | str  | 标题。                                     |
+| followed_at     | int  | 关注时间戳（毫秒）。                         |
+
+### 请求示例
+
+**cURL**
+```bash
+curl -X POST https://api.reportify.cn/v1/followings/topics \
+-H "Authorization: Bearer YOUR_API_KEY" \
+-H "Content-Type: application/json" \
+-d '{
+    "query": "AI 芯片行业趋势"
+}'
+```
+
+**Python**
+```python
+import requests
+
+url = "https://api.reportify.cn/v1/followings/topics"
+headers = {
+    "Authorization": "Bearer YOUR_API_KEY",
+    "Content-Type": "application/json"
+}
+
+data = {
+    "query": "AI 芯片行业趋势",
+    # 可选：限定话题范围
+    # "meta_data": {"symbols": ["00700", "AAPL"]}
+}
+
+response = requests.post(url, headers=headers, json=data)
+print(response.json())
+```
+
+### 响应示例
+```json
+{
+  "follow_id": "2002",
+  "follow_type": 2,
+  "follow_sub_type": 0,
+  "follow_value": "AI 芯片行业趋势",
+  "name": "AI 芯片行业趋势",
+  "logo": "",
+  "title": "AI 芯片行业趋势",
+  "followed_at": 1720000100000
+}
+```
+
+### 错误响应
+| 状态码 | 描述               |
+|--------|--------------------|
+| 422    | 请求参数验证失败。 |
