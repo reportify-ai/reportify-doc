@@ -22,7 +22,7 @@ MCP Gateway (https://mcp.reportify.cn)
 ├── /search/mcp    - 文档搜索类工具
 ├── /stock/mcp     - 股票数据类工具
 ├── /agent/mcp     - Agent 对话类工具
-└── /channels/mcp  - 频道与时间线类工具
+└── /following/mcp - 账号关注/频道/时间线/关注组工具
 ```
 
 每个端点都是独立的 MCP 服务器，客户端可以按需选择连接。
@@ -54,12 +54,13 @@ MCP Gateway (https://mcp.reportify.cn)
     - 获取对话历史和生成文件
   </Card>
   
-  <Card title="Channels MCP" icon="rss" color="#0072ff">
-    频道与时间线类工具
+  <Card title="Following MCP" icon="rss" color="#0072ff">
+    账号关注 / 频道 / 时间线 / 关注组 工具
     
-    - 频道搜索和订阅管理
-    - 公司/话题/机构时间线
-    - 媒体内容时间线
+    - 公司关注（关注/取关/已关注列表）
+    - 频道搜索与订阅管理
+    - 公司/话题/机构/媒体时间线
+    - 关注组管理
   </Card>
 </CardGroup>
 
@@ -72,7 +73,7 @@ MCP Gateway (https://mcp.reportify.cn)
 | Search MCP | `https://mcp.reportify.cn/search/mcp` | 文档搜索类工具 |
 | Stock MCP | `https://mcp.reportify.cn/stock/mcp` | 股票数据类工具 |
 | Agent MCP | `https://mcp.reportify.cn/agent/mcp` | Agent 对话类工具 |
-| Channels MCP | `https://mcp.reportify.cn/channels/mcp` | 频道时间线类工具 |
+| Following MCP | `https://mcp.reportify.cn/following/mcp` | 账号关注/频道/时间线/关注组工具 |
 
 ### 客户端配置
 
@@ -101,8 +102,8 @@ MCP Gateway (https://mcp.reportify.cn)
             "Authorization": "Bearer YOUR_API_KEY"
           }
         },
-        "reportify-channels": {
-          "url": "https://mcp.reportify.cn/channels/mcp",
+        "reportify-following": {
+          "url": "https://mcp.reportify.cn/following/mcp",
           "headers": {
             "Authorization": "Bearer YOUR_API_KEY"
           }
@@ -321,19 +322,29 @@ Agent 对话相关工具。
 
 ---
 
-### Channels MCP (`/channels/mcp`)
+### Following MCP (`/following/mcp`)
 
-频道订阅与时间线工具。
+账号关注 / 频道 / 时间线 / 关注组 工具。
 
 <AccordionGroup>
-  <Accordion title="频道工具" icon="rss" defaultOpen>
+  <Accordion title="账号关注工具" icon="user-plus" defaultOpen>
+  
+  | 工具名 | 功能描述 |
+  |--------|----------|
+  | `followed_companies` | 获取已关注公司 |
+  | `follow_company` | 关注公司 |
+  | `unfollow_company` | 取消关注公司 |
+  
+  </Accordion>
+
+  <Accordion title="频道工具" icon="rss">
   
   | 工具名 | 功能描述 |
   |--------|----------|
   | `channels_search` | 搜索频道 |
   | `following_channels` | 获取已关注频道 |
   | `channel_follow` | 关注频道 |
-  | `channel_unfollow` | 取消关注 |
+  | `channel_unfollow` | 取消关注频道 |
   | `channel_docs` | 获取频道文档 |
   
   </Accordion>
@@ -347,6 +358,22 @@ Agent 对话相关工具。
   | `timeline_institutes` | 机构时间线 |
   | `timeline_public_media` | 公共媒体时间线 |
   | `timeline_social_media` | 社交媒体时间线 |
+  
+  </Accordion>
+
+  <Accordion title="关注组工具" icon="users">
+  
+  | 工具名 | 功能描述 |
+  |--------|----------|
+  | `follow_group_create` | 创建关注组 |
+  | `follow_group_list` | 获取关注组列表 |
+  | `follow_group_get` | 获取关注组详情 |
+  | `follow_group_update` | 更新关注组 |
+  | `follow_group_delete` | 删除关注组 |
+  | `follow_group_add_follows` | 关注组添加关注 |
+  | `follow_group_remove_follows` | 关注组移除关注 |
+  | `follow_group_set_follows` | 关注组设置关注（全量替换） |
+  | `follow_group_docs` | 获取关注组文档 |
   
   </Accordion>
 </AccordionGroup>
