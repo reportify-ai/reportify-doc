@@ -1,0 +1,102 @@
+---
+title: 'Company Search'
+openapi: 'POST /v1/stock/company-search'
+---
+
+## 公司搜索
+
+**URL**: `/v1/stock/company-search`
+**方法**: `POST`  
+**描述**: 通过公司名称、股票代码或关键词（支持中英文）搜索上市公司，返回最匹配的公司信息列表。
+
+### 请求参数
+| 参数名 | 类型    | 必填 | 描述                                                     |
+|--------|---------|------|----------------------------------------------------------|
+| query  | str     | 是   | 搜索关键词：公司名称 / 简称 / 股票代码 / 自由文本，如 `腾讯`、`AAPL` |
+| top_k  | int     | 否   | 返回的最大公司数量，默认 `10`                             |
+| strict | bool    | 否   | 是否启用严格关键词匹配，默认 `true`                      |
+
+### 响应参数
+| 参数名                | 类型    | 描述                                       |
+|-----------------------|---------|--------------------------------------------|
+| companies             | array   | 匹配到的公司列表，按相关度排序。           |
+| &nbsp;&nbsp;id                     | int     | 公司 ID。                                  |
+| &nbsp;&nbsp;symbol                 | str     | 完整股票标识，如 `HK:00700`。              |
+| &nbsp;&nbsp;market                 | str     | 市场代码，如 `HK` / `US` / `SH` / `SZ`。   |
+| &nbsp;&nbsp;region                 | str     | 地区代码。                                 |
+| &nbsp;&nbsp;ticker                 | str     | 股票代码，如 `00700` / `AAPL`。            |
+| &nbsp;&nbsp;name                   | str     | 公司显示名称。                             |
+| &nbsp;&nbsp;full_name              | str     | 公司全称。                                 |
+| &nbsp;&nbsp;chinese_name           | str     | 中文名称。                                 |
+| &nbsp;&nbsp;chinese_full_name      | str     | 中文全称。                                 |
+| &nbsp;&nbsp;english_name           | str     | 英文名称。                                 |
+| &nbsp;&nbsp;english_full_name      | str     | 英文全称。                                 |
+| &nbsp;&nbsp;synonyms               | str     | 别名/同义词（逗号分隔）。                  |
+| &nbsp;&nbsp;logo                   | str     | 公司 Logo 地址。                           |
+| &nbsp;&nbsp;rank                   | int     | 相关度排序值（越小越靠前）。               |
+| words                 | array   | 从查询中抽取的关键词（严格匹配时返回）。   |
+
+### 请求示例
+
+**cURL**
+```bash
+curl -X POST https://api.reportify.cn/v1/stock/company-search \
+-H "Authorization: Bearer YOUR_API_KEY" \
+-H "Content-Type: application/json" \
+-d '{
+    "query": "腾讯",
+    "top_k": 3
+}'
+```
+
+**Python**
+```python
+import requests
+
+url = "https://api.reportify.cn/v1/stock/company-search"
+headers = {
+    "Authorization": "Bearer YOUR_API_KEY",
+    "Content-Type": "application/json"
+}
+
+# 支持中文名称、英文名称或股票代码
+data = {"query": "腾讯", "top_k": 3}
+
+response = requests.post(url, headers=headers, json=data)
+print(response.json())
+```
+
+### 响应示例
+```json
+{
+  "companies": [
+    {
+      "id": 1407,
+      "symbol": "HK:00700",
+      "market": "HK",
+      "region": "HK",
+      "ticker": "00700",
+      "name": "腾讯控股",
+      "full_name": "腾讯控股有限公司",
+      "chinese_name": "腾讯控股",
+      "chinese_full_name": "腾讯控股有限公司",
+      "english_name": "TENCENT",
+      "english_full_name": "Tencent Holdings Limited",
+      "synonyms": "腾讯,腾讯控股",
+      "logo": "https://files.reportify.cn/logos_all/700.HK.svg",
+      "rank": 1
+    }
+  ],
+  "words": []
+}
+```
+
+<Note>
+`query` 为空时返回空列表 `{"companies": [], "words": []}`。
+</Note>
+
+### 错误响应
+| 状态码 | 描述                     |
+|--------|--------------------------|
+| 403    | 未认证（缺少或无效的 API Key）。 |
+| 422    | 请求参数验证失败。       |

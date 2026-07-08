@@ -138,6 +138,7 @@
             "icon": "building",
             "pages": [
               "apis/stock/company_overview",
+              "apis/stock/company_search",
               "apis/stock/company_shareholders"
             ]
           },

@@ -1059,6 +1059,34 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
       - BearerAuth: []
+  /v1/stock/company-search:
+    post:
+      tags:
+      - openapi-v2-stock
+      summary: Company Search
+      description: Search listed companies by name, ticker or keyword (Chinese/English) and return matching company profiles
+      operationId: company_search_reportify_api_v2_stock_company_search_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompanyVectorSearchRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompanyVectorSearchResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
   /v1/stock/stock-quote:
     post:
       tags:
@@ -4967,6 +4995,103 @@ components:
       - symbol
       title: CompanyShareholdersInput
       description: Input schema for company shareholders
+    CompanyVectorSearchRequest:
+      properties:
+        query:
+          type: string
+          title: Query
+          description: Search keyword - company name, ticker or free text (Chinese/English)
+          example: 腾讯
+        top_k:
+          type: integer
+          title: Top K
+          description: Max number of companies to return
+          default: 10
+        strict:
+          type: boolean
+          title: Strict
+          description: Whether to apply strict keyword matching
+          default: true
+      type: object
+      required:
+      - query
+      title: CompanyVectorSearchRequest
+      description: Input schema for company search
+    CompanyVectorSearchResponse:
+      properties:
+        companies:
+          type: array
+          items:
+            $ref: '#/components/schemas/CompanyRead'
+          title: Companies
+          description: Matching companies ordered by relevance
+        words:
+          type: array
+          items:
+            type: string
+          title: Words
+          description: Extracted search keywords
+      type: object
+      title: CompanyVectorSearchResponse
+      description: Response schema for company search
+    CompanyRead:
+      properties:
+        id:
+          type: integer
+          title: Id
+        symbol:
+          type: string
+          title: Symbol
+          description: Full stock symbol, e.g. HK:00700
+        market:
+          type: string
+          title: Market
+          description: Market code, e.g. HK / US / SH / SZ
+        region:
+          type: string
+          title: Region
+        ticker:
+          type: string
+          title: Ticker
+          description: Stock ticker, e.g. 00700 / AAPL
+        name:
+          type: string
+          title: Name
+          description: Company display name
+        full_name:
+          type: string
+          title: Full Name
+        chinese_name:
+          type: string
+          title: Chinese Name
+        chinese_full_name:
+          type: string
+          title: Chinese Full Name
+        english_name:
+          type: string
+          title: English Name
+        english_full_name:
+          type: string
+          title: English Full Name
+        synonyms:
+          type: string
+          title: Synonyms
+        logo:
+          type: string
+          title: Logo
+          description: Company logo URL
+        rank:
+          type: integer
+          title: Rank
+        following:
+          type: boolean
+          title: Following
+        status:
+          type: integer
+          title: Status
+      type: object
+      title: CompanyRead
+      description: Company profile returned by company search
     StockQuoteInput:
       properties:
         symbol:
