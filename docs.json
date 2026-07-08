@@ -77,7 +77,8 @@
               "apis/docs/docs_tag",
               "apis/docs/docs_symbol",
               "apis/docs/doc",
-              "apis/docs/doc_summary"
+              "apis/docs/doc_summary",
+              "apis/institutions/list"
             ]
           },
           {

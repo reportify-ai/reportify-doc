@@ -2261,6 +2261,51 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
       - BearerAuth: []
+  /v1/institutions:
+    get:
+      tags:
+      - openapi-institutions
+      summary: List Institutions
+      description: List research institutions (optionally name-filtered); use the returned name as the institutions[] search filter value.
+      operationId: list_institutions_reportify_api_v1_institutions_get
+      parameters:
+      - description: Case-insensitive institution name filter
+        required: false
+        schema:
+          type: string
+          title: Query
+          description: Case-insensitive institution name filter
+        name: query
+        in: query
+      - required: false
+        schema:
+          type: integer
+          title: Page Num
+          default: 1
+        name: page_num
+        in: query
+      - required: false
+        schema:
+          type: integer
+          title: Page Size
+          default: 50
+        name: page_size
+        in: query
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OAIInstitutionPagination'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
   /v1/followings/recommend:
     get:
       tags:
@@ -3902,6 +3947,11 @@ components:
         channel_name:
           type: string
           title: Channel Name
+        summary:
+          type: string
+          title: Summary
+          description: Two-line document summary
+          nullable: true
       type: object
       required:
       - doc_id
@@ -4436,6 +4486,46 @@ components:
       required:
       - folder_id
       title: OAIFolderResponse
+    OAIInstitutionPagination:
+      properties:
+        total_count:
+          type: integer
+          title: Total Count
+          default: 0
+        total_page:
+          type: integer
+          title: Total Page
+          default: 0
+        page_num:
+          type: integer
+          title: Page Num
+          default: 1
+        page_size:
+          type: integer
+          title: Page Size
+          default: 50
+        institutions:
+          items:
+            $ref: '#/components/schemas/OAIInstitutionResponse'
+          type: array
+          title: Institutions
+      type: object
+      title: OAIInstitutionPagination
+    OAIInstitutionResponse:
+      properties:
+        id:
+          type: string
+          title: Id
+          description: Institution id (symbol)
+        name:
+          type: string
+          title: Name
+          description: Institution name — pass into institutions[] filter
+      type: object
+      required:
+      - id
+      - name
+      title: OAIInstitutionResponse
     OAIMarket:
       type: string
       enum:
@@ -7568,9 +7658,44 @@ components:
             type: string
           title: Symbols
           description: Related stock symbols
+        companies:
+          type: array
+          items:
+            $ref: '#/components/schemas/ToolAPICompanyInfo'
+          title: Companies
+          description: Related companies
       type: object
       title: ToolAPIDocument
       description: Document in tool API response
+    ToolAPICompanyInfo:
+      properties:
+        name:
+          type: string
+          title: Name
+          description: Company name
+        logo:
+          type: string
+          title: Logo
+          description: Company logo URL
+        industry:
+          type: string
+          title: Industry
+          description: Industry
+        sector:
+          type: string
+          title: Sector
+          description: Sector
+        stocks:
+          type: array
+          items:
+            type: object
+          title: Stocks
+          description: Stock information
+      type: object
+      required:
+      - name
+      title: ToolAPICompanyInfo
+      description: Company information in tool API response
     TimelineToolsResponse:
       properties:
         docs:
