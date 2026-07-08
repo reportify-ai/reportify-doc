@@ -1,0 +1,99 @@
+---
+title: 'List Followings'
+openapi: 'GET /v1/followings'
+---
+
+## 说明
+
+**URL**: `/v1/followings`
+**方法**: `GET`  
+**描述**: 统一关注列表，返回当前用户关注的公司、话题、渠道等，支持分页并可按 `follow_type` / `follow_sub_type` 过滤。
+
+### 请求参数
+| 参数名          | 类型 | 必填 | 描述                                        |
+|-----------------|------|------|---------------------------------------------|
+| follow_type     | int  | 否   | 关注类型：`1` 公司，`2` 话题，`3` 渠道。         |
+| follow_sub_type | int  | 否   | 关注子类型：`1` 机构，`2` 媒体，`3` 社交。       |
+| page_num        | int  | 否   | 页码，从 1 开始，默认 `1`。                     |
+| page_size       | int  | 否   | 每页数量，默认 `20`。                          |
+
+### 响应参数
+| 参数名          | 类型   | 描述                                       |
+|-----------------|--------|--------------------------------------------|
+| total_count     | int    | 关注总数。                                 |
+| total_page      | int    | 总页数。                                   |
+| page_num        | int    | 当前页码。                                 |
+| page_size       | int    | 每页数量。                                 |
+| items           | array  | 关注列表。                                 |
+| &nbsp;&nbsp;follow_id       | str    | 关注 ID。                                  |
+| &nbsp;&nbsp;follow_type     | int    | 关注类型：`1` 公司，`2` 话题，`3` 渠道。       |
+| &nbsp;&nbsp;follow_sub_type | int    | 关注子类型：`1` 机构，`2` 媒体，`3` 社交。     |
+| &nbsp;&nbsp;follow_value    | str    | 关注对象的取值（如股票代码、话题内容等）。       |
+| &nbsp;&nbsp;name            | str    | 名称。                                     |
+| &nbsp;&nbsp;logo            | str    | 图标 URL。                                 |
+| &nbsp;&nbsp;title           | str    | 标题。                                     |
+| &nbsp;&nbsp;followed_at     | int    | 关注时间戳（毫秒）。                         |
+
+### 请求示例
+
+**cURL**
+```bash
+curl -X GET "https://api.reportify.cn/v1/followings?follow_type=1&page_num=1&page_size=20" \
+-H "Authorization: Bearer YOUR_API_KEY"
+```
+
+**Python**
+```python
+import requests
+
+url = "https://api.reportify.cn/v1/followings"
+headers = {
+    "Authorization": "Bearer YOUR_API_KEY"
+}
+
+params = {
+    "follow_type": 1,
+    "page_num": 1,
+    "page_size": 20
+}
+
+response = requests.get(url, headers=headers, params=params)
+print(response.json())
+```
+
+### 响应示例
+```json
+{
+  "total_count": 2,
+  "total_page": 1,
+  "page_num": 1,
+  "page_size": 20,
+  "items": [
+    {
+      "follow_id": "1001",
+      "follow_type": 1,
+      "follow_sub_type": 0,
+      "follow_value": "00700",
+      "name": "腾讯控股",
+      "logo": "https://static.reportify.cn/logo/00700.png",
+      "title": "",
+      "followed_at": 1720000000000
+    },
+    {
+      "follow_id": "2002",
+      "follow_type": 2,
+      "follow_sub_type": 0,
+      "follow_value": "AI 芯片行业趋势",
+      "name": "AI 芯片行业趋势",
+      "logo": "",
+      "title": "AI 芯片行业趋势",
+      "followed_at": 1720000100000
+    }
+  ]
+}
+```
+
+### 错误响应
+| 状态码 | 描述               |
+|--------|--------------------|
+| 422    | 请求参数验证失败。 |

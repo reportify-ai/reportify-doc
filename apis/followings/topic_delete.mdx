@@ -1,0 +1,56 @@
+---
+title: 'Delete Topic'
+openapi: 'DELETE /v1/followings/topics/{follow_id}'
+---
+
+## 说明
+
+**URL**: `/v1/followings/topics/{follow_id}`
+**方法**: `DELETE`  
+**描述**: 删除话题，取消并删除指定的话题关注。
+
+### 请求参数
+| 参数名    | 类型 | 必填 | 位置 | 描述          |
+|-----------|------|------|------|---------------|
+| follow_id | str  | 是   | path | 话题关注 ID。 |
+
+### 响应参数
+| 参数名  | 类型 | 描述                       |
+|---------|------|----------------------------|
+| status  | bool | 操作是否成功。             |
+| message | str  | 提示信息。                 |
+
+### 请求示例
+
+**cURL**
+```bash
+curl -X DELETE https://api.reportify.cn/v1/followings/topics/2002 \
+-H "Authorization: Bearer YOUR_API_KEY"
+```
+
+**Python**
+```python
+import requests
+
+follow_id = "2002"
+url = f"https://api.reportify.cn/v1/followings/topics/{follow_id}"
+headers = {
+    "Authorization": "Bearer YOUR_API_KEY"
+}
+
+response = requests.delete(url, headers=headers)
+print(response.json())
+```
+
+### 响应示例
+```json
+{
+  "status": true,
+  "message": "success"
+}
+```
+
+### 错误响应
+| 状态码 | 描述               |
+|--------|--------------------|
+| 422    | 请求参数验证失败。 |

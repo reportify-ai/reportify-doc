@@ -1,0 +1,80 @@
+---
+title: 'Recommend Followings'
+openapi: 'GET /v1/followings/recommend'
+---
+
+## 说明
+
+**URL**: `/v1/followings/recommend`
+**方法**: `GET`  
+**描述**: 推荐关注，根据指定的关注类型返回推荐的关注对象列表，并标记当前用户是否已关注。
+
+### 请求参数
+| 参数名      | 类型 | 必填 | 描述                                    |
+|-------------|------|------|-----------------------------------------|
+| follow_type | int  | 是   | 关注类型：`1` 公司，`2` 话题，`3` 渠道。     |
+
+### 响应参数
+| 参数名        | 类型   | 描述                             |
+|---------------|--------|----------------------------------|
+| items         | array  | 推荐关注列表。                   |
+| &nbsp;&nbsp;follow_value  | str    | 关注对象的取值（如股票代码等）。   |
+| &nbsp;&nbsp;name          | str    | 名称。                           |
+| &nbsp;&nbsp;logo          | str    | 图标 URL。                       |
+| &nbsp;&nbsp;is_following  | bool   | 当前用户是否已关注。             |
+| &nbsp;&nbsp;group_key     | str    | 推荐分组标识。                   |
+| &nbsp;&nbsp;description    | str    | 描述信息。                       |
+
+### 请求示例
+
+**cURL**
+```bash
+curl -X GET "https://api.reportify.cn/v1/followings/recommend?follow_type=1" \
+-H "Authorization: Bearer YOUR_API_KEY"
+```
+
+**Python**
+```python
+import requests
+
+url = "https://api.reportify.cn/v1/followings/recommend"
+headers = {
+    "Authorization": "Bearer YOUR_API_KEY"
+}
+
+params = {
+    "follow_type": 1
+}
+
+response = requests.get(url, headers=headers, params=params)
+print(response.json())
+```
+
+### 响应示例
+```json
+{
+  "items": [
+    {
+      "follow_value": "00700",
+      "name": "腾讯控股",
+      "logo": "https://static.reportify.cn/logo/00700.png",
+      "is_following": false,
+      "group_key": "热门港股",
+      "description": "互联网增值服务龙头"
+    },
+    {
+      "follow_value": "AAPL",
+      "name": "苹果",
+      "logo": "https://static.reportify.cn/logo/AAPL.png",
+      "is_following": true,
+      "group_key": "热门美股",
+      "description": "全球消费电子领导者"
+    }
+  ]
+}
+```
+
+### 错误响应
+| 状态码 | 描述               |
+|--------|--------------------|
+| 422    | 请求参数验证失败。 |
