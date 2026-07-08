@@ -1,0 +1,79 @@
+---
+title: 'List Institutions'
+openapi: 'GET /v1/institutions'
+---
+
+## 机构列表
+
+**URL**: `/v1/institutions`
+**方法**: `GET`  
+**描述**: 获取研究机构列表（可按名称过滤）。返回的 `name` 即为在文档搜索中传入 `institutions[]` 过滤条件的取值。
+
+### 请求参数
+| 参数名    | 类型 | 必填 | 描述                                       |
+|-----------|------|------|--------------------------------------------|
+| query     | str  | 否   | 机构名称过滤，不区分大小写。               |
+| page_num  | int  | 否   | 页码，默认 `1`。                           |
+| page_size | int  | 否   | 每页数量，默认 `50`。                      |
+
+### 响应参数
+| 参数名                       | 类型    | 描述                                                         |
+|------------------------------|---------|--------------------------------------------------------------|
+| total_count                  | int     | 机构总数。                                                   |
+| total_page                   | int     | 总页数。                                                     |
+| page_num                     | int     | 当前页码。                                                   |
+| page_size                    | int     | 每页数量。                                                   |
+| institutions                 | array   | 机构列表。                                                   |
+| &nbsp;&nbsp;id               | str     | 机构 ID（symbol）。                                          |
+| &nbsp;&nbsp;name             | str     | 机构名称，将其作为 `institutions[]` 搜索过滤条件的取值传入。 |
+
+### 请求示例
+
+**cURL**
+```bash
+curl -X GET "https://api.reportify.cn/v1/institutions?query=中金&page_num=1&page_size=50" \
+-H "Authorization: Bearer YOUR_API_KEY"
+```
+
+**Python**
+```python
+import requests
+
+url = "https://api.reportify.cn/v1/institutions"
+headers = {
+    "Authorization": "Bearer YOUR_API_KEY"
+}
+params = {
+    "query": "中金",
+    "page_num": 1,
+    "page_size": 50,
+}
+
+response = requests.get(url, headers=headers, params=params)
+print(response.json())
+```
+
+### 响应示例
+```json
+{
+  "total_count": 1,
+  "total_page": 1,
+  "page_num": 1,
+  "page_size": 50,
+  "institutions": [
+    {
+      "id": "cicc",
+      "name": "中国国际金融股份有限公司"
+    }
+  ]
+}
+```
+
+<Note>
+将响应中的 `name` 字段值传入文档搜索接口的 `institutions[]` 过滤条件，即可按该机构筛选研报。
+</Note>
+
+### 错误响应
+| 状态码 | 描述               |
+|--------|--------------------|
+| 422    | 请求参数验证失败。 |
