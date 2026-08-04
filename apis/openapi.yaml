@@ -440,6 +440,43 @@ paths:
                 $ref: '#/components/schemas/HTTPValidationError'
       security:
       - BearerAuth: []
+  /v1/docs/{doc_id}/chunks/{chunk_id}:
+    get:
+      tags:
+      - openapi-docs
+      summary: Get Doc Chunk
+      description: Retrieve one authority chunk by its stable chunk ID, together with the document metadata and current document version.
+      operationId: get_doc_chunk_reportify_api_v1_docs__doc_id__chunks__chunk_id__get
+      parameters:
+      - required: true
+        schema:
+          type: string
+          title: Doc Id
+        name: doc_id
+        in: path
+      - required: true
+        schema:
+          type: string
+          title: Chunk Id
+        name: chunk_id
+        in: path
+      responses:
+        '200':
+          description: Successful Response. The chunks array contains exactly the requested chunk.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OAIDocContentsResponse'
+        '404':
+          description: Document chunk not found
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      security:
+      - BearerAuth: []
   /v1/docs/{doc_id}/raw-content:
     get:
       tags:
