@@ -1,0 +1,93 @@
+---
+title: 'Doc Chunk'
+openapi: 'GET /v1/docs/{doc_id}/chunks/{chunk_id}'
+---
+
+## 精确获取文档分块
+
+**URL**: `/v1/docs/{doc_id}/chunks/{chunk_id}`  
+**方法**: `GET`  
+**描述**: 使用稳定的文档 ID 和 chunk ID 精确读取一个权威原文分块。适合 Citation
+跳转、原文核对，以及已知 chunk ID 后的按需读取；无需顺序翻页扫描整篇文档。
+
+### 请求参数
+
+| 参数名 | 类型 | 必填 | 描述 |
+|--------|------|------|------|
+| `doc_id` | string | 是 | Reportify 文档唯一 ID。 |
+| `chunk_id` | string | 是 | 搜索或文档接口返回的稳定 chunk ID。 |
+
+### 响应说明
+
+响应沿用文档内容结构，并保证 `chunks` 数组只包含所请求的一个分块：
+
+| 字段 | 类型 | 描述 |
+|------|------|------|
+| `doc_id` | string | 文档唯一 ID。 |
+| `document_version` | string | 当前文档内容与 locator 快照版本。 |
+| `chunks` | array | 仅包含目标 chunk。 |
+| `chunks[0].id` | string | 与请求中的 `chunk_id` 相同。 |
+| `chunks[0].content` | string | 可引用的原文。 |
+| `chunks[0].metadata` | object | 页码、bbox、页面尺寸或 HTML 定位信息（数据存在时返回）。 |
+| `total_chunks` | integer | 当前文档的总分块数。 |
+| `chunk_offset` | integer | 目标 chunk 在当前文档中的零基位置。 |
+
+### 请求示例
+
+```bash
+curl -X GET \
+  'https://api.reportify.cn/v1/docs/1046895208953942016/chunks/605401659404358' \
+  -H 'Authorization: Bearer 447460****09c9'
+```
+
+```python
+import requests
+
+response = requests.get(
+    "https://api.reportify.cn/v1/docs/1046895208953942016/chunks/605401659404358",
+    headers={"Authorization": "Bearer 447460****09c9"},
+)
+response.raise_for_status()
+chunk = response.json()["chunks"][0]
+print(chunk["content"])
+```
+
+### 响应示例
+
+```json
+{
+  "doc_id": "1046895208953942016",
+  "title": "AI in Finance Report",
+  "url": "https://reportify.cn/financials/1046895208953942016",
+  "document_version": "sha256:7c12d1...",
+  "chunks": [
+    {
+      "id": "605401659404358",
+      "type": "text",
+      "content": "AI in finance is transforming the industry...",
+      "summary": null,
+      "media_url": null,
+      "metadata": {
+        "document_page": 8,
+        "bbox": {
+          "left": 72,
+          "top": 180,
+          "right": 524,
+          "bottom": 246
+        }
+      },
+      "score": 0
+    }
+  ],
+  "total_chunks": 143,
+  "chunk_offset": 87,
+  "next_chunk_offset": null
+}
+```
+
+### 错误响应
+
+| 状态码 | 描述 |
+|--------|------|
+| `404` | 文档中不存在指定 chunk，或 chunk 已失效。 |
+| `422` | 路径参数格式不正确。 |
