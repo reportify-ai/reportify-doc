@@ -5263,6 +5263,13 @@ components:
           type: array
           title: Docs
           description: Search result documents
+        chunks:
+          items:
+            type: object
+          type: array
+          title: Chunks
+          description: Search result content chunks (parity with the internal search tools). Empty for news and webpages searches.
+          default: []
         total_count:
           type: integer
           title: Total Count

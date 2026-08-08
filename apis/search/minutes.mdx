@@ -31,6 +31,14 @@ openapi: 'POST /v2/search/minutes'
 | &nbsp;&nbsp;metadata     | object  | 文档元数据。                                           |
 | &nbsp;&nbsp;score        | number  | 相关性评分。                                           |
 | &nbsp;&nbsp;url          | str     | 文档链接。                                             |
+| chunks              | array   | 内容分片数组，用于原文引用；news、webpages 搜索不返回该字段。每个分片包含以下字段： |
+| &nbsp;&nbsp;id           | str     | 分片唯一 ID。                                          |
+| &nbsp;&nbsp;type         | str     | 分片类型。                                             |
+| &nbsp;&nbsp;content      | str     | 分片正文内容。                                         |
+| &nbsp;&nbsp;summary      | str     | 分片摘要，可能为 null。                                |
+| &nbsp;&nbsp;score        | number  | 分片相关性评分。                                       |
+| &nbsp;&nbsp;metadata     | object  | 分片元数据。                                           |
+| &nbsp;&nbsp;doc          | object  | 分片所属文档：包含 doc_id、title、url、published_at 等。 |
 | total_count         | int     | 匹配文档总数。                                         |
 | took_ms             | int     | 搜索执行时间（毫秒）。                                 |
 
@@ -101,6 +109,22 @@ print(response.json())
       },
       "score": 0.9723,
       "url": "https://reportify.cn/transcripts/1046915273103380482"
+    }
+  ],
+  "chunks": [
+    {
+      "id": "624813519365412",
+      "type": "text",
+      "content": "……匹配到的原文分片内容……",
+      "summary": null,
+      "score": 0.87,
+      "metadata": {},
+      "doc": {
+        "doc_id": "1046915273103380483",
+        "title": "示例文档标题",
+        "url": "https://reportify.cn/reports/1046915273103380483",
+        "published_at": 1730390400000
+      }
     }
   ],
   "total_count": 1,
