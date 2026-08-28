@@ -19,7 +19,7 @@ Reportify MCP 是一个基于 MCP (Model Context Protocol) 协议的金融数据
 
 ```
 MCP Gateway (https://mcp.reportify.cn)
-├── /mcp           - 统一端点（推荐）= Search + Stock，共 47 个工具
+├── /mcp           - 统一端点（推荐）= Search + Stock
 ├── /search/mcp    - 文档搜索类工具
 ├── /stock/mcp     - 股票数据类工具
 ├── /agent/mcp     - Agent 对话类工具
@@ -77,7 +77,7 @@ MCP Gateway (https://mcp.reportify.cn)
 
 | 服务 | 端点 URL | 说明 |
 |------|----------|------|
-| **统一端点（推荐）** | `https://mcp.reportify.cn/mcp` | Search + Stock 合并，47 个工具 |
+| **统一端点（推荐）** | `https://mcp.reportify.cn/mcp` | Search + Stock 合并 |
 | Search MCP | `https://mcp.reportify.cn/search/mcp` | 文档搜索类工具 |
 | Stock MCP | `https://mcp.reportify.cn/stock/mcp` | 股票数据类工具 |
 | Agent MCP | `https://mcp.reportify.cn/agent/mcp` | Agent 对话类工具 |
@@ -205,7 +205,7 @@ Authorization: Bearer YOUR_API_KEY
 <Info>
   **统一端点 `/mcp` 的工具构成**
 
-  统一端点 = Search MCP 的 18 个工具 + Stock MCP 的 29 个工具，共 **47 个**。下面 Search / Stock 两节列出的工具，除标记为「仅 `/search/mcp`」的写操作外，在 `/mcp` 上都可以直接调用，工具名完全一致。
+  统一端点包含 Search MCP 和 Stock MCP 的全部工具。下面 Search / Stock 两节列出的工具，除标记为「仅 `/search/mcp`」的写操作外，在 `/mcp` 上都可以直接调用，工具名完全一致。
 </Info>
 
 ### Search MCP (`/search/mcp`)
